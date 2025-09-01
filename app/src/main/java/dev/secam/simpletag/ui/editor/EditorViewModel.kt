@@ -15,16 +15,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.data
+package dev.secam.simpletag.ui.editor
 
-import kotlinx.serialization.Serializable
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.secam.simpletag.data.MusicData
+import org.jaudiotagger.audio.AudioFile
+import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.tag.Tag
+import java.io.File
+import javax.inject.Inject
 
-@Serializable
-data class MusicData(
-    val id: Long,
-    val path: String,
-    val title: String? = null,
-    val artist: String? = null,
-    val album: String? = null,
-    val hasArtwork: Boolean = false
-)
+@HiltViewModel
+class EditorViewModel @Inject constructor(): ViewModel() {
+
+    fun getTag(musicData: MusicData): Tag? {
+        val file: AudioFile = AudioFileIO.read(File(musicData.path))
+        return file.getTag()
+    }
+}

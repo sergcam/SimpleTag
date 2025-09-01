@@ -1,15 +1,27 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector
 
 import android.content.ContentResolver
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.provider.MediaStore
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil3.compose.AsyncImage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.data.MusicData
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -20,13 +32,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
-import org.jaudiotagger.audio.mp3.MP3FileReader
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import java.io.File
 import javax.inject.Inject
 
-
+@HiltViewModel
 class SelectorViewModel @Inject constructor(): ViewModel() {
     private val _uiState = MutableStateFlow(SelectorUiState())
     val uiState = _uiState.asStateFlow()
@@ -127,64 +138,23 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
 
     fun updateHasArt(index: Int){
         val path = uiState.value.musicList[index].path
-        if (path != null) {
-            backgroundScope.launch {
-                val file: AudioFile = AudioFileIO.read(File(path))
-                val tag: Tag? = file.getTag()
-                val hasArt = tag?.firstArtwork != null
-                _uiState.update { currentState ->
-                    val newList = uiState.value.musicList.toMutableList()
-                    newList[index] = MusicData(
-                        id = newList[index].id,
-                        path = path,
-                        title = newList[index].title,
-                        artist = newList[index].artist,
-                        album = newList[index].album,
-                        hasArtwork = hasArt
-                    )
-                    currentState.copy(
-                        musicList = newList
-                    )
-                }
-            }
-        }
-    }
-    // loads tag data using jaudiotagger
-    fun loadTagData(index: Int){
-        val path = uiState.value.musicList[index].path
-        if (path != null) {
-            backgroundScope.launch {
-                val file: AudioFile = AudioFileIO.read(File(path))
-                val tag: Tag? = file.getTag()
-                val title = if (tag?.getFirst(FieldKey.TITLE) != "") {
-                    tag?.getFirst(FieldKey.TITLE) ?: file.file.name
-                } else {
-                    file.file.name
-                }
-                val album = if (tag?.getFirst(FieldKey.ALBUM) != "") {
-                    tag?.getFirst(FieldKey.ALBUM) ?: "<unknown>"
-                } else {
-                    "<unknown>"
-                }
-                val artist = if (tag?.getFirst(FieldKey.ARTIST) != "") {
-                    tag?.getFirst(FieldKey.ARTIST) ?: "<unknown>"
-                } else {
-                    "<unknown>"
-                }
-                val artwork = tag?.firstArtwork
-                _uiState.update { currentState ->
-                    val newList = uiState.value.musicList.toMutableList()
-                    newList[index] = MusicData(
-                        id = newList[index].id,
-                        path = path,
-                        title = title,
-                        artist = artist,
-                        album = album,
-                    )
-                    currentState.copy(
-                        musicList = newList
-                    )
-                }
+        backgroundScope.launch {
+            val file: AudioFile = AudioFileIO.read(File(path))
+            val tag: Tag? = file.getTag()
+            val hasArt = tag?.firstArtwork != null
+            _uiState.update { currentState ->
+                val newList = uiState.value.musicList.toMutableList()
+                newList[index] = MusicData(
+                    id = newList[index].id,
+                    path = path,
+                    title = newList[index].title,
+                    artist = newList[index].artist,
+                    album = newList[index].album,
+                    hasArtwork = hasArt
+                )
+                currentState.copy(
+                    musicList = newList
+                )
             }
         }
     }
