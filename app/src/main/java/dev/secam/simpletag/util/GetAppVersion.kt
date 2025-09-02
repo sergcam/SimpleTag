@@ -15,23 +15,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag
+package dev.secam.simpletag.util
 
-import android.app.Application
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.SingletonImageLoader
-import dagger.hilt.android.HiltAndroidApp
-import dev.secam.simpletag.data.myImageLoader
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 
-@HiltAndroidApp
-class SimpleTag : Application(), SingletonImageLoader.Factory {
-    //    @Inject
-//    lateinit var preferencesRepo: PreferencesRepo
+/** returns versionName as defined in build.gradle
+ *
+ */
+fun getAppVersion(
+    context: Context,
+): String? {
+    return try {
+        val packageManager = context.packageManager
+        val packageName = context.packageName
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+        } else {
+            packageManager.getPackageInfo(packageName, 0)
+        }
+        packageInfo.versionName
 
-    override fun newImageLoader(context: PlatformContext): ImageLoader = myImageLoader(context)
-
-    override fun onCreate() {
-        super.onCreate()
+    } catch (_: Exception) {
+        null
     }
 }

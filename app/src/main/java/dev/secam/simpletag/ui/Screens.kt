@@ -12,6 +12,12 @@ import kotlinx.serialization.json.Json
 object Selector
 
 @Serializable
+object Settings
+
+@Serializable
+object About
+
+@Serializable
 data class Editor(
     val musicList: List<MusicData>
 )
@@ -32,21 +38,3 @@ inline fun <reified T> navTypeOf(
 
 }
 
-//val LikeNavType = object : NavType<List<MusicData>>(isNullableAllowed = false) {
-//    override fun get(bundle: Bundle, key: String): List<MusicData> {
-//        return bundle.getSerializable(key) as List<MusicData>
-//    }
-//
-//    override fun parseValue(value: String): List<MusicData> {
-//        return Json.decodeFromString(value)
-//    }
-//
-//    override fun serializeAsValue(value: List<MusicData>): String {
-//        return Uri.encode(Json.encodeToString(value))
-//    }
-//
-//    override fun put(bundle: Bundle, key: String, value: List<MusicData>) {
-//        bundle.putSerializable(key, value as java.io.Serializable)
-//    }
-//
-//}

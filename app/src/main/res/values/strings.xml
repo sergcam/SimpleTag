@@ -1,7 +1,13 @@
 <resources>
+    <!--    Titles    -->
     <string name="app_name">SimpleTag</string>
+    <string name="settings_title">Settings</string>
+
+    <!--     Content Desc    -->
     <string name="back_button">back button</string>
     <string name="settings_button">settings button</string>
+
+    <!--    Tag Fields    -->
     <string name="title_field">Title</string>
     <string name="artist_field">Artist</string>
     <string name="album_field">Album</string>
@@ -12,7 +18,115 @@
     <string name="composer_field">Composer</string>
     <string name="disc_number_field">Disc Number</string>
     <string name="comment_field">Comment</string>
+    <string name="acoustid_fingerprint_field">AcoustId Fingerprint</string>
+    <string name="acoustid_id">AcoustId Id</string>
+    <string name="album_artist_sort_order_field">Album Artist Sort Order</string>
+    <string name="album_sort_order_field">Album Sort Order</string>
+    <string name="arranger_field">Arranger</string>
+    <string name="artist_sort_order_field">Artist Sort Order</string>
+    <string name="artists_field">Artists</string>
+    <string name="asin_field">ASIN</string>
+    <string name="barcode_field">Barcode</string>
+    <string name="bpm_field">BPM</string>
+    <string name="catalog_number_field">Catalog Number</string>
+    <string name="compilation_field">Compilation</string>
+    <string name="composer_sort_order_field">Composer Sort Order</string>
+    <string name="conductor_field">Conductor</string>
+    <string name="copyright_field">Copyright</string>
+    <string name="country_field">Country</string>
+    <string name="custom_one_field">Custom 1</string>
+    <string name="custom_two_field">Custom 2</string>
+    <string name="custom_three_field">Custom 3</string>
+    <string name="custom_four_field">Custom 4</string>
+    <string name="custom_five_field">Custom 5</string>
+    <string name="discogs_artist_site_url_field">Discogs Artist Site Url</string>
+    <string name="discogs_release_site_url_field">Discogs Release Site Url</string>
+    <string name="dj_mixer_field">DJ Mixer</string>
+    <string name="encoded_by_field">Encoded By</string>
+    <string name="engineer_field">Engineer</string>
+    <string name="floating_point_bpm_field">Floating Point BPM</string>
+    <string name="gapless_playback_field">Gapless Playback</string>
+    <string name="grouping_field">Grouping</string>
+    <string name="isrc_field">ISRC</string>
+    <string name="key_field">Key</string>
+    <string name="label_field">Label</string>
+    <string name="language_field">Language</string>
+    <string name="lyricist_field">Lyricist</string>
+    <string name="lyrics_field">Lyrics</string>
+    <string name="lyrics_site_url_field">Lyrics Site Url</string>
+    <string name="media_field">Media</string>
+    <string name="mixer_field">Mixer</string>
+    <string name="mood_field">Mood</string>
+    <string name="musicbrainz_artist_id_field">MusicBrainz Artist Id</string>
+    <string name="musicbrainz_disc_id_field">MusicBrainz Disc Id</string>
+    <string name="musicbrainz_original_release_id_field">MusicBrainz Original Release Id</string>
+    <string name="musicbrainz_release_artist_id_field">MusicBrainz Release Artist Id</string>
+    <string name="musicbrainz_release_group_id_field">MusicBrainz Release Group Id</string>
+    <string name="musicbrainz_release_id_field">MusicBrainz Release Id</string>
+    <string name="musicbrainz_track_id_field">MusicBrainz Track Id</string>
+    <string name="musicbrainz_work_id_field">MusicBrainz Work Id</string>
+    <string name="occasion_field">Occasion</string>
+    <string name="official_artist_site_url_field">Official Artist Site Url</string>
+    <string name="official_release_site_url_field">Official Release Site Url</string>
+    <string name="original_album_field">Original Album</string>
+    <string name="original_artist_field">Original Artist</string>
+    <string name="original_lyricist_field">Original Lyricist</string>
+    <string name="original_release_date_field">Original Release Date</string>
+    <string name="producer_field">Producer</string>
+    <string name="quality_field">Quality</string>
+    <string name="rating_field">Rating</string>
+    <string name="release_country_field">Release Country</string>
+    <string name="release_status_field">Release Status</string>
+    <string name="release_type_field">Release Type</string>
+    <string name="remixer_field">Remixer</string>
+    <string name="script_field">Script</string>
+    <string name="tags_field">Tags</string>
+    <string name="tempo_field">Tempo</string>
+    <string name="title_sort_order_field">TitleSortOrder</string>
+    <string name="total_discs_field">Total Discs</string>
+    <string name="total_tracks_field">Total Tracks</string>
+    <string name="wikipedia_artist_site_url_field">Wikipedia Artist Site Url</string>
+    <string name="wikipedia_release_site_url_field">Wikipedia Release Site Url</string>
+
+    <!--    Themes      -->
+    <string name="system_theme">System</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+
+    <!--    Color Schemes       -->
+    <string name="dynamic">Dynamic</string>
+    <string name="red">Red</string>
+    <string name="orange">Orange</string>
+    <string name="yellow">Yellow</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="purple">Purple</string>
+
+    <!--    UI      -->
     <string name="welcome">Welcome</string>
-    <string name="grant_permisson">Grant Permission</string>
-    <string name="missing_permission">Access to audio files is required to use the app</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="missing_permission">Access to audio files is required to use the app</string> <string name="theme">Theme</string>
+    <string name="color_scheme">Color Scheme</string>
+    <string name="pure_black">Pure Black Dark Theme</string>
+    <string name="advanced_editor">Advanced Editor</string>
+    <string name="advanced_editor_subtext">Show all editable tags</string>
+    <string name="round_album_cover">Rounded Album Covers</string>
+    <string name="about_title">About</string>
+    <string name="app_logo">App Logo</string>
+    <string name="version">Version</string>
+    <string name="source_code">Source Code</string>
+    <string name="license">License</string>
+    <string name="author">Author</string>
+    <string name="website">Website</string>
+    <string name="email">Email</string>
+    <string name="donate">Donate</string>
+    <string name="support">Support</string>
+    <string name="bugs_features">Bug or Feature request?</string>
+    <string name="bugs">Found a bug?</string>
+    <string name="gplv3_fulltext">todo</string>
+    <string name="dialog_close">Close</string>
+    <string name="advanced_fields">Advanced Fields</string>
+
+    <!--    Uncategorized   -->
+
 </resources>

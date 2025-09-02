@@ -38,7 +38,7 @@ fun SimpleAlbumArtwork(musicData: MusicData, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
     ) {
-        if (!musicData.hasArtwork) {
+        if (musicData.hasArtwork == null || !musicData.hasArtwork) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier

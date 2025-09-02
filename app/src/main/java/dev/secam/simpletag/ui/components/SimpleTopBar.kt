@@ -42,7 +42,7 @@ fun SimpleTopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         actions = {
             IconButton(onClick = action) {
@@ -75,7 +75,7 @@ fun SimpleTopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         navigationIcon = {
             IconButton(onClick = onBack) {
@@ -111,7 +111,7 @@ fun SimpleTopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         navigationIcon = {
             IconButton(onClick = onBack) {

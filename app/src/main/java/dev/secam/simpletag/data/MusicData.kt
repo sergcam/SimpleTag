@@ -26,5 +26,5 @@ data class MusicData(
     val title: String? = null,
     val artist: String? = null,
     val album: String? = null,
-    val hasArtwork: Boolean = false
+    val hasArtwork: Boolean? = null
 )

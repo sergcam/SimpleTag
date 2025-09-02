@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.jaudiotagger)
     implementation(libs.accompanist.permissions)
     implementation(libs.kotlinx.serialization.json)
-
+    implementation(libs.androidx.datastore.preferences)
 
     //coil
     implementation(libs.coil.compose)

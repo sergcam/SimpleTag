@@ -15,23 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag
+package dev.secam.simpletag.data
 
-import android.app.Application
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.SingletonImageLoader
-import dagger.hilt.android.HiltAndroidApp
-import dev.secam.simpletag.data.myImageLoader
+import kotlinx.coroutines.flow.Flow
 
-@HiltAndroidApp
-class SimpleTag : Application(), SingletonImageLoader.Factory {
-    //    @Inject
-//    lateinit var preferencesRepo: PreferencesRepo
-
-    override fun newImageLoader(context: PlatformContext): ImageLoader = myImageLoader(context)
-
-    override fun onCreate() {
-        super.onCreate()
-    }
+interface PreferencesRepo {
+    val preferencesFlow: Flow<UserPreferences>
+    suspend fun saveThemePref(theme: SimpleAppTheme)
+    suspend fun saveColorSchemePref(colorScheme: SimpleAppColorScheme)
+    suspend fun savePureBlackPref(pureBlack: Boolean)
+    suspend fun saveAdvancedEditorPref(advancedEditor: Boolean)
+    suspend fun saveRoundCoversPref(roundCovers: Boolean)
 }

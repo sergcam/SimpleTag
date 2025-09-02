@@ -3,6 +3,7 @@ accompanistPermissions = "0.37.3"
 agp = "8.12.2"
 appcompat = "1.7.1"
 coilCompose = "3.3.0"
+datastorePreferences = "1.1.7"
 jaudiotagger = "3.0.1"
 kotlin = "2.2.10"
 activityCompose = "1.10.1"
@@ -16,6 +17,7 @@ kotlinxSerializationJson = "1.9.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }

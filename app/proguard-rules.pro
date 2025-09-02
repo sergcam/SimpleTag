@@ -20,21 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#-keepclassmembers, allowoptimization class org.jaudiotagger.audio.AudioFile {
-#    <init>();
-#}
-#-keepclassmembers, allowoptimization class org.jaudiotagger.audio.AudioFileIO {
-#    <init>();
-#}
-
-#-keep class org.jaudiotagger.audio.AudioFile { *; }
-#-keep class org.jaudiotagger.audio.AudioFileIO { *;}
+# for debugging release
 #-dontoptimize
 #-dontobfuscate
-#-keep class org.jaudiotagger.tag.id3.framebody.FrameBodyTIT2 { *; }
-#-keep class org.jaudiotagger.tag.id3.framebody.FrameBodyTPE1 { *; }
--keep class org.jaudiotagger.tag.id3.framebody.* { *; }
 
-
-#-keep class org.jaudiotagger.tag.datatype.NumberHashMap { *; }
--keep class org.jaudiotagger.tag.datatype.* { *; }
+# need these for jaudiotagger to work
+-keep, allowoptimization class org.jaudiotagger.tag.id3.framebody.* { *; }
+-keep, allowoptimization class org.jaudiotagger.tag.datatype.* { *; }

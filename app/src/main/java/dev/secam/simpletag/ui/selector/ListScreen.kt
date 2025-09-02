@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector
 
 import androidx.compose.foundation.layout.Column
@@ -6,18 +23,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.ui.components.SimpleMusicItem
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -28,9 +36,8 @@ fun ListScreen(
     updateHasArt: (Int) -> Unit
 ) {
 //    var musicList by remember { mutableStateOf(musicList) }
-    val scope = rememberCoroutineScope()
-    var loaded by remember { mutableIntStateOf(0) }
-    var loading by remember { mutableStateOf(true) }
+//    val scope = rememberCoroutineScope()
+
 //    if(musicList.isNotEmpty()) {
 //        if(musicList[musicList.size-1].title == null){
 //            loading = false
@@ -70,7 +77,7 @@ fun ListScreen(
 //                    }
 //                    }
 
-                    if(!musicList[index].hasArtwork){
+                    if(musicList[index].hasArtwork == null){
                         updateHasArt(index)
                     }
                     SimpleMusicItem(musicList[index]) {

@@ -40,14 +40,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
@@ -63,6 +67,10 @@ fun EditorScreen(
     viewModel: EditorViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit
 ) {
+    // prefs
+    val prefs = viewModel.prefState.collectAsState().value
+    val advancedEditor = prefs.advancedEditor
+    val roundCovers = prefs.roundCovers
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -80,6 +88,8 @@ fun EditorScreen(
         if(musicList.size == 1) {
             SingleEditor(
                 tag = viewModel.getTag( musicList[0]),
+                advancedEditor = advancedEditor,
+                roundCovers = roundCovers,
                 modifier = modifier
                     .padding(contentPadding)
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -93,7 +103,7 @@ fun EditorScreen(
 }
 
 @Composable
-fun SingleEditor(tag: Tag?, modifier: Modifier = Modifier){
+fun SingleEditor(tag: Tag?, advancedEditor: Boolean, roundCovers: Boolean, modifier: Modifier = Modifier){
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +125,9 @@ fun SingleEditor(tag: Tag?, modifier: Modifier = Modifier){
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(
-                            shape = RoundedCornerShape(16.dp)
+                            shape =
+                                if(roundCovers) RoundedCornerShape(16.dp)
+                                else RectangleShape
                         )
                 )
             }
@@ -151,28 +163,46 @@ fun SingleEditor(tag: Tag?, modifier: Modifier = Modifier){
                 }
             }
         }
-//        SimpleAlbumArtwork(
-//            musicData = musicList[0],
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .aspectRatio(1f)
-//                .clip(
-//                    shape = RoundedCornerShape(16.dp)
-//                )
-//        )
         val textStates: Map<SimpleTagField,TextFieldState> = buildMap {
             for(field in SimpleTagField.entries){
                 put(field, rememberTextFieldState(tag?.getFirst( field.fieldKey) ?: ""))
             }
         }
-        for(field in textStates){
-            SimpleTextField(
-
-                state = field.value,
-                label = stringResource(field.key.localizedNameRes),
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 24.dp)
+        ){
+            for (field in textStates) {
+                if(field.key.ordinal < 10){
+                    SimpleTextField(
+                        state = field.value,
+                        label = stringResource(field.key.localizedNameRes),
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                    )
+                }
+            }
+            if(advancedEditor) {
+                Text(
+                    text = stringResource(R.string.advanced_fields),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .padding(top = 28.dp)
+                )
+                for (field in textStates){
+                    if (field.key.ordinal > 9) {
+                        SimpleTextField(
+                            state = field.value,
+                            label = stringResource(field.key.localizedNameRes),
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }

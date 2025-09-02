@@ -18,8 +18,13 @@
 package dev.secam.simpletag.ui.editor
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.PreferencesRepo
+import dev.secam.simpletag.data.UserPreferences
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.Tag
@@ -27,8 +32,14 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class EditorViewModel @Inject constructor(): ViewModel() {
-
+class EditorViewModel @Inject constructor(
+    preferencesRepo: PreferencesRepo
+): ViewModel() {
+    val prefState = preferencesRepo.preferencesFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UserPreferences()
+    )
     fun getTag(musicData: MusicData): Tag? {
         val file: AudioFile = AudioFileIO.read(File(musicData.path))
         return file.getTag()

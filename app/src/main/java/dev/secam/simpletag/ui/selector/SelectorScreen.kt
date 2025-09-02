@@ -39,7 +39,12 @@ import dev.secam.simpletag.ui.components.SimpleTopBar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun SelectorScreen(modifier: Modifier = Modifier, viewModel: SelectorViewModel = hiltViewModel(), onNavigateToEditor: (List<MusicData>) -> Unit) {
+fun SelectorScreen(
+    modifier: Modifier = Modifier,
+    viewModel: SelectorViewModel = hiltViewModel(),
+    onNavigateToEditor: (List<MusicData>) -> Unit,
+    onNavigateToSettings: () -> Unit
+) {
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
@@ -61,7 +66,7 @@ fun SelectorScreen(modifier: Modifier = Modifier, viewModel: SelectorViewModel =
                 title = "SimpleTag",
                 actionIcon = painterResource(R.drawable.ic_settings_24px),
                 contentDescription = "save tag",
-                action = {},
+                action = { onNavigateToSettings() },
                 scrollBehavior = scrollBehavior
             )
         }

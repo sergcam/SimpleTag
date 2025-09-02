@@ -82,7 +82,7 @@ fun PermissionScreen(modifier: Modifier = Modifier, onClick: () -> Unit){
 
         ) {
             Text(
-                text = stringResource(R.string.grant_permisson),
+                text = stringResource(R.string.grant_permission),
                 fontWeight = FontWeight.Bold
             )
         }
