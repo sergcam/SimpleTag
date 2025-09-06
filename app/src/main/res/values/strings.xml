@@ -126,6 +126,9 @@
     <string name="gplv3_fulltext">todo</string>
     <string name="dialog_close">Close</string>
     <string name="advanced_fields">Advanced Fields</string>
+    <string name="date_added">Date Added</string>
+    <string name="descending">Descending</string>
+    <string name="ascending">Ascending</string>
 
     <!--    Uncategorized   -->
 

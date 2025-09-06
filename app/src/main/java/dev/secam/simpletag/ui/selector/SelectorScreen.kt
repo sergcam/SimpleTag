@@ -17,6 +17,7 @@
 
 package dev.secam.simpletag.ui.selector
 
+import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,17 +49,22 @@ fun SelectorScreen(
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
-    val musicList = uiState.musicList
+    val musicList = uiState.filteredMusic
+    val showSortDialog = uiState.showSortDialog
+    val showFilterDialog = uiState.showFilterDialog
+    val taggedFilter = uiState.taggedFilter
+    val sortOrder = uiState.sortOrder
+    val sortDirection = uiState.sortDirection
 
     val mediaPermissionState = rememberPermissionState(
             permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    android.Manifest.permission.READ_MEDIA_AUDIO
+                    Manifest.permission.READ_MEDIA_AUDIO
                 } else {
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
                 }
     )
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -74,6 +80,7 @@ fun SelectorScreen(
 
         if (mediaPermissionState.status.isGranted) {
             val contentResolver = LocalContext.current.contentResolver
+            // TODO: fix this. key1 should not be true (reloads library everytime you navigate)
             LaunchedEffect(key1 = true) {
                 viewModel.loadFiles(contentResolver)
             }
@@ -81,9 +88,19 @@ fun SelectorScreen(
                 onNavigateToEditor = onNavigateToEditor,
                 updateHasArt = viewModel::updateHasArt,
                 musicList = musicList,
+                updateQuery = viewModel::updateQuery,
                 modifier = modifier
                     .padding(contentPadding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                setSortOrder = viewModel::setSortOrder,
+                taggedFilter = taggedFilter,
+                setTaggedFilter = viewModel::setTaggedFilter,
+                showSortDialog = showSortDialog,
+                showFilterDialog = showFilterDialog,
+                setShowSortDialog = viewModel::setShowSortDialog,
+                setShowFilterDialog = viewModel::setShowFilterDialog,
+                sortOrder = sortOrder,
+                sortDirection = sortDirection
             )
         } else {
             PermissionScreen(

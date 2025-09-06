@@ -2,7 +2,6 @@ package dev.secam.simpletag.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,7 +28,7 @@ import dev.secam.simpletag.util.SetDialogDim
 @Composable
 fun SimpleDialog(
     title: String,
-    optionsPadding: Boolean = false,
+//    optionsPadding: Boolean = false,
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -44,19 +43,29 @@ fun SimpleDialog(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(
-                        paddingValues =
-                            if (optionsPadding) PaddingValues(top = 24.dp, bottom = 16.dp, start = 26.dp, end = 18.dp)
-                            else PaddingValues(vertical = 24.dp,  horizontal = 26.dp,)
-                    )
+//                    .padding(
+//                        paddingValues =
+//                            if (optionsPadding) PaddingValues(top = 24.dp, bottom = 16.dp, start = 26.dp, end = 18.dp)
+//                            else PaddingValues(vertical = 24.dp,  horizontal = 26.dp,)
+//                    )
             ) {
-                Text(
-                    text = title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(
+
+                                    top = 24.dp,
+                                    start = 26.dp,
+//                                else PaddingValues(vertical = 24.dp, horizontal = 26.dp)
+                        )
+                ) {
+                    Text(
+                        text = title,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                    )
+                }
                 content()
             }
         }
@@ -77,7 +86,7 @@ fun SimpleDialogOptions(
         horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)
+            .padding(top = 20.dp, bottom = 12.dp, end = 16.dp)
             .height(40.dp)
     ) {
         TextButton(
@@ -86,7 +95,7 @@ fun SimpleDialogOptions(
             Text(option1)
         }
         TextButton(
-            onClick = { action2 },
+            onClick = { action2() },
         ) {
             Text(option2)
         }
@@ -101,7 +110,7 @@ fun SimpleDialogOptions(
         horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)
+            .padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
             .height(40.dp)
     ) {
         TextButton(
@@ -119,7 +128,7 @@ fun DialogPrev(){
         SimpleDialog(
             title = "Hi",
             onDismiss = {},
-            optionsPadding = true
+//            optionsPadding = true
         ) {
             Text("hihihihiihhihihihiihhihihihiihhihihihiihhihihihiihhihihihiih")
             SimpleDialogOptions(
