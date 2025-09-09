@@ -1,4 +1,4 @@
-package dev.secam.simpletag.ui.components
+package dev.secam.simpletag.ui.selector.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets

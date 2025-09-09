@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.ui.components
+package dev.secam.simpletag.ui.selector.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
