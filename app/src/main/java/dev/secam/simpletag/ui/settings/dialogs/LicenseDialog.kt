@@ -19,7 +19,6 @@ package dev.secam.simpletag.ui.settings.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -44,7 +43,6 @@ fun LicenseDialog(
     ) {
         Column(
             modifier = modifier
-                .padding(horizontal = 26.dp)
                 .fillMaxWidth()
                 .size(300.dp)
         ) {
@@ -56,7 +54,7 @@ fun LicenseDialog(
         }
         SimpleDialogOptions(
             option = stringResource(R.string.dialog_close)
-        ) { onDismissRequest }
+        ) { onDismissRequest() }
     }
 }
 

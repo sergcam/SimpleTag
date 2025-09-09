@@ -50,7 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.ui.components.SettingsItem
+import dev.secam.simpletag.ui.components.SimpleListItem
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.settings.dialogs.LicenseDialog
 import dev.secam.simpletag.ui.theme.SimpleTagTheme
@@ -129,16 +129,16 @@ fun AppInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
         }
 
         Column {
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.version),
                 icon = painterResource(R.drawable.ic_info_24px),
                 supportingContent = getAppVersion(LocalContext.current) ?: "null",
             )
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.source_code),
                 icon = painterResource(R.drawable.ic_code_24px),
             ) { uriHandler.openUri("https://github.com/sergcam/SimpleTag") }
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.license),
                 icon = painterResource(R.drawable.ic_balance_24px),
                 supportingContent = "GPL v3",
@@ -175,16 +175,16 @@ fun AuthorInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
         }
 
         Column {
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = "Sergio Camacho",
                 icon = painterResource(R.drawable.ic_person_24px),
             )
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = "Github",
                 supportingContent = "sergcam",
                 icon = painterResource(R.drawable.ic_github_logo),
             ) { uriHandler.openUri("https://github.com/sergcam/") }
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.donate),
                 supportingContent = "give me money",
                 icon = painterResource(R.drawable.ic_kofi_24px),
@@ -217,12 +217,12 @@ fun SupportInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
             )
         }
         Column {
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.bugs),
                 supportingContent = "Open an issue on GitHub",
                 icon = painterResource(R.drawable.ic_feedback_24px),
             ) { uriHandler.openUri("https://github.com/sergcam/SimpleTag/issues/new") }
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.email),
                 supportingContent = "sergio@secam.dev",
                 icon = painterResource(R.drawable.ic_mail_24px),
@@ -234,9 +234,11 @@ fun SupportInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun AboutPreview() {
-    SimpleTagTheme {
-        AboutScreen(
-            onNavigateBack = {},
-        )
-    }
+    SimpleTagTheme(
+        content = {
+            AboutScreen(
+                onNavigateBack = {},
+            )
+        },
+    )
 }
