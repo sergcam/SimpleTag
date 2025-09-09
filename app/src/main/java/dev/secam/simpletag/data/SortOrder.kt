@@ -24,5 +24,5 @@ enum class SortOrder(val displayNameRes: Int) {
     Artist(R.string.artist_field),
     Album(R.string.album_field),
 //    ReleaseDate(),
-    DateAdded(R.string.date_added),
+//    DateAdded(R.string.date_added),
 }

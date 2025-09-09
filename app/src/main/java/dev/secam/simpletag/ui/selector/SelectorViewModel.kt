@@ -199,8 +199,8 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                         selector.title?.lowercase()
                     SortOrder.Artist ->
                         selector.artist?.lowercase()
-                    SortOrder.DateAdded ->
-                        selector.artist?.lowercase()
+//                    SortOrder.DateAdded ->
+//                        selector.artist?.lowercase()
                 }
             }
             if(uiState.value.sortDirection == SortDirection.Descending){
