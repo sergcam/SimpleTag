@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.ui.components
+package dev.secam.simpletag.ui.selector.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.data.MusicData
 
@@ -44,7 +45,7 @@ fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick
     else {
         ListItem(
             headlineContent = {
-                Text(musicData.title)
+                Text(text = musicData.title, fontWeight = FontWeight.Medium)
             },
             supportingContent = {
                 Text(
@@ -59,7 +60,7 @@ fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick
                             shape = RoundedCornerShape(8.dp)
                         )
                 ) {
-                SimpleAlbumArtwork(musicData)
+                    SimpleAlbumArtwork(musicData)
                 }
             },
             colors = ListItemDefaults.colors(

@@ -2,6 +2,7 @@ package dev.secam.simpletag.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +29,7 @@ import dev.secam.simpletag.util.SetDialogDim
 @Composable
 fun SimpleDialog(
     title: String,
-//    optionsPadding: Boolean = false,
+    manualPadding: Boolean = false,
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -43,19 +44,19 @@ fun SimpleDialog(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-//                    .padding(
-//                        paddingValues =
-//                            if (optionsPadding) PaddingValues(top = 24.dp, bottom = 16.dp, start = 26.dp, end = 18.dp)
-//                            else PaddingValues(vertical = 24.dp,  horizontal = 26.dp,)
-//                    )
+                    .padding(
+                        paddingValues =
+                            if (manualPadding) PaddingValues()
+                            else PaddingValues(top = 24.dp, bottom = 12.dp, start = 26.dp, end = 16.dp)
+                    )
             ) {
                 Row(
                     modifier = Modifier
                         .padding(
-
-                                    top = 24.dp,
-                                    start = 26.dp,
-//                                else PaddingValues(vertical = 24.dp, horizontal = 26.dp)
+                            paddingValues =
+                                if (manualPadding) PaddingValues(top = 24.dp,
+                                    start = 26.dp,)
+                                else PaddingValues()
                         )
                 ) {
                     Text(
@@ -79,6 +80,7 @@ fun SimpleDialog(
 fun SimpleDialogOptions(
     option1: String,
     option2: String,
+    manualPadding: Boolean = false,
     action1: () -> Unit,
     action2: () -> Unit
 ) {
@@ -86,7 +88,10 @@ fun SimpleDialogOptions(
         horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 12.dp, end = 16.dp)
+            .padding(
+                paddingValues = if(manualPadding) PaddingValues(12.dp, bottom = 12.dp, end = 16.dp)
+                else PaddingValues()
+            )
             .height(40.dp)
     ) {
         TextButton(
@@ -104,13 +109,18 @@ fun SimpleDialogOptions(
 @Composable
 fun SimpleDialogOptions(
     option: String,
+    manualPadding: Boolean = false,
     action: () -> Unit,
+
 ) {
     Row(
         horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
+            .padding(
+                paddingValues = if(manualPadding) PaddingValues(12.dp, bottom = 12.dp, end = 16.dp)
+                    else PaddingValues()
+            )
             .height(40.dp)
     ) {
         TextButton(
@@ -124,16 +134,17 @@ fun SimpleDialogOptions(
 @Preview
 @Composable
 fun DialogPrev(){
+    val manualPadding = true
     SimpleTagTheme {
         SimpleDialog(
             title = "Hi",
             onDismiss = {},
-//            optionsPadding = true
+            manualPadding = manualPadding,
         ) {
             Text("hihihihiihhihihihiihhihihihiihhihihihiihhihihihiihhihihihiih")
             SimpleDialogOptions(
-                "Cancel",
-
+                option = "Cancel",
+                manualPadding = manualPadding
 
             ) { }
         }

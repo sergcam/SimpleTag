@@ -23,25 +23,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.secam.simpletag.data.SimpleSortOrder
+import dev.secam.simpletag.data.SortOrder
 import dev.secam.simpletag.data.SortDirection
 import dev.secam.simpletag.ui.components.SimpleDialog
 import dev.secam.simpletag.ui.components.SimpleDialogOptions
 
 @Composable
 fun SortDialog(
-    sortOrder: SimpleSortOrder,
+    sortOrder: SortOrder,
     sortDirection: SortDirection,
-    onConfirm: (SimpleSortOrder, SortDirection) -> Unit,
+    onConfirm: (SortOrder, SortDirection) -> Unit,
     onCancel: () -> Unit
 ) {
     SimpleDialog(
         title = "Sort by",
-        onDismiss = onCancel
+        onDismiss = onCancel,
+        manualPadding = true
     ) {
         var newSortOrder by remember { mutableStateOf(sortOrder) }
         var newSortDirection by remember { mutableStateOf(sortDirection) }
-        val orderOptions = SimpleSortOrder.entries.toList()
+        val orderOptions = SortOrder.entries.toList()
         val directionOptions = SortDirection.entries.toList()
 
         Column(
@@ -58,7 +59,7 @@ fun SortDialog(
                 sortDirection = sortDirection,
                 options = directionOptions,
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp, bottom = 12.dp)
             ) { direction ->
                 newSortDirection = direction
             }
@@ -70,16 +71,17 @@ fun SortDialog(
             action2 = {
                 onCancel()
                 onConfirm(newSortOrder, newSortDirection)
-            }
+            },
+            manualPadding = true
         )
     }
 }
 
 @Composable
 fun OrderRadioList(
-    sortOrder: SimpleSortOrder,
-    options: List<SimpleSortOrder>,
-    setOrder: (SimpleSortOrder) -> Unit
+    sortOrder: SortOrder,
+    options: List<SortOrder>,
+    setOrder: (SortOrder) -> Unit
 ) {
     var selected by remember { mutableStateOf(sortOrder) }
     options.forEach { option ->
@@ -139,7 +141,7 @@ fun DirectionButton(
 @Composable
 fun SortPrev() {
     SortDialog(
-        sortOrder = SimpleSortOrder.Title,
+        sortOrder = SortOrder.Title,
         sortDirection = SortDirection.Ascending,
         onConfirm = { one, two -> }
     ) { }

@@ -20,7 +20,7 @@ package dev.secam.simpletag.data
 import dev.secam.simpletag.R
 import org.jaudiotagger.tag.FieldKey
 
-enum class SimpleTagField (val localizedNameRes: Int, val fieldKey: FieldKey) {
+enum class SimpleTagField (val displayNameRes: Int, val fieldKey: FieldKey) {
     // Basic (ordinal 0-9)
     Title(R.string.title_field, FieldKey.TITLE),
     Artist(R.string.artist_field, FieldKey.ARTIST),

@@ -15,16 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag
+package dev.secam.simpletag.data.preferences
 
-import android.app.Application
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.SingletonImageLoader
-import dagger.hilt.android.HiltAndroidApp
-import dev.secam.simpletag.data.coil.myImageLoader
+import dev.secam.simpletag.data.AppColorScheme
+import dev.secam.simpletag.data.AppTheme
 
-@HiltAndroidApp
-class SimpleTag : Application(), SingletonImageLoader.Factory {
-    override fun newImageLoader(context: PlatformContext): ImageLoader = myImageLoader(context)
-}
+data class UserPreferences(
+    val theme: AppTheme = AppTheme.System,
+    val colorScheme: AppColorScheme = AppColorScheme.Dynamic,
+    val pureBlack: Boolean = false,
+    val advancedEditor: Boolean = false,
+    val roundCovers: Boolean = true,
+)

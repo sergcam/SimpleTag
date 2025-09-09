@@ -15,16 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag
+package dev.secam.simpletag.data.coil
 
-import android.app.Application
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.SingletonImageLoader
-import dagger.hilt.android.HiltAndroidApp
-import dev.secam.simpletag.data.coil.myImageLoader
+import coil3.key.Keyer
+import coil3.request.Options
+import dev.secam.simpletag.data.MusicData
 
-@HiltAndroidApp
-class SimpleTag : Application(), SingletonImageLoader.Factory {
-    override fun newImageLoader(context: PlatformContext): ImageLoader = myImageLoader(context)
+object MusicDataKeyer : Keyer<MusicData> {
+    override fun key(data: MusicData, options: Options): String {
+        return data.id.toString()
+    }
 }

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.data
+package dev.secam.simpletag.data.preferences
 
 import android.os.Build
 import android.util.Log
@@ -25,13 +25,16 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dev.secam.simpletag.data.AppColorScheme
+import dev.secam.simpletag.data.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
 
-class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<Preferences>) : PreferencesRepo {
+class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<Preferences>) :
+    PreferencesRepo {
     private companion object {
         val THEME = stringPreferencesKey("theme")
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
@@ -60,8 +63,8 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val roundCovers = preferences[ROUND_COVERS] ?: true
 
             UserPreferences(
-                theme = SimpleAppTheme.valueOf(theme),
-                colorScheme = SimpleAppColorScheme.valueOf(colorScheme),
+                theme = AppTheme.valueOf(theme),
+                colorScheme = AppColorScheme.valueOf(colorScheme),
                 pureBlack = pureBlack,
                 advancedEditor = advancedEditor,
                 roundCovers = roundCovers,
@@ -69,13 +72,13 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
 
         }
 
-    override suspend fun saveThemePref(theme: SimpleAppTheme) {
+    override suspend fun saveThemePref(theme: AppTheme) {
         dataStore.edit { preferences ->
             preferences[THEME] = theme.name
         }
     }
 
-    override suspend fun saveColorSchemePref(colorScheme: SimpleAppColorScheme) {
+    override suspend fun saveColorSchemePref(colorScheme: AppColorScheme) {
         dataStore.edit { preferences ->
             preferences[COLOR_SCHEME] = colorScheme.name
         }
@@ -99,4 +102,3 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         }
     }
 }
-

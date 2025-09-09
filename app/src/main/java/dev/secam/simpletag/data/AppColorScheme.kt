@@ -17,13 +17,14 @@
 
 package dev.secam.simpletag.data
 
-import kotlinx.coroutines.flow.Flow
+import dev.secam.simpletag.R
 
-interface PreferencesRepo {
-    val preferencesFlow: Flow<UserPreferences>
-    suspend fun saveThemePref(theme: SimpleAppTheme)
-    suspend fun saveColorSchemePref(colorScheme: SimpleAppColorScheme)
-    suspend fun savePureBlackPref(pureBlack: Boolean)
-    suspend fun saveAdvancedEditorPref(advancedEditor: Boolean)
-    suspend fun saveRoundCoversPref(roundCovers: Boolean)
+enum class AppColorScheme (val displayNameRes: Int){
+    Dynamic(R.string.dynamic),
+    Red(R.string.red),
+    Orange(R.string.orange),
+    Yellow(R.string.yellow),
+    Green(R.string.green),
+    Blue(R.string.blue),
+    Purple(R.string.purple),
 }

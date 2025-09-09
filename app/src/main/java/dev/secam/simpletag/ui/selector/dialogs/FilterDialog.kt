@@ -36,7 +36,8 @@ fun FilterDialog(
     var toggleState by remember { mutableStateOf(hasTag) }
     SimpleDialog(
         title = "Filter",
-        onDismiss = onCancel
+        onDismiss = onCancel,
+        manualPadding = true
     ) {
         ToggleDialogItem (
             currentState = toggleState,
@@ -51,7 +52,8 @@ fun FilterDialog(
             action2 = {
                 onCancel()
                 onConfirm(toggleState)
-            }
+            },
+            manualPadding = true
         )
     }
 }

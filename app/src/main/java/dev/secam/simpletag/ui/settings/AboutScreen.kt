@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import dev.secam.simpletag.R
 import dev.secam.simpletag.ui.components.SettingsItem
 import dev.secam.simpletag.ui.components.SimpleTopBar
+import dev.secam.simpletag.ui.settings.dialogs.LicenseDialog
 import dev.secam.simpletag.ui.theme.SimpleTagTheme
 import dev.secam.simpletag.util.getAppVersion
 
@@ -145,7 +146,7 @@ fun AppInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
         }
     }
     if (showDialog) {
-//        LicenseDialog { showDialog = false }
+        LicenseDialog { showDialog = false }
     }
 }
 
@@ -215,7 +216,6 @@ fun SupportInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             )
         }
-// feature
         Column {
             SettingsItem(
                 headlineContent = stringResource(R.string.bugs),

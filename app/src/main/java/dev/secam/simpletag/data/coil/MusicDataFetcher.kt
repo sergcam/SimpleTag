@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.data
+package dev.secam.simpletag.data.coil
 
 import android.graphics.BitmapFactory
 import androidx.core.graphics.scale
@@ -25,14 +25,13 @@ import coil3.decode.DataSource
 import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
-import coil3.key.Keyer
 import coil3.request.Options
+import dev.secam.simpletag.data.MusicData
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 import javax.inject.Inject
 
 class MusicDataFetcher(private val musicData: MusicData): Fetcher {
-
     override suspend fun fetch(): FetchResult? {
         val artwork = AudioFileIO.read(File(musicData.path)).tag.firstArtwork?.binaryData
 
@@ -55,8 +54,3 @@ class MusicDataFetcher(private val musicData: MusicData): Fetcher {
     }
 }
 
-object MusicDataKeyer : Keyer<MusicData> {
-    override fun key(data: MusicData, options: Options): String {
-        return data.id.toString()
-    }
-}

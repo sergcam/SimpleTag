@@ -26,8 +26,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.secam.simpletag.data.PreferencesRepo
-import dev.secam.simpletag.data.PreferencesRepoImpl
+import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.data.preferences.PreferencesRepoImpl
 import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(

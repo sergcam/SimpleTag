@@ -17,18 +17,15 @@
 
 package dev.secam.simpletag.ui
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import dagger.hilt.android.AndroidEntryPoint
-import dev.secam.simpletag.data.PreferencesRepo
-import dev.secam.simpletag.data.SimpleAppTheme
+import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.ui.theme.SimpleTagTheme
 import javax.inject.Inject
 
@@ -44,18 +41,6 @@ class MainActivity : ComponentActivity() {
             val theme = preferencesRepo.preferencesFlow.collectAsState(null).value?.theme
             val colorScheme = preferencesRepo.preferencesFlow.collectAsState(null).value?.colorScheme
             val pureBlack = preferencesRepo.preferencesFlow.collectAsState(null).value?.pureBlack
-            when (theme) {
-                SimpleAppTheme.Dark -> enableEdgeToEdge(
-                    SystemBarStyle.dark(Color.TRANSPARENT)
-                )
-                SimpleAppTheme.Light -> enableEdgeToEdge(
-                    SystemBarStyle.light(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT
-                    )
-                )
-                else -> enableEdgeToEdge()
-            }
             SimpleTagTheme(
                 appTheme = theme,
                 appColorScheme = colorScheme,

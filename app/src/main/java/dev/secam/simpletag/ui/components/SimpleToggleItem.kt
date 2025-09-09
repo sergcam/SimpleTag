@@ -52,12 +52,10 @@ fun ToggleSettingsItem(
             )
         },
         colors = if (enabled) ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.background
         ) else ListItemDefaults.colors(
             headlineColor = MaterialTheme.colorScheme.outline,
             supportingColor = MaterialTheme.colorScheme.outlineVariant,
             leadingIconColor = MaterialTheme.colorScheme.outline,
-            containerColor = MaterialTheme.colorScheme.background
         ),
         modifier = modifier
             .clickable(enabled = enabled, onClick = {

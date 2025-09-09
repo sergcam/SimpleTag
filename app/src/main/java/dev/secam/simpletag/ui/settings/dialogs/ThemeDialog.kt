@@ -34,20 +34,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.SimpleAppTheme
+import dev.secam.simpletag.data.AppTheme
 import dev.secam.simpletag.ui.components.SimpleDialog
 
 @Composable
 fun ThemeDialog(
-    theme: SimpleAppTheme,
-    setTheme: (SimpleAppTheme) -> Unit,
+    theme: AppTheme,
+    setTheme: (AppTheme) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     SimpleDialog(
         title = stringResource(R.string.theme),
         onDismiss = onDismissRequest
     ) {
-        val radioOptions = SimpleAppTheme.entries.toList()
+        val radioOptions = AppTheme.entries.toList()
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(theme ) }
         radioOptions.forEach { option ->
             Row(

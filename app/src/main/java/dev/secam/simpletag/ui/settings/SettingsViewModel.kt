@@ -24,10 +24,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.PreferencesRepo
-import dev.secam.simpletag.data.SimpleAppColorScheme
-import dev.secam.simpletag.data.SimpleAppTheme
-import dev.secam.simpletag.data.UserPreferences
+import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.data.AppColorScheme
+import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,13 +48,13 @@ class SettingsViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    fun setTheme(theme: SimpleAppTheme) {
+    fun setTheme(theme: AppTheme) {
         viewModelScope.launch {
             preferencesRepo.saveThemePref(theme)
         }
     }
 
-    fun setColorScheme(colorScheme: SimpleAppColorScheme) {
+    fun setColorScheme(colorScheme: AppColorScheme) {
         viewModelScope.launch {
             preferencesRepo.saveColorSchemePref(colorScheme)
         }
@@ -94,11 +94,11 @@ class SettingsViewModel @Inject constructor(
     }
 
     @Composable
-    fun getThemeIcon(theme: SimpleAppTheme): Painter {
+    fun getThemeIcon(theme: AppTheme): Painter {
         return when (theme) {
-            SimpleAppTheme.System -> painterResource(R.drawable.ic_system_theme_24px)
-            SimpleAppTheme.Dark -> painterResource(R.drawable.ic_dark_mode_24px)
-            SimpleAppTheme.Light -> painterResource(R.drawable.ic_light_mode_24px)
+            AppTheme.System -> painterResource(R.drawable.ic_system_theme_24px)
+            AppTheme.Dark -> painterResource(R.drawable.ic_dark_mode_24px)
+            AppTheme.Light -> painterResource(R.drawable.ic_light_mode_24px)
         }
     }
 }

@@ -34,6 +34,7 @@ import dev.secam.simpletag.ui.editor.EditorScreen
 import dev.secam.simpletag.ui.selector.SelectorScreen
 import dev.secam.simpletag.ui.settings.AboutScreen
 import dev.secam.simpletag.ui.settings.SettingsScreen
+import dev.secam.simpletag.util.navTypeOf
 import kotlin.reflect.typeOf
 
 @Composable
@@ -53,23 +54,25 @@ fun SimpleTagApp(
             EnterTransition.None
         },
     ) {
-        composable<Selector> (enterTransition = {
-            return@composable fadeIn(tween(1000))
-        }, exitTransition = {
-            return@composable slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
-            )
-        }, popEnterTransition = {
-            return@composable slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.End, tween(700)
-            )
-        }) {
+        val duration = 400
+        composable<Selector>(
+            enterTransition = {
+                return@composable fadeIn(tween(1000))
+            }, exitTransition = {
+                return@composable slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
+                )
+            }, popEnterTransition = {
+                return@composable slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
+                )
+            }
+        ) {
             SelectorScreen(
-                onNavigateToSettings = {navController.navigate(Settings)},
+                onNavigateToSettings = { navController.navigate(Settings) },
                 onNavigateToEditor = { musicList: List<MusicData> ->
                     navController.navigate(Editor(musicList))
                 }
-
             )
         }
 
@@ -77,22 +80,22 @@ fun SimpleTagApp(
             typeMap = mapOf(typeOf<List<MusicData>>() to navTypeOf<List<MusicData>>()),
             enterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             exitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             popExitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             },
             popEnterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             }
         ){ backStackEntry ->
@@ -106,22 +109,22 @@ fun SimpleTagApp(
         composable<Settings> (
             enterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             exitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             popExitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             },
             popEnterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             }
         ){
@@ -133,22 +136,22 @@ fun SimpleTagApp(
         composable<About> (
             enterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             exitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
                 )
             },
             popExitTransition = {
                 return@composable slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             },
             popEnterTransition = {
                 return@composable slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+                    AnimatedContentTransitionScope.SlideDirection.End, tween(duration)
                 )
             }
         ){

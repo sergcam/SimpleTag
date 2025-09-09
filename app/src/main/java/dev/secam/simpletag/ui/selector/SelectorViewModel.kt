@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.data.SimpleSortOrder
+import dev.secam.simpletag.data.SortOrder
 import dev.secam.simpletag.data.SortDirection
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -65,8 +65,8 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
             val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
 
-            contentResolver.let { cosRes ->
-                val cursor = cosRes.query(
+            contentResolver.let { resolver ->
+                val cursor = resolver.query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     projection,
                     selection,
@@ -81,11 +81,13 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                     val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
                     val pathColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
 
+                    // Read Music from MediaStore
                     val musicLoaders = mutableListOf<Deferred<MusicData?>>()
                     while (it.moveToNext()) {
-                        // get this info from MediaStore metadata
+                        // get id and path from MediaStore metadata
                         val id = it.getLong(idColumn)
                         val path = it.getString(pathColumn)
+
                         // Use MediaStore metadata for mp3 files
                         if (path.substring(path.length - 3, path.length).lowercase() == "mp3") {
                                 val title = it.getString(titleColumn)
@@ -104,7 +106,7 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                                 )
                             )
                         }
-                        // Use jaudiotagger for non-mp3 files (better compatibility but slower)
+                        // Use jaudiotagger for non-mp3 files (better compatibility / more accurate but slower)
                         else {
                             val loader = backgroundScope.async {
                                 val file: AudioFile = AudioFileIO.read(File(path))
@@ -155,29 +157,22 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                             entry.value
                         }.sortedBy { selector ->
                             selector.title?.lowercase()
-                        }
+                        },
+                        filesLoaded = true
                     )
                 }
             }
         }
     }
 
-//    fun clearFilters() {
-//        _uiState.update { currentState ->
-//            currentState.copy(
-//                filteredMusic = uiState.value.musicMap.map{ entry ->
-//                    entry.value
-//                }
-//            )
-//        }
-//    }
-
-    fun updateQuery(query: String) {
+    fun updateMusicList(query: String) {
         backgroundScope.launch {
             val musicList = uiState.value.musicMap.map{ entry ->
                 entry.value
             }
             val newList = mutableListOf<MusicData>()
+
+            //  Check query and filter
             val scanners = mutableListOf<Deferred<Boolean>>()
             for (song in musicList) {
                 val scanner = backgroundScope.async {
@@ -194,15 +189,17 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                 scanners.add(scanner)
             }
             scanners.awaitAll()
+
+            //  Sort files
             newList.sortBy { selector ->
                 when(uiState.value.sortOrder){
-                    SimpleSortOrder.Album ->
+                    SortOrder.Album ->
                         selector.album?.lowercase()
-                    SimpleSortOrder.Title ->
+                    SortOrder.Title ->
                         selector.title?.lowercase()
-                    SimpleSortOrder.Artist ->
+                    SortOrder.Artist ->
                         selector.artist?.lowercase()
-                    SimpleSortOrder.DateAdded ->
+                    SortOrder.DateAdded ->
                         selector.artist?.lowercase()
                 }
             }
@@ -233,6 +230,7 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                 false
         }
     }
+
     fun updateHasArt(index: Int){
         val path = uiState.value.filteredMusic[index].path
         backgroundScope.launch {
@@ -258,6 +256,7 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
         }
     }
 
+    //  Setters
     fun setTaggedFilter(taggedFilter: Boolean){
         _uiState.update { currentState ->
             currentState.copy(
@@ -265,7 +264,6 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             )
         }
     }
-
     fun setShowSortDialog(showSortDialog: Boolean){
         _uiState.update { currentState ->
             currentState.copy(
@@ -273,7 +271,6 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             )
         }
     }
-
     fun setShowFilterDialog(showFilterDialog: Boolean){
         _uiState.update { currentState ->
             currentState.copy(
@@ -281,7 +278,7 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             )
         }
     }
-    fun setSortOrder(sortOrder: SimpleSortOrder, sortDirection: SortDirection){
+    fun setSort(sortOrder: SortOrder, sortDirection: SortDirection){
         _uiState.update { currentState ->
             currentState.copy(
                 sortOrder = sortOrder,
@@ -297,6 +294,7 @@ data class SelectorUiState(
     val showSortDialog: Boolean = false,
     val showFilterDialog: Boolean = false,
     val taggedFilter: Boolean = false, //true means only show non-tagged
-    val sortOrder: SimpleSortOrder = SimpleSortOrder.Title,
-    val sortDirection: SortDirection = SortDirection.Ascending
+    val sortOrder: SortOrder = SortOrder.Title,
+    val sortDirection: SortDirection = SortDirection.Ascending,
+    val filesLoaded: Boolean = false
 )

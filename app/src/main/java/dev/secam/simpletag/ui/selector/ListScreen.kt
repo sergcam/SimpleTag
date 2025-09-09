@@ -38,10 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.data.SimpleSortOrder
+import dev.secam.simpletag.data.SortOrder
 import dev.secam.simpletag.data.SortDirection
-import dev.secam.simpletag.ui.components.ListScreenTopBar
-import dev.secam.simpletag.ui.components.SimpleMusicItem
+import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
+import dev.secam.simpletag.ui.selector.components.SimpleMusicItem
 import dev.secam.simpletag.ui.selector.dialogs.FilterDialog
 import dev.secam.simpletag.ui.selector.dialogs.SortDialog
 
@@ -54,30 +54,33 @@ fun ListScreen(
     onNavigateToEditor: (List<MusicData>) -> Unit,
     updateHasArt: (Int) -> Unit,
     updateQuery: (String) -> Unit,
-    setSortOrder: (SimpleSortOrder, SortDirection) -> Unit,
-    sortOrder: SimpleSortOrder,
+    setSortOrder: (SortOrder, SortDirection) -> Unit,
+    sortOrder: SortOrder,
     sortDirection: SortDirection,
     taggedFilter: Boolean,
     setTaggedFilter: (Boolean) -> Unit,
     showSortDialog: Boolean,
     showFilterDialog: Boolean,
     setShowSortDialog: (Boolean) -> Unit,
-    setShowFilterDialog: (Boolean) -> Unit
+    setShowFilterDialog: (Boolean) -> Unit,
+    filesLoaded: Boolean
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val textFieldState = rememberTextFieldState()
+    val searchFieldState = rememberTextFieldState()
     var searchEnabled by remember { mutableStateOf(false) }
     if (!searchEnabled) {
-        textFieldState.clearText()
+        searchFieldState.clearText()
     }
-    LaunchedEffect(textFieldState.text, sortOrder, taggedFilter, sortDirection) {
-        updateQuery(textFieldState.text as String)
+
+    // update sort, filter, and search
+    LaunchedEffect(searchFieldState.text, sortOrder, taggedFilter, sortDirection) {
+        updateQuery(searchFieldState.text as String)
     }
     Scaffold(
         topBar = {
             ListScreenTopBar(
                 searchEnabled = searchEnabled,
-                textFieldState = textFieldState,
+                textFieldState = searchFieldState,
                 scrollBehavior = scrollBehavior,
                 setSearchEnabled = { enabled ->
                     searchEnabled = enabled
@@ -95,11 +98,14 @@ fun ListScreen(
                 .padding(contentPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
-            if (musicList.isEmpty()) {
+            //  Loading bar while loading music
+            if (!filesLoaded) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+
+            // File List
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -124,6 +130,8 @@ fun ListScreen(
                 }
             }
         }
+
+        //  Show Dialogs
         if(showFilterDialog){
             FilterDialog(
                 hasTag = taggedFilter,

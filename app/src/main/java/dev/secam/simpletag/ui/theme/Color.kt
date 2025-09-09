@@ -1,10 +1,27 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
-import dev.secam.simpletag.data.SimpleAppColorScheme
+import dev.secam.simpletag.data.AppColorScheme
 
 private val YellowLightColorScheme = lightColorScheme(
     primary = Color(0xFF705D0D),
@@ -458,14 +475,14 @@ private val PurpleDarkColorScheme = darkColorScheme(
 )
 
 
-fun getColorScheme(appColorScheme: SimpleAppColorScheme, darkTheme: Boolean): ColorScheme {
+fun getColorScheme(appColorScheme: AppColorScheme, darkTheme: Boolean): ColorScheme {
     return when (appColorScheme) {
-        SimpleAppColorScheme.Red -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
-        SimpleAppColorScheme.Orange -> if (darkTheme) OrangeDarkColorScheme else OrangeLightColorScheme
-        SimpleAppColorScheme.Yellow -> if (darkTheme) YellowDarkColorScheme else YellowLightColorScheme
-        SimpleAppColorScheme.Green -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
-        SimpleAppColorScheme.Blue -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
-        SimpleAppColorScheme.Purple -> if (darkTheme) PurpleDarkColorScheme else PurpleLightColorScheme
+        AppColorScheme.Red -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
+        AppColorScheme.Orange -> if (darkTheme) OrangeDarkColorScheme else OrangeLightColorScheme
+        AppColorScheme.Yellow -> if (darkTheme) YellowDarkColorScheme else YellowLightColorScheme
+        AppColorScheme.Green -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
+        AppColorScheme.Blue -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
+        AppColorScheme.Purple -> if (darkTheme) PurpleDarkColorScheme else PurpleLightColorScheme
         else -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
     }
 }
@@ -487,7 +504,7 @@ fun blackThemeConvert(colorScheme: ColorScheme): ColorScheme {
         onTertiaryContainer = colorScheme.onTertiaryContainer,
         background = Color.Black,
         onBackground = colorScheme.onBackground,
-        surface = colorScheme.surface,
+        surface = Color.Black,
         onSurface = colorScheme.onSurface,
         surfaceVariant = colorScheme.surfaceVariant,
         onSurfaceVariant = colorScheme.onSurfaceVariant,

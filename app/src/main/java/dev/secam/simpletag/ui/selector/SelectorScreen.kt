@@ -24,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -46,25 +45,25 @@ fun SelectorScreen(
     onNavigateToEditor: (List<MusicData>) -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val mediaPermissionState = rememberPermissionState(
+        permission =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Manifest.permission.READ_MEDIA_AUDIO
+            } else {
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+    )
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
     val musicList = uiState.filteredMusic
+    val filesLoaded = uiState.filesLoaded
     val showSortDialog = uiState.showSortDialog
     val showFilterDialog = uiState.showFilterDialog
     val taggedFilter = uiState.taggedFilter
     val sortOrder = uiState.sortOrder
     val sortDirection = uiState.sortDirection
-
-    val mediaPermissionState = rememberPermissionState(
-            permission =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    Manifest.permission.READ_MEDIA_AUDIO
-                } else {
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                }
-    )
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -80,19 +79,15 @@ fun SelectorScreen(
 
         if (mediaPermissionState.status.isGranted) {
             val contentResolver = LocalContext.current.contentResolver
-            // TODO: fix this. key1 should not be true (reloads library everytime you navigate)
-            LaunchedEffect(key1 = true) {
+            if(!filesLoaded) {
                 viewModel.loadFiles(contentResolver)
             }
             ListScreen(
                 onNavigateToEditor = onNavigateToEditor,
                 updateHasArt = viewModel::updateHasArt,
                 musicList = musicList,
-                updateQuery = viewModel::updateQuery,
-                modifier = modifier
-                    .padding(contentPadding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection),
-                setSortOrder = viewModel::setSortOrder,
+                updateQuery = viewModel::updateMusicList,
+                setSortOrder = viewModel::setSort,
                 taggedFilter = taggedFilter,
                 setTaggedFilter = viewModel::setTaggedFilter,
                 showSortDialog = showSortDialog,
@@ -100,7 +95,11 @@ fun SelectorScreen(
                 setShowSortDialog = viewModel::setShowSortDialog,
                 setShowFilterDialog = viewModel::setShowFilterDialog,
                 sortOrder = sortOrder,
-                sortDirection = sortDirection
+                sortDirection = sortDirection,
+                filesLoaded = filesLoaded,
+                modifier = modifier
+                    .padding(contentPadding)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
             )
         } else {
             PermissionScreen(
