@@ -26,4 +26,5 @@ data class UserPreferences(
     val pureBlack: Boolean = false,
     val advancedEditor: Boolean = false,
     val roundCovers: Boolean = true,
+    val systemFont: Boolean = false,
 )

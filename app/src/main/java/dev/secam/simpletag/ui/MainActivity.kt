@@ -41,10 +41,12 @@ class MainActivity : ComponentActivity() {
             val theme = preferencesRepo.preferencesFlow.collectAsState(null).value?.theme
             val colorScheme = preferencesRepo.preferencesFlow.collectAsState(null).value?.colorScheme
             val pureBlack = preferencesRepo.preferencesFlow.collectAsState(null).value?.pureBlack
+            val systemFont = preferencesRepo.preferencesFlow.collectAsState(null).value?.systemFont
             SimpleTagTheme(
                 appTheme = theme,
                 appColorScheme = colorScheme,
-                pureBlack = pureBlack
+                pureBlack = pureBlack,
+                systemFont = systemFont
             ) {
                 SimpleTagApp()
             }

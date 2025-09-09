@@ -35,10 +35,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.secam.simpletag.R
-import dev.secam.simpletag.ui.components.SettingsItem
-import dev.secam.simpletag.ui.components.SettingsSectionHeader
+import dev.secam.simpletag.ui.components.SimpleListItem
+import dev.secam.simpletag.ui.components.SimpleSectionHeader
 import dev.secam.simpletag.ui.components.SimpleTopBar
-import dev.secam.simpletag.ui.components.ToggleSettingsItem
+import dev.secam.simpletag.ui.components.SimpleToggleItem
 import dev.secam.simpletag.ui.settings.dialogs.ColorSchemeDialog
 import dev.secam.simpletag.ui.settings.dialogs.ThemeDialog
 
@@ -57,6 +57,7 @@ fun SettingsScreen(
     val pureBlack = prefs.pureBlack
     val advancedEditor = prefs.advancedEditor
     val roundCovers = prefs.roundCovers
+    val systemFont = prefs.systemFont
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
@@ -81,22 +82,27 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             //  Appearance Section
-            SettingsSectionHeader("Appearance")
-            SettingsItem(
+            SimpleSectionHeader("Appearance")
+            SimpleListItem(
                 headlineContent = stringResource(R.string.theme),
                 supportingContent = stringResource(theme.displayNameRes),
                 icon = viewModel.getThemeIcon(theme)
             ) {viewModel.setShowThemeDialog(true)}
-            SettingsItem(
+            SimpleListItem(
                 headlineContent = stringResource(R.string.color_scheme),
                 supportingContent = stringResource(colorScheme.displayNameRes),
                 icon = painterResource(R.drawable.ic_palette_24px),
                 iconColor = MaterialTheme.colorScheme.primary
             ) {viewModel.setShowColorSchemeDialog(true)}
-            ToggleSettingsItem(
+            SimpleToggleItem(
                 headlineContent = stringResource(R.string.pure_black),
                 currentState = pureBlack,
                 onToggle = viewModel::setPureBlack
+            )
+            SimpleToggleItem(
+                headlineContent = stringResource(R.string.system_font),
+                currentState = systemFont,
+                onToggle = viewModel::setSystemFont
             )
             HorizontalDivider(
                 modifier = modifier
@@ -104,14 +110,14 @@ fun SettingsScreen(
             )
 
             //  Editor Section
-            SettingsSectionHeader("Editor")
-            ToggleSettingsItem(
+            SimpleSectionHeader("Editor")
+            SimpleToggleItem(
                 headlineContent = stringResource(R.string.advanced_editor),
                 supportingContent = stringResource(R.string.advanced_editor_subtext),
                 currentState = advancedEditor,
                 onToggle = viewModel::setAdvancedEditor
             )
-            ToggleSettingsItem(
+            SimpleToggleItem(
                 headlineContent = stringResource(R.string.round_album_cover),
                 currentState = roundCovers,
                 onToggle = viewModel::setRoundCovers
@@ -122,8 +128,8 @@ fun SettingsScreen(
             )
 
             //  About Section
-            SettingsSectionHeader("About")
-            SettingsItem(
+            SimpleSectionHeader("About")
+            SimpleListItem(
                 headlineContent = stringResource(R.string.about_title),
                 icon = painterResource(R.drawable.ic_info_24px)
             ) { onNavigateToAbout() }

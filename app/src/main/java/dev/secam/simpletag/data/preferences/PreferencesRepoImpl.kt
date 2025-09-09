@@ -41,6 +41,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val PURE_BLACK = booleanPreferencesKey("pure_black")
         val ADVANCED_EDITOR = booleanPreferencesKey("advanced_editor")
         val ROUND_COVERS = booleanPreferencesKey("round_covers")
+        val SYSTEM_FONT = booleanPreferencesKey("system_font")
         const val TAG = "PreferencesRepo"
     }
 
@@ -61,6 +62,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val pureBlack = preferences[PURE_BLACK] ?: false
             val advancedEditor = preferences[ADVANCED_EDITOR] ?: false
             val roundCovers = preferences[ROUND_COVERS] ?: true
+            val systemFont = preferences[SYSTEM_FONT] ?: false
 
             UserPreferences(
                 theme = AppTheme.valueOf(theme),
@@ -68,6 +70,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
                 pureBlack = pureBlack,
                 advancedEditor = advancedEditor,
                 roundCovers = roundCovers,
+                systemFont = systemFont
             )
 
         }
@@ -99,6 +102,12 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
     override suspend fun saveRoundCoversPref(roundCovers: Boolean) {
         dataStore.edit { preferences ->
             preferences[ROUND_COVERS] = roundCovers
+        }
+    }
+
+    override suspend fun saveSystemFontPref(systemFont: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SYSTEM_FONT] = systemFont
         }
     }
 }

@@ -90,7 +90,7 @@ fun SimpleDialogOptions(
             .fillMaxWidth()
             .padding(
                 paddingValues = if(manualPadding) PaddingValues(12.dp, bottom = 12.dp, end = 16.dp)
-                else PaddingValues()
+                else PaddingValues(top = 8.dp,)
             )
             .height(40.dp)
     ) {
@@ -111,7 +111,6 @@ fun SimpleDialogOptions(
     option: String,
     manualPadding: Boolean = false,
     action: () -> Unit,
-
 ) {
     Row(
         horizontalArrangement = Arrangement.End,
@@ -119,12 +118,12 @@ fun SimpleDialogOptions(
             .fillMaxWidth()
             .padding(
                 paddingValues = if(manualPadding) PaddingValues(12.dp, bottom = 12.dp, end = 16.dp)
-                    else PaddingValues()
+                    else PaddingValues(top = 8.dp,)
             )
             .height(40.dp)
     ) {
         TextButton(
-            onClick = { action },
+            onClick = { action() },
         ) {
             Text(option)
         }
@@ -135,18 +134,20 @@ fun SimpleDialogOptions(
 @Composable
 fun DialogPrev(){
     val manualPadding = true
-    SimpleTagTheme {
-        SimpleDialog(
-            title = "Hi",
-            onDismiss = {},
-            manualPadding = manualPadding,
-        ) {
-            Text("hihihihiihhihihihiihhihihihiihhihihihiihhihihihiihhihihihiih")
-            SimpleDialogOptions(
-                option = "Cancel",
-                manualPadding = manualPadding
+    SimpleTagTheme(
+        content = {
+            SimpleDialog(
+                title = "Hi",
+                onDismiss = {},
+                manualPadding = manualPadding,
+            ) {
+                Text("hihihihiihhihihihiihhihihihiihhihihihiihhihihihiihhihihihiih")
+                SimpleDialogOptions(
+                    option = "Cancel",
+                    manualPadding = manualPadding
 
-            ) { }
-        }
-    }
+                ) { }
+            }
+        },
+    )
 }

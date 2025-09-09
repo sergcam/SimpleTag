@@ -753,6 +753,7 @@ copy of the Program in return for a fee.\n\n
     <string name="date_added">Date Added</string>
     <string name="descending">Descending</string>
     <string name="ascending">Ascending</string>
+    <string name="system_font">Use System Font</string>
 
     <!--    Uncategorized   -->
 

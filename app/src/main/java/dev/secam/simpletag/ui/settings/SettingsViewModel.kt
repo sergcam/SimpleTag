@@ -24,9 +24,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.AppColorScheme
 import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,6 +77,11 @@ class SettingsViewModel @Inject constructor(
             preferencesRepo.saveRoundCoversPref(roundCovers)
         }
     }
+    fun setSystemFont(systemFont: Boolean) {
+        viewModelScope.launch {
+            preferencesRepo.saveSystemFontPref(systemFont)
+        }
+    }
 
     fun setShowThemeDialog(showThemeDialog: Boolean) {
         _uiState.update { currentState ->
@@ -92,6 +97,7 @@ class SettingsViewModel @Inject constructor(
             )
         }
     }
+
 
     @Composable
     fun getThemeIcon(theme: AppTheme): Painter {

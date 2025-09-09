@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ToggleSettingsItem(
+fun SimpleToggleItem(
     modifier: Modifier = Modifier,
     currentState: Boolean,
     headlineContent: String,

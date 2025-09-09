@@ -28,4 +28,5 @@ interface PreferencesRepo {
     suspend fun savePureBlackPref(pureBlack: Boolean)
     suspend fun saveAdvancedEditorPref(advancedEditor: Boolean)
     suspend fun saveRoundCoversPref(roundCovers: Boolean)
+    suspend fun saveSystemFontPref(systemFont: Boolean)
 }

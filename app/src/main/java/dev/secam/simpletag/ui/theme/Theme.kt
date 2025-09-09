@@ -40,10 +40,12 @@ fun SimpleTagTheme(
     appTheme: AppTheme? = AppTheme.System,
     appColorScheme: AppColorScheme? = AppColorScheme.Dynamic,
     pureBlack: Boolean? = false,
-    content: @Composable () -> Unit
+    systemFont: Boolean? = false,
+    content: @Composable () -> Unit,
 ) {
     val appColorScheme = appColorScheme ?: AppColorScheme.Dynamic
     val pureBlack = pureBlack ?: false
+    val systemFont = systemFont ?: false
     val darkTheme = when(appTheme) {
         AppTheme.Dark -> true
         AppTheme.Light -> false
@@ -59,7 +61,7 @@ fun SimpleTagTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = if(systemFont) baseline else Typography,
         content = content
     )
 }

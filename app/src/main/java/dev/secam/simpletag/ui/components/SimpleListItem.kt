@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsItem(
+fun SimpleListItem(
     headlineContent: String,
     icon: Painter,
     modifier: Modifier = Modifier,

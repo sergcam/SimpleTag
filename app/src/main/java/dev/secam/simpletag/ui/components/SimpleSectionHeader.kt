@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingsSectionHeader(text: String, modifier: Modifier = Modifier){
+fun SimpleSectionHeader(text: String, modifier: Modifier = Modifier){
     Text(
         text = text,
         color = MaterialTheme.colorScheme.primary,
