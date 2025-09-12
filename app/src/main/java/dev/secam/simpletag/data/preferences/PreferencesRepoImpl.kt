@@ -58,7 +58,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             Log.d(TAG, "prefs read")
 
             val theme = preferences[THEME] ?: "System"
-            val colorScheme = preferences[COLOR_SCHEME] ?: if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) "Dynamic" else "Classic"
+            val colorScheme = preferences[COLOR_SCHEME] ?: if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) "Dynamic" else "Red"
             val pureBlack = preferences[PURE_BLACK] ?: false
             val advancedEditor = preferences[ADVANCED_EDITOR] ?: false
             val roundCovers = preferences[ROUND_COVERS] ?: true

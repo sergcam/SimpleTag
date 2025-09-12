@@ -17,6 +17,7 @@
 
 package dev.secam.simpletag.ui.settings.dialogs
 
+import android.os.Build
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,7 +48,7 @@ fun ColorSchemeDialog(
         title = stringResource(R.string.color_scheme),
         onDismiss = onDismissRequest
     ) {
-        val radioOptions = AppColorScheme.entries.toList()
+        val radioOptions = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppColorScheme.entries.toList() else AppColorScheme.entries.toList().subList(1,AppColorScheme.entries.size)
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(colorScheme ) }
         radioOptions.forEach { option ->
             Row(
@@ -67,7 +68,7 @@ fun ColorSchemeDialog(
             ) {
                 RadioButton(
                     selected = (option == selectedOption),
-                    onClick = null // null recommended for accessibility with screen readers
+                    onClick = null
                 )
                 Text(
                     text = stringResource(option.displayNameRes),
