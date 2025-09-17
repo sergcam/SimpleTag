@@ -43,8 +43,10 @@ fun ListScreenTopBar(
         title = {
             if (searchEnabled) {
                 val focusRequester = remember { FocusRequester() }
-//                        val focusManager = LocalFocusManager.current
-                BackPressHandler { setSearchEnabled(false) }
+                BackPressHandler {
+                    textFieldState.clearText()
+                    setSearchEnabled(false)
+                }
                 SearchBar(
                     state = searchBarState,
                     inputField = {
@@ -53,7 +55,10 @@ fun ListScreenTopBar(
                             textFieldState = textFieldState,
                             leadingIcon = {
                                 IconButton(
-                                    onClick = { setSearchEnabled(false) }
+                                    onClick = {
+                                        textFieldState.clearText()
+                                        setSearchEnabled(false)
+                                    }
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_arrow_back_24px),
