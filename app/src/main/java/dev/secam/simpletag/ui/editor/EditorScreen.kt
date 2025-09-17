@@ -147,6 +147,7 @@ fun EditorScreen(
     ) { contentPadding ->
         if(musicList.size == 1) {
             SingleEditor(
+                path = musicList[0].path,
                 artwork = artwork,
                 setArtwork = viewModel::setArtwork,
                 roundCovers = roundCovers,
