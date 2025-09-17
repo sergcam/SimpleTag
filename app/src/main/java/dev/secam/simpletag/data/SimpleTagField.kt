@@ -33,7 +33,7 @@ enum class SimpleTagField (val displayNameRes: Int, val fieldKey: FieldKey) {
     DiscNumber(R.string.disc_number_field, FieldKey.DISC_NO),
     Comment(R.string.comment_field, FieldKey.COMMENT),
 
-    // Advanced (ordinal 10+)
+    // Advanced (enum ordinal 10+)
     AcoustIdFingerprint(R.string.acoustid_fingerprint_field, FieldKey.ACOUSTID_FINGERPRINT),
     AcoustIdId(R.string.acoustid_id, FieldKey.ACOUSTID_ID),
     AlbumArtistSortOrder(R.string.album_artist_sort_order_field, FieldKey.ALBUM_ARTIST_SORT),
@@ -101,5 +101,9 @@ enum class SimpleTagField (val displayNameRes: Int, val fieldKey: FieldKey) {
     TotalDiscs(R.string.total_discs_field, FieldKey.DISC_TOTAL),
     TotalTracks(R.string.total_tracks_field, FieldKey.TRACK_TOTAL),
     WikipediaArtistSiteUrl(R.string.wikipedia_artist_site_url_field, FieldKey.URL_WIKIPEDIA_ARTIST_SITE),
-    WikipediaReleaseSiteUrl(R.string.wikipedia_release_site_url_field, FieldKey.URL_WIKIPEDIA_RELEASE_SITE),
+    WikipediaReleaseSiteUrl(R.string.wikipedia_release_site_url_field, FieldKey.URL_WIKIPEDIA_RELEASE_SITE);
+
+    companion object {
+        const val ADVANCED_CUTOFF = 9
+    }
 }

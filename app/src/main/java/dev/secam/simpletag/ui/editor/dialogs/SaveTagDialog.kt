@@ -24,7 +24,7 @@ import dev.secam.simpletag.ui.components.SimpleDialog
 import dev.secam.simpletag.ui.components.SimpleDialogOptions
 
 @Composable
-fun SaveTagDialog(onCancel: () -> Unit, onLeave: () -> Unit) {
+fun SaveTagDialog(onCancel: () -> Unit, onConfirm: () -> Unit) {
     SimpleDialog(
         title = "Confirm Changes",
         onDismiss = onCancel
@@ -36,7 +36,7 @@ fun SaveTagDialog(onCancel: () -> Unit, onLeave: () -> Unit) {
             option1 = "Cancel",
             option2 = "Confirm",
             action1 = onCancel,
-            action2 = onLeave
+            action2 = onConfirm
         )
     }
 }

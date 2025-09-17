@@ -43,9 +43,11 @@ import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.ui.components.SimpleTopBar
+import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
+import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
+import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
-import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 
@@ -74,6 +76,8 @@ fun EditorScreen(
     val initialized = uiState.initialized
     val artwork = uiState.artwork
     val fieldStates = uiState.fieldStates
+    val showSaveDialog = uiState.showSaveDialog
+    val showBackDialog = uiState.showBackDialog
 
     // permission request (API30+)
     val getPermissionResult = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -99,9 +103,8 @@ fun EditorScreen(
 
     // initialize editor fields
     if(!initialized){
-        val firstFile: AudioFile = AudioFileIO.read(File(musicList[0].path))
-        val firstTag = firstFile.tag
-        viewModel.setMusicList(musicList)
+        val firstTag = AudioFileIO.read(File(musicList[0].path)).tag
+        viewModel.setEditorMusicList(musicList)
         viewModel.setArtwork(firstTag?.firstArtwork)
         viewModel.setFieldStates(
             buildMap {
@@ -112,30 +115,34 @@ fun EditorScreen(
                 }
             }
         )
+        viewModel.setSavedFields()
+        viewModel.setArtworkChanged(false)
         viewModel.setInitialized(true)
     }
-
+    BackPressHandler {
+        if (viewModel.changesMade()) {
+            viewModel.setShowBackDialog(true)
+        } else onNavigateBack()
+    }
     Scaffold(
         topBar = {
             SimpleTopBar(
                 title = "Edit Tag",
                 actionIcon = painterResource(R.drawable.ic_save_24px),
                 contentDescription = "save tag",
-                onBack = onNavigateBack,
+                onBack = {
+                    if (viewModel.changesMade()) {
+                        viewModel.setShowBackDialog(true)
+                    } else onNavigateBack()
+                },
                 action = {
-                    viewModel.onSave(
-                        activity = activity,
-                        context = context,
-                        launcher = getPermissionResult,
-                        snackbarHostState = snackbarHostState
-                    )
+                    viewModel.setShowSaveDialog(true)
                 },
                 scrollBehavior = scrollBehavior
             )
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
-
         }
     ) { contentPadding ->
         if(musicList.size == 1) {
@@ -153,6 +160,31 @@ fun EditorScreen(
         }
         else {
             BatchEditor(musicList)
+        }
+
+        //  Show dialogs
+        if(showSaveDialog){
+            SaveTagDialog(
+                onCancel = { viewModel.setShowSaveDialog(false) },
+                onConfirm = {
+                    viewModel.onSave(
+                        activity = activity,
+                        context = context,
+                        launcher = getPermissionResult,
+                        snackbarHostState = snackbarHostState
+                    )
+                    viewModel.setShowSaveDialog(false)
+                }
+            )
+        }
+        if(showBackDialog){
+            BackWarningDialog(
+                onCancel = { viewModel.setShowBackDialog(false) },
+                onLeave = {
+                    viewModel.setShowBackDialog(false)
+                    onNavigateBack()
+                }
+            )
         }
     }
 }
