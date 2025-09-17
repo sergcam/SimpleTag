@@ -17,12 +17,10 @@
 
 package dev.secam.simpletag.ui
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import dagger.hilt.android.AndroidEntryPoint
 import dev.secam.simpletag.data.preferences.PreferencesRepo
@@ -33,7 +31,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject lateinit var preferencesRepo: PreferencesRepo
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

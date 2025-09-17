@@ -32,6 +32,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
@@ -64,7 +65,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditorViewModel @Inject constructor(
-    preferencesRepo: PreferencesRepo
+    preferencesRepo: PreferencesRepo,
+    private val mediaRepo: MediaRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(EditorUiState())
     val uiState = _uiState.asStateFlow()
@@ -93,7 +95,6 @@ class EditorViewModel @Inject constructor(
         val types = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac")
         return types.contains(ext)
     }
-
     fun getArtworkFromUri(contentResolver: ContentResolver, uri: Uri): Artwork?{
         var path: String? = null
         val projection = arrayOf(
@@ -118,14 +119,16 @@ class EditorViewModel @Inject constructor(
         return backgroundScope.async{
             val fields = uiState.value.fieldStates
             val artwork = uiState.value.artwork
-            val musicList = uiState.value.musicList
+            val musicList = uiState.value.editorMusicList
             if (musicList.size == 1) {
                 val file: AudioFile = AudioFileIO.read(File(musicList[0].path))
                 if(file.tag == null) {
                     file.tag = createTag(file.ext)
                 }
                 val tag = file.tag
-                if (artwork == null) tag.deleteArtworkField() else tag.setField(artwork)
+                tag.deleteArtworkField()
+                if (artwork != null) tag.setField(artwork)
+
                 for (field in fields) {
                     tag.setField(field.key.fieldKey, field.value.text as String)
                 }
@@ -133,6 +136,12 @@ class EditorViewModel @Inject constructor(
             } else {
                 //TODO: batch tagging support
             }
+            //  reset change tracking
+            setArtworkChanged(false)
+            setSavedFields()
+
+            //  refresh mediastore to reflect changes
+            mediaRepo.refreshMediaStore(uiState.value.editorMusicList)
         }
     }
 
@@ -146,7 +155,7 @@ class EditorViewModel @Inject constructor(
             backgroundScope.launch {
                 // request permission for api 30+
                 if (launcher != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    val musicList = uiState.value.musicList
+                    val musicList = uiState.value.editorMusicList
                     val uri = ContentUris.withAppendedId(
                         MediaStore.Audio.Media.getContentUri("external"),
                         musicList[0].id
@@ -165,6 +174,7 @@ class EditorViewModel @Inject constructor(
                         writeTags().await()
                         snackbarHostState.showSnackbar("Tag(s) written successfully")
                     } catch (e: AccessDeniedException) {
+                        e.printStackTrace()
                         snackbarHostState.showSnackbar("Permission Denied")
                     }
                 }
@@ -172,10 +182,19 @@ class EditorViewModel @Inject constructor(
         }
     }
 
+    fun changesMade(): Boolean {
+        val currentFields = uiState.value.fieldStates.map { mapEntry ->
+            mapEntry.value.text as String
+        }
+        return (uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
+    }
+
+    /*------- Setters -------*/
     fun setArtwork(artwork: Artwork?){
         _uiState.update { currentState ->
             currentState.copy(
-                artwork = artwork
+                artwork = artwork,
+                artworkChanged = true
             )
         }
     }
@@ -188,10 +207,10 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setMusicList(musicList: List<MusicData>){
+    fun setEditorMusicList(editorMusicList: List<MusicData>){
         _uiState.update { currentState ->
             currentState.copy(
-                musicList = musicList
+                editorMusicList = editorMusicList
             )
         }
     }
@@ -203,11 +222,45 @@ class EditorViewModel @Inject constructor(
             )
         }
     }
+
+    fun setShowBackDialog(showBackDialog: Boolean){
+        _uiState.update { currentState ->
+            currentState.copy(
+                showBackDialog = showBackDialog
+            )
+        }
+    }
+
+    fun setShowSaveDialog(showSaveDialog: Boolean){
+        _uiState.update { currentState ->
+            currentState.copy(
+                showSaveDialog = showSaveDialog
+            )
+        }
+    }
+
+    fun setSavedFields() {
+        _uiState.update {
+            it.copy(
+                savedFields = uiState.value.fieldStates.map { mapEntry ->
+                    mapEntry.value.text as String
+                }
+            )
+        }
+    }
+    fun setArtworkChanged(artworkChanged: Boolean) {
+        _uiState.update { it.copy(artworkChanged = artworkChanged) }
+    }
+
 }
 
 data class EditorUiState(
     val initialized: Boolean = false,
     val artwork: Artwork? = null,
     val fieldStates: Map<SimpleTagField,TextFieldState> = mapOf(),
-    val musicList: List<MusicData> = listOf()
+    val editorMusicList: List<MusicData> = listOf(),
+    val artworkChanged: Boolean = false,
+    val showBackDialog: Boolean = false,
+    val showSaveDialog: Boolean = false,
+    val savedFields: List<String> = listOf()
 )

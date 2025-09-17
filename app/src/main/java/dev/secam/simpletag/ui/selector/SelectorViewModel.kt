@@ -17,15 +17,15 @@
 
 package dev.secam.simpletag.ui.selector
 
-import android.content.ContentResolver
-import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.data.SortOrder
 import dev.secam.simpletag.data.SortDirection
+import dev.secam.simpletag.data.SortOrder
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,140 +34,51 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.Deferred
-import org.jaudiotagger.audio.AudioFile
-import org.jaudiotagger.audio.AudioFileIO
-import org.jaudiotagger.tag.FieldKey
-import org.jaudiotagger.tag.Tag
-import java.io.File
 import javax.inject.Inject
-import kotlin.collections.sortBy
 
 @HiltViewModel
-class SelectorViewModel @Inject constructor(): ViewModel() {
+class SelectorViewModel @Inject constructor(
+    private val mediaRepo: MediaRepo
+): ViewModel() {
     private val _uiState = MutableStateFlow(SelectorUiState())
     val uiState = _uiState.asStateFlow()
-
+    val musicMapState = mediaRepo.musicMapState
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
     }
     private val backgroundScope = viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
-    fun loadFiles(contentResolver: ContentResolver) {
+    fun loadList() {
         backgroundScope.launch {
-            val projection = arrayOf(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.DATA
-            )
-            val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
-            val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
-
-            contentResolver.let { resolver ->
-                val cursor = resolver.query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    selection,
-                    null,
-                    sortOrder
-                )
-                val music = mutableMapOf<Long, MusicData>()
-                cursor?.use {
-                    val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-                    val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-                    val albumColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
-                    val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-                    val pathColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-
-                    // Read Music from MediaStore
-                    val musicLoaders = mutableListOf<Deferred<MusicData?>>()
-                    while (it.moveToNext()) {
-                        // get id and path from MediaStore metadata
-                        val id = it.getLong(idColumn)
-                        val path = it.getString(pathColumn)
-
-                        // Use MediaStore metadata for mp3 files
-                        if (path.substring(path.length - 3, path.length).lowercase() == "mp3") {
-                                val title = it.getString(titleColumn)
-                                val album = it.getString(albumColumn)
-                                val artist = it.getString(artistColumn)
-                            music.put(
-                                key = id,
-                                MusicData(
-                                    id = id,
-                                    path = path,
-                                    title = title,
-                                    artist = artist,
-                                    album = album,
-                                    hasArtwork = null,
-                                    tagged = artist != "<unknown>"
-                                )
-                            )
-                        }
-                        // Use jaudiotagger for non-mp3 files (better compatibility / more accurate but slower)
-                        else {
-                            val loader = backgroundScope.async {
-                                val file: AudioFile = AudioFileIO.read(File(path))
-                                val tag: Tag? = file.getTag()
-                                var tagged = 0
-                                val title: String
-                                val artist: String
-                                val album: String
-                                if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(FieldKey.TITLE) == null) {
-                                    title = file.file.name
-                                    tagged++
-                                } else {
-                                    title = tag.getFirst(FieldKey.TITLE) ?: file.file.name
-                                }
-                                if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(FieldKey.ALBUM) == null) {
-                                    album = "<unknown>"
-                                    tagged++
-                                } else {
-                                    album = tag.getFirst(FieldKey.ALBUM) ?: "<unknown>"
-                                }
-                                if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(FieldKey.ARTIST) == null) {
-                                    artist = "<unknown>"
-                                    tagged++
-                                } else {
-                                    artist = tag.getFirst(FieldKey.ARTIST) ?: "<unknown>"
-                                }
-                                val hasArt = tag?.firstArtwork != null
-                                music.put(
-                                    key = id,
-                                    MusicData(
-                                        id = id,
-                                        path = path,
-                                        title = title,
-                                        artist = artist,
-                                        album = album,
-                                        hasArtwork = hasArt,
-                                        tagged = tagged == 0
-                                    )
-                                )
-                            }
-                            musicLoaders.add(loader)
-                        }
-                    }
-                    musicLoaders.awaitAll()
-                    _uiState.value = _uiState.value.copy(
-                        musicMap = music,
-                        filteredMusic = music.map { entry ->
+            mediaRepo.loadFiles()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    musicList = sortList(
+                        musicMapState.value.map { entry ->
                             entry.value
-                        }.sortedBy { selector ->
-                            selector.title?.lowercase()
-                        },
-                        filesLoaded = true
-                    )
-                }
+                        }
+                    ),
+                    filesLoaded = true
+                )
             }
         }
     }
-
+    suspend fun suspendLoadList() {
+        mediaRepo.loadFiles()
+        _uiState.update { currentState ->
+            currentState.copy(
+                musicList = sortList(
+                    musicMapState.value.map { entry ->
+                        entry.value
+                    }
+                ),
+                filesLoaded = true
+            )
+        }
+    }
     fun updateMusicList(query: String) {
         backgroundScope.launch {
-            val musicList = uiState.value.musicMap.map{ entry ->
+            val musicList = musicMapState.value.map{ entry ->
                 entry.value
             }
             val newList = mutableListOf<MusicData>()
@@ -208,12 +119,33 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             }
             _uiState.update { currentState ->
                 currentState.copy(
-                    filteredMusic = newList
+                    musicList = newList
                 )
             }
         }
     }
-
+    fun syncMusicList() {
+        updateMusicList("")
+    }
+    fun sortList(musicList: List<MusicData>): List<MusicData> {
+        val newList = musicList.toMutableList()
+        newList.sortBy { selector ->
+            when(uiState.value.sortOrder){
+                SortOrder.Album ->
+                    selector.album?.lowercase()
+                SortOrder.Title ->
+                    selector.title?.lowercase()
+                SortOrder.Artist ->
+                    selector.artist?.lowercase()
+//                    SortOrder.DateAdded ->
+//                        selector.artist?.lowercase()
+            }
+        }
+        if(uiState.value.sortDirection == SortDirection.Descending){
+            newList.reverse()
+        }
+        return newList as List<MusicData>
+    }
     fun matchesQuery(song: MusicData, query: String): Boolean {
         return when {
             query.isEmpty() ->
@@ -230,33 +162,36 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
                 false
         }
     }
-
     fun updateHasArt(index: Int){
-        val path = uiState.value.filteredMusic[index].path
         backgroundScope.launch {
-            val file: AudioFile = AudioFileIO.read(File(path))
-            val tag: Tag? = file.getTag()
-            val hasArt = tag?.firstArtwork != null
+            val id = uiState.value.musicList[index].id
+            mediaRepo.updateHasArt(id)
             _uiState.update { currentState ->
-                val newList = uiState.value.filteredMusic.toMutableList()
-                newList[index] = MusicData(
-                    id = newList[index].id,
-                    path = path,
-                    title = newList[index].title,
-                    artist = newList[index].artist,
-                    album = newList[index].album,
-                    hasArtwork = hasArt,
-                    tagged = newList[index].tagged
-                )
+                val newList = uiState.value.musicList.toMutableList()
+                newList[index] = musicMapState.value[id]!!
                 currentState.copy(
-                    musicMap = uiState.value.musicMap + Pair(newList[index].id,newList[index]),
-                    filteredMusic = newList
+                    musicList = newList
                 )
             }
         }
     }
+    fun refreshMediaStore() {
+        backgroundScope.launch{
+            var count = 0
+            mediaRepo.rescanMediaStore {path, uri ->
+                count++
+                if(count == musicMapState.value.size){
+                    backgroundScope.launch {
+                        suspendLoadList()
+                        updateMusicList("")
+                        _uiState.update { it.copy(isRefreshing = false) }
+                    }
+                }
+            }
+        }
+    }
 
-    //  Setters
+    /*------- Setters -------*/
     fun setTaggedFilter(taggedFilter: Boolean){
         _uiState.update { currentState ->
             currentState.copy(
@@ -286,15 +221,23 @@ class SelectorViewModel @Inject constructor(): ViewModel() {
             )
         }
     }
+    fun setIsRefreshing(isRefreshing: Boolean){
+        _uiState.update { currentState ->
+            currentState.copy(
+                isRefreshing = isRefreshing
+            )
+        }
+    }
+
 }
 
 data class SelectorUiState(
-    val musicMap: Map<Long,MusicData> = mapOf(),
-    val filteredMusic: List<MusicData> = listOf(),
+    val musicList: List<MusicData> = listOf(),
     val showSortDialog: Boolean = false,
     val showFilterDialog: Boolean = false,
     val taggedFilter: Boolean = false, //true means only show non-tagged
     val sortOrder: SortOrder = SortOrder.Title,
     val sortDirection: SortDirection = SortDirection.Ascending,
-    val filesLoaded: Boolean = false
+    val filesLoaded: Boolean = false,
+    val isRefreshing: Boolean = false,
 )
