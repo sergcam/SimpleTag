@@ -24,13 +24,17 @@ import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SortDirection
 import dev.secam.simpletag.data.SortOrder
+import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -38,10 +42,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectorViewModel @Inject constructor(
+    private val preferencesRepo: PreferencesRepo,
     private val mediaRepo: MediaRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(SelectorUiState())
     val uiState = _uiState.asStateFlow()
+    val prefState = preferencesRepo.preferencesFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UserPreferences()
+    )
     val musicMapState = mediaRepo.musicMapState
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -56,7 +66,7 @@ class SelectorViewModel @Inject constructor(
                     musicList = sortList(
                         musicMapState.value.map { entry ->
                             entry.value
-                        }
+                        },
                     ),
                     filesLoaded = true
                 )
@@ -76,7 +86,7 @@ class SelectorViewModel @Inject constructor(
             )
         }
     }
-    fun updateMusicList(query: String) {
+    fun updateMusicList() {
         backgroundScope.launch {
             val musicList = musicMapState.value.map{ entry ->
                 entry.value
@@ -87,7 +97,7 @@ class SelectorViewModel @Inject constructor(
             val scanners = mutableListOf<Deferred<Boolean>>()
             for (song in musicList) {
                 val scanner = backgroundScope.async {
-                    if (matchesQuery(song, query)) {
+                    if (matchesQuery(song)) {
                         if (uiState.value.taggedFilter) {
                             if (!song.tagged) {
                                 newList.add(song)
@@ -124,9 +134,7 @@ class SelectorViewModel @Inject constructor(
             }
         }
     }
-    fun syncMusicList() {
-        updateMusicList("")
-    }
+
     fun sortList(musicList: List<MusicData>): List<MusicData> {
         val newList = musicList.toMutableList()
         newList.sortBy { selector ->
@@ -146,7 +154,8 @@ class SelectorViewModel @Inject constructor(
         }
         return newList as List<MusicData>
     }
-    fun matchesQuery(song: MusicData, query: String): Boolean {
+    fun matchesQuery(song: MusicData): Boolean {
+        val query = uiState.value.searchQuery
         return when {
             query.isEmpty() ->
                 true
@@ -183,7 +192,7 @@ class SelectorViewModel @Inject constructor(
                 if(count == musicMapState.value.size){
                     backgroundScope.launch {
                         suspendLoadList()
-                        updateMusicList("")
+                        updateMusicList()
                         _uiState.update { it.copy(isRefreshing = false) }
                     }
                 }
@@ -198,6 +207,7 @@ class SelectorViewModel @Inject constructor(
                 taggedFilter = taggedFilter
             )
         }
+        updateMusicList()
     }
     fun setShowSortDialog(showSortDialog: Boolean){
         _uiState.update { currentState ->
@@ -220,12 +230,34 @@ class SelectorViewModel @Inject constructor(
                 sortDirection = sortDirection
             )
         }
+        updateMusicList()
     }
     fun setIsRefreshing(isRefreshing: Boolean){
         _uiState.update { currentState ->
             currentState.copy(
                 isRefreshing = isRefreshing
             )
+        }
+    }
+    fun setSearchQuery(searchQuery: String){
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchQuery = searchQuery
+            )
+        }
+        updateMusicList()
+    }
+    fun setSearchEnabled(searchEnabled: Boolean){
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchEnabled = searchEnabled
+            )
+        }
+        setSearchQuery("")
+    }
+    fun setOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean){
+        viewModelScope.launch {
+            preferencesRepo.saveOptionalPermissionsSkipped(optionalPermissionsSkipped)
         }
     }
 
@@ -240,4 +272,6 @@ data class SelectorUiState(
     val sortDirection: SortDirection = SortDirection.Ascending,
     val filesLoaded: Boolean = false,
     val isRefreshing: Boolean = false,
+    val searchQuery: String = "",
+    val searchEnabled: Boolean = false,
 )

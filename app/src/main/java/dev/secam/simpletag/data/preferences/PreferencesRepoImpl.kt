@@ -42,6 +42,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val ADVANCED_EDITOR = booleanPreferencesKey("advanced_editor")
         val ROUND_COVERS = booleanPreferencesKey("round_covers")
         val SYSTEM_FONT = booleanPreferencesKey("system_font")
+        val OPTIONAL_PERMISSIONS_SKIPPED = booleanPreferencesKey("optional_permissions_skipped")
         const val TAG = "PreferencesRepo"
     }
 
@@ -63,6 +64,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val advancedEditor = preferences[ADVANCED_EDITOR] ?: false
             val roundCovers = preferences[ROUND_COVERS] ?: true
             val systemFont = preferences[SYSTEM_FONT] ?: false
+            val optionalPermissionsSkipped = preferences[OPTIONAL_PERMISSIONS_SKIPPED] ?: false
 
             UserPreferences(
                 theme = AppTheme.valueOf(theme),
@@ -70,7 +72,8 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
                 pureBlack = pureBlack,
                 advancedEditor = advancedEditor,
                 roundCovers = roundCovers,
-                systemFont = systemFont
+                systemFont = systemFont,
+                optionalPermissionsSkipped = optionalPermissionsSkipped
             )
 
         }
@@ -110,4 +113,11 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             preferences[SYSTEM_FONT] = systemFont
         }
     }
+
+    override suspend fun saveOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[OPTIONAL_PERMISSIONS_SKIPPED] = optionalPermissionsSkipped
+        }
+    }
+
 }

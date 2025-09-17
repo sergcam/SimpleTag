@@ -730,7 +730,8 @@ copy of the Program in return for a fee.\n\n
     <!--    UI      -->
     <string name="welcome">Welcome</string>
     <string name="grant_permission">Grant Permission</string>
-    <string name="missing_permission">Access to audio files is required to use the app</string> <string name="theme">Theme</string>
+    <string name="missing_permission">Access to audio files is required to use the app</string>
+    <string name="theme">Theme</string>
     <string name="color_scheme">Color Scheme</string>
     <string name="pure_black">Pure Black Dark Theme</string>
     <string name="advanced_editor">Advanced Editor</string>
@@ -754,6 +755,7 @@ copy of the Program in return for a fee.\n\n
     <string name="descending">Descending</string>
     <string name="ascending">Ascending</string>
     <string name="system_font">Use System Font</string>
+    <string name="optional_permissions">Optional Permissions</string>
 
     <!--    Uncategorized   -->
 

@@ -27,4 +27,5 @@ data class UserPreferences(
     val advancedEditor: Boolean = false,
     val roundCovers: Boolean = true,
     val systemFont: Boolean = false,
+    val optionalPermissionsSkipped: Boolean = false
 )

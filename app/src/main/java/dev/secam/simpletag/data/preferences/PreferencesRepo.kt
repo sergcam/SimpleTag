@@ -29,4 +29,5 @@ interface PreferencesRepo {
     suspend fun saveAdvancedEditorPref(advancedEditor: Boolean)
     suspend fun saveRoundCoversPref(roundCovers: Boolean)
     suspend fun saveSystemFontPref(systemFont: Boolean)
+    suspend fun saveOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean)
 }
