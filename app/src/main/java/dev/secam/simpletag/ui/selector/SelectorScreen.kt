@@ -19,23 +19,41 @@ package dev.secam.simpletag.ui.selector
 
 import android.Manifest
 import android.os.Build
+import android.provider.MediaStore
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.ui.components.SimpleTopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -43,28 +61,22 @@ fun SelectorScreen(
     modifier: Modifier = Modifier,
     viewModel: SelectorViewModel = hiltViewModel(),
     onNavigateToEditor: (List<MusicData>) -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val mediaPermissionState = rememberPermissionState(
         permission =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Manifest.permission.READ_MEDIA_AUDIO
-            } else {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
                 Manifest.permission.READ_EXTERNAL_STORAGE
+            } else {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             }
     )
-
-    // ui state
-    val uiState = viewModel.uiState.collectAsState().value
-    val musicList = uiState.filteredMusic
-    val filesLoaded = uiState.filesLoaded
-    val showSortDialog = uiState.showSortDialog
-    val showFilterDialog = uiState.showFilterDialog
-    val taggedFilter = uiState.taggedFilter
-    val sortOrder = uiState.sortOrder
-    val sortDirection = uiState.sortDirection
-
+    val lazyListState = rememberLazyListState()
+    val firstVisible = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
     Scaffold(
         topBar = {
             SimpleTopBar(
@@ -74,38 +86,62 @@ fun SelectorScreen(
                 action = { onNavigateToSettings() },
                 scrollBehavior = scrollBehavior
             )
+        }, floatingActionButton = {
+            AnimatedVisibility(
+                visible = firstVisible.value != 0,
+                enter = scaleIn(tween(150)) + fadeIn(),
+                exit = scaleOut(tween(150)) + fadeOut()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch { lazyListState.animateScrollToItem(0) }
+                    },
+                ) {
+                    Icon(painterResource(R.drawable.ic_arrow_upward_24px), "scroll to top")
+                }
+            }
         }
     ) { contentPadding ->
-
-        if (mediaPermissionState.status.isGranted) {
-            val contentResolver = LocalContext.current.contentResolver
-            if(!filesLoaded) {
-                viewModel.loadFiles(contentResolver)
+        val context = LocalContext.current
+        var readAudio by remember { mutableStateOf(mediaPermissionState.status.isGranted) }
+        readAudio = mediaPermissionState.status.isGranted
+        var manageMedia by remember {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                mutableStateOf(MediaStore.canManageMedia(context))
+            } else {
+                mutableStateOf(false)
             }
+        }
+        // update manage media permission on resume from settings activity
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                manageMedia = MediaStore.canManageMedia(context)
+            }
+        }
+
+        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                readAudio && manageMedia
+            } else {
+                readAudio
+            }
+        ) {
+//            val contentResolver = context.contentResolver
             ListScreen(
+                lazyListState = lazyListState,
                 onNavigateToEditor = onNavigateToEditor,
-                updateHasArt = viewModel::updateHasArt,
-                musicList = musicList,
-                updateQuery = viewModel::updateMusicList,
-                setSortOrder = viewModel::setSort,
-                taggedFilter = taggedFilter,
-                setTaggedFilter = viewModel::setTaggedFilter,
-                showSortDialog = showSortDialog,
-                showFilterDialog = showFilterDialog,
-                setShowSortDialog = viewModel::setShowSortDialog,
-                setShowFilterDialog = viewModel::setShowFilterDialog,
-                sortOrder = sortOrder,
-                sortDirection = sortDirection,
-                filesLoaded = filesLoaded,
+                viewModel = viewModel,
                 modifier = modifier
                     .padding(contentPadding)
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
             )
         } else {
             PermissionScreen(
+                readAudio = readAudio,
+                manageMedia = manageMedia,
+                mediaPermissionState = mediaPermissionState,
                 modifier = modifier
                     .padding(contentPadding)
-            ) { mediaPermissionState.launchPermissionRequest() }
+            )
         }
 
     }
