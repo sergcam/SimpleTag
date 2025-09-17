@@ -4,7 +4,7 @@
 <p align="center">
     <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge">
     <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label=">
-    <img alt="API" src="https://img.shields.io/badge/Api%2028+-50f270?logo=android&logoColor=black&style=for-the-badge"><br>
+    <img alt="API" src="https://img.shields.io/badge/Api%2027+-50f270?logo=android&logoColor=black&style=for-the-badge"><br>
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/sergcam/SimpleTag?color=a1168e&include_prereleases&style=for-the-badge&labelColor=700f63">
     <img alt="GitHub License" src="https://img.shields.io/github/license/sergcam/SimpleTag?style=for-the-badge&labelColor=A6572C">
     <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/sergcam/SimpleTag/total?link=https%3A%2F%2Fgithub.com%2Fsergcam%2FSimpleTag%2Freleases&style=for-the-badge&labelColor=97790E">
@@ -19,7 +19,7 @@ SimpleTag is a Material You audio tagger built with Jetpack Compose. Supports mo
 - MP3, MP4(audio), OGG, FLAC, WAV, AIF, DSF, and WMA audio format support
 - ID3v1, ID3v11, ID3v22, ID3v23, ID3v24, and FLAC tag format support
 - Supports 50+ of the most popular tag fields (full tag mapping [here](https://www.jthink.net/jaudiotagger/tagmapping.html))
-- Batch tag editing (WIP)
+- Batch tag editing (Planned)
 
 ## Screenshots
 <p align="center">
