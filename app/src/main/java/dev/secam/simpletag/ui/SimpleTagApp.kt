@@ -54,7 +54,7 @@ fun SimpleTagApp(
             EnterTransition.None
         },
     ) {
-        val duration = 400
+        val duration = 300
         composable<Selector>(
             enterTransition = {
                 return@composable fadeIn(tween(1000))
