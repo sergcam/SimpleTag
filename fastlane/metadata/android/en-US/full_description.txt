@@ -4,4 +4,4 @@ Features:
 
 - MP3, MP4(audio), OGG, FLAC, WAV, AIF, DSF, and WMA audio format support
 - ID3v1, ID3v11, ID3v22, ID3v23, ID3v24, and FLAC tag format support
-- Batch tag editing
+- Batch tag editing (Planned)
