@@ -27,3 +27,7 @@
 # need these for jaudiotagger to work
 -keep, allowoptimization class org.jaudiotagger.tag.id3.framebody.* { *; }
 -keep, allowoptimization class org.jaudiotagger.tag.datatype.* { *; }
+
+-dontwarn java.awt.image.BufferedImage
+-dontwarn javax.imageio.ImageIO
+-dontwarn javax.imageio.stream.ImageInputStream
