@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import org.jaudiotagger.tag.images.Artwork
 
 @Composable
 fun SingleEditor(
+    path: String,
     roundCovers: Boolean,
     modifier: Modifier = Modifier,
     setArtwork: (Artwork?) -> Unit,
@@ -64,6 +66,8 @@ fun SingleEditor(
             modifier = Modifier
                 .padding(top = 8.dp)
         )
+        Text(path,modifier = Modifier
+            .padding(vertical = 8.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
