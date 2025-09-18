@@ -40,7 +40,7 @@ import org.jaudiotagger.tag.images.Artwork
 @Composable
 fun SingleEditor(
     path: String,
-    roundCovers: Boolean,
+    roundCovers: Boolean?,
     modifier: Modifier = Modifier,
     setArtwork: (Artwork?) -> Unit,
     artwork: Artwork?,
@@ -54,7 +54,7 @@ fun SingleEditor(
             .fillMaxWidth()
     ) {
         EditorArtwork(
-            roundCovers = roundCovers,
+            roundCovers = roundCovers ?: true,
             artwork = artwork,
             modifier = Modifier
                 .padding(top = 16.dp)

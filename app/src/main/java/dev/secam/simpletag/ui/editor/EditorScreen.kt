@@ -23,7 +23,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -38,18 +37,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
 import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
-import org.jaudiotagger.audio.AudioFileIO
-import java.io.File
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,8 +64,7 @@ fun EditorScreen(
 
     // prefs
     val prefs = viewModel.prefState.collectAsState().value
-    val advancedEditor = prefs.advancedEditor
-    val roundCovers = prefs.roundCovers
+    val roundCovers = prefs?.roundCovers
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
@@ -103,21 +98,7 @@ fun EditorScreen(
 
     // initialize editor fields
     if(!initialized){
-        val firstTag = AudioFileIO.read(File(musicList[0].path)).tag
-        viewModel.setEditorMusicList(musicList)
-        viewModel.setArtwork(firstTag?.firstArtwork)
-        viewModel.setFieldStates(
-            buildMap {
-                SimpleTagField.entries.forEachIndexed { index, field ->
-                    if(index <= SimpleTagField.ADVANCED_CUTOFF || advancedEditor) {
-                        put(field, rememberTextFieldState(firstTag?.getFirst(field.fieldKey) ?: ""))
-                    }
-                }
-            }
-        )
-        viewModel.setSavedFields()
-        viewModel.setArtworkChanged(false)
-        viewModel.setInitialized(true)
+        viewModel.initEditor(musicList)
     }
     BackPressHandler {
         if (viewModel.changesMade()) {

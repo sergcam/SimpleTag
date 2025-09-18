@@ -36,7 +36,6 @@ import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
-import dev.secam.simpletag.data.preferences.UserPreferences
 import dev.secam.simpletag.util.setArtworkField
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
@@ -74,13 +73,35 @@ class EditorViewModel @Inject constructor(
     val prefState = preferencesRepo.preferencesFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = UserPreferences()
+        initialValue = null
     )
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
     }
     private val backgroundScope = viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
+    fun initEditor(musicList: List<MusicData>) {
+        backgroundScope.launch{
+            val advancedEditor = prefState.value?.advancedEditor
+            if (advancedEditor != null) {
+                val firstTag = AudioFileIO.read(File(musicList[0].path)).tag
+                setEditorMusicList(musicList)
+                setArtwork(firstTag?.firstArtwork)
+                setFieldStates(
+                    buildMap {
+                        SimpleTagField.entries.forEachIndexed { index, field ->
+                            if (index <= SimpleTagField.ADVANCED_CUTOFF || advancedEditor) {
+                                put(field, TextFieldState(firstTag?.getFirst(field.fieldKey) ?: ""))
+                            }
+                        }
+                    }
+                )
+                setSavedFields()
+                setArtworkChanged(false)
+                setInitialized(true)
+            }
+        }
+    }
     fun createTag(ext: String): Tag {
         return when (ext){
             "flac" -> FlacTag()
