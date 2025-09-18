@@ -37,6 +37,7 @@ import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
+import dev.secam.simpletag.util.setArtworkField
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -91,10 +92,10 @@ class EditorViewModel @Inject constructor(
         }!!
     }
 
-    fun isCompatible(ext: String): Boolean {
-        val types = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac")
-        return types.contains(ext)
-    }
+//    fun isCompatible(ext: String): Boolean {
+//        val types = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac")
+//        return types.contains(ext)
+//    }
     fun getArtworkFromUri(contentResolver: ContentResolver, uri: Uri): Artwork?{
         var path: String? = null
         val projection = arrayOf(
@@ -127,7 +128,13 @@ class EditorViewModel @Inject constructor(
                 }
                 val tag = file.tag
                 tag.deleteArtworkField()
-                if (artwork != null) tag.setField(artwork)
+                if (artwork != null) {
+                    if(tag.javaClass == FlacTag().javaClass) {
+                        (tag as FlacTag).setArtworkField(artwork)
+                    }
+                    else tag.setField(artwork)
+
+                }
 
                 for (field in fields) {
                     tag.setField(field.key.fieldKey, field.value.text as String)
@@ -252,6 +259,7 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(artworkChanged = artworkChanged) }
     }
 
+
 }
 
 data class EditorUiState(
@@ -264,3 +272,4 @@ data class EditorUiState(
     val showSaveDialog: Boolean = false,
     val savedFields: List<String> = listOf()
 )
+
