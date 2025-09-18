@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.data.SimpleTagField
+import dev.secam.simpletag.ui.components.SimpleSectionHeader
 import dev.secam.simpletag.ui.editor.components.EditorArtwork
 import dev.secam.simpletag.ui.editor.components.EditorArtworkButtons
 import dev.secam.simpletag.ui.editor.components.EditorTextField
@@ -66,8 +67,17 @@ fun SingleEditor(
             modifier = Modifier
                 .padding(top = 8.dp)
         )
-        Text(path,modifier = Modifier
-            .padding(vertical = 8.dp))
+        SimpleSectionHeader(
+            text = "File Location",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+        Text(
+            text = path,
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
