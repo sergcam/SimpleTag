@@ -15,5 +15,5 @@ Permissions:
 
 Optional permissions (API31+):
 
-MANAGE_MEDIA Used in combination with ACCESS_MEDIA_LOCATION to write to audio files without system pop-up
-ACCESS_MEDIA_LOCATION required in conjunction with MANAGE_MEDIA to disable the write permission prompt
+- MANAGE_MEDIA Used in combination with ACCESS_MEDIA_LOCATION to write to audio files without system pop-up
+- ACCESS_MEDIA_LOCATION required in conjunction with MANAGE_MEDIA to disable the write permission prompt
