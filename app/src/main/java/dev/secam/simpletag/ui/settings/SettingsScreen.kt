@@ -82,7 +82,11 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             //  Appearance Section
-            SimpleSectionHeader("Appearance")
+            SimpleSectionHeader(
+                text = "Appearance",
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
             SimpleListItem(
                 headlineContent = stringResource(R.string.theme),
                 supportingContent = stringResource(theme.displayNameRes),
@@ -105,12 +109,16 @@ fun SettingsScreen(
                 onToggle = viewModel::setSystemFont
             )
             HorizontalDivider(
-                modifier = modifier
+                modifier = Modifier
                     .padding(vertical = 16.dp)
             )
 
             //  Editor Section
-            SimpleSectionHeader("Editor")
+            SimpleSectionHeader(
+                text = "Editor",
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
             SimpleToggleItem(
                 headlineContent = stringResource(R.string.advanced_editor),
                 supportingContent = stringResource(R.string.advanced_editor_subtext),
@@ -123,12 +131,16 @@ fun SettingsScreen(
                 onToggle = viewModel::setRoundCovers
             )
             HorizontalDivider(
-                modifier = modifier
+                modifier = Modifier
                     .padding(vertical = 16.dp)
             )
 
             //  About Section
-            SimpleSectionHeader("About")
+            SimpleSectionHeader(
+                text = "About",
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
             SimpleListItem(
                 headlineContent = stringResource(R.string.about_title),
                 icon = painterResource(R.drawable.ic_info_24px)
