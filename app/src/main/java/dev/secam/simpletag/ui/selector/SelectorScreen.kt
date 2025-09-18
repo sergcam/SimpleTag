@@ -43,7 +43,7 @@ package dev.secam.simpletag.ui.selector
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.input.nestedscroll.nestedScroll
  import androidx.compose.ui.res.painterResource
- import androidx.hilt.navigation.compose.hiltViewModel
+ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
  import com.google.accompanist.permissions.ExperimentalPermissionsApi
  import com.google.accompanist.permissions.isGranted
  import com.google.accompanist.permissions.rememberPermissionState
