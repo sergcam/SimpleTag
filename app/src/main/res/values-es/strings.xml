@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SimpleTag</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="about_title">Acerca De</string>
+    <string name="title_field">Título</string>
+    <string name="artist_field">Artista</string>
+    <string name="album_field">Álbum</string>
+    <string name="year_field">Año</string>
+    <string name="genre_field">Género</string>
+    <string name="composer_field">Compositor</string>
+    <string name="system_theme">Sistema</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="dynamic">Dinámico</string>
+    <string name="red">Rojo</string>
+    <string name="orange">Naranja</string>
+    <string name="yellow">Amarillo</string>
+    <string name="green">Verde</string>
+    <string name="blue">Azul</string>
+    <string name="purple">Morado</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_leave">Salir</string>
+    <string name="dialog_close">Cerrar</string>
+    <string name="dialog_confirm">Confirmar</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="theme">Tema</string>
+    <string name="appearance">Apariencia</string>
+    <string name="editor">Editor</string>
+    <string name="sort_by">Ordernar Por</string>
+    <string name="add_cover">Agregar Portada</string>
+    <string name="delete_cover">Remover Portada</string>
+    <string name="website">Sitio Web</string>
+    <string name="email">Correo Electrónico</string>
+    <string name="donate">Donar</string>
+</resources>
