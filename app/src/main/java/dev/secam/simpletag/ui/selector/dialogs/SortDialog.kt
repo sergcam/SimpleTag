@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector.dialogs
 
 import androidx.compose.foundation.layout.Column
@@ -23,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.secam.simpletag.R
 import dev.secam.simpletag.data.SortOrder
 import dev.secam.simpletag.data.SortDirection
 import dev.secam.simpletag.ui.components.SimpleDialog
@@ -36,7 +54,7 @@ fun SortDialog(
     onCancel: () -> Unit
 ) {
     SimpleDialog(
-        title = "Sort by",
+        title = stringResource(R.string.sort_by),
         onDismiss = onCancel,
         manualPadding = true
     ) {
@@ -65,8 +83,8 @@ fun SortDialog(
             }
         }
         SimpleDialogOptions(
-            option1 = "Cancel",
-            option2 = "OK",
+            option1 = stringResource(R.string.dialog_cancel),
+            option2 = stringResource(R.string.dialog_ok),
             action1 = { onCancel() },
             action2 = {
                 onCancel()

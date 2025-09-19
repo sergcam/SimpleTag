@@ -48,7 +48,9 @@ fun ColorSchemeDialog(
         title = stringResource(R.string.color_scheme),
         onDismiss = onDismissRequest
     ) {
-        val radioOptions = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppColorScheme.entries.toList() else AppColorScheme.entries.toList().subList(1,AppColorScheme.entries.size)
+        val radioOptions =
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppColorScheme.entries.toList()
+            else AppColorScheme.entries.toList().subList(1,AppColorScheme.entries.size)
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(colorScheme ) }
         radioOptions.forEach { option ->
             Row(

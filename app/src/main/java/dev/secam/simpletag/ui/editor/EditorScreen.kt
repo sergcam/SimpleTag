@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
@@ -75,17 +76,19 @@ fun EditorScreen(
     val showBackDialog = uiState.showBackDialog
 
     // permission request (API30+)
+    val onCancelText = stringResource(R.string.permission_denied)
+    val onOkText = stringResource(R.string.tag_written)
     val getPermissionResult = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         rememberActivityResult(
             onResultCanceled = {
                 scope.launch {
-                    snackbarHostState.showSnackbar("Permission Denied")
+                    snackbarHostState.showSnackbar(onCancelText )
                 }
             }
         ) {
             scope.launch {
                 viewModel.writeTags().await()
-                snackbarHostState.showSnackbar("Tag(s) written successfully")
+                snackbarHostState.showSnackbar(onOkText)
             }
         }
     } else null
@@ -108,9 +111,9 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = "Edit Tag",
+                title = stringResource(R.string.edit_tag),
                 actionIcon = painterResource(R.drawable.ic_save_24px),
-                contentDescription = "save tag",
+                contentDescription = stringResource(R.string.cd_save_tag_icon),
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
@@ -153,7 +156,9 @@ fun EditorScreen(
                         activity = activity,
                         context = context,
                         launcher = getPermissionResult,
-                        snackbarHostState = snackbarHostState
+                        snackbarHostState = snackbarHostState,
+                        onCancelText = onCancelText,
+                        onOkText = onOkText
                     )
                     viewModel.setShowSaveDialog(false)
                 }

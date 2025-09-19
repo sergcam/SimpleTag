@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector.components
 
 import androidx.compose.foundation.background
@@ -24,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
 import dev.secam.simpletag.util.BackPressHandler
@@ -62,7 +80,7 @@ fun ListScreenTopBar(
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_arrow_back_24px),
-                                        contentDescription = "back",
+                                        contentDescription = stringResource(R.string.cd_back),
                                         modifier = Modifier
                                             .offset(x = (-5).dp)
                                     )
@@ -75,7 +93,7 @@ fun ListScreenTopBar(
                                     ) {
                                         Icon(
                                             painter = painterResource(R.drawable.ic_close_24px),
-                                            contentDescription = "close"
+                                            contentDescription = stringResource(R.string.cd_clear_button)
                                         )
                                     }
                                 }
@@ -99,7 +117,6 @@ fun ListScreenTopBar(
 //                                if (showSearch && !showingIme) {
                             focusRequester.requestFocus()
 //                                    onShowSearchChange(false)
-
                         },
                     shape = RectangleShape,
                     colors = SearchBarDefaults.colors(
@@ -114,7 +131,7 @@ fun ListScreenTopBar(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_search_24px),
-                        contentDescription = "search"
+                        contentDescription = stringResource(R.string.cd_search_button)
                     )
 
                 }
@@ -130,7 +147,7 @@ fun ListScreenTopBar(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_filter_24px),
-                        contentDescription = "filter"
+                        contentDescription = stringResource(R.string.cd_filter_button)
                     )
                 }
                 IconButton(
@@ -138,7 +155,7 @@ fun ListScreenTopBar(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_sort_24px),
-                        contentDescription = "sort"
+                        contentDescription = stringResource(R.string.sort_button)
                     )
                 }
             }

@@ -33,16 +33,15 @@ import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.data.MusicData
 
 @Composable
-fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick: () -> Unit){
-    if(musicData.title == null){
+fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    if (musicData.title == null) {
         ListItem(
             headlineContent = {},
             colors = ListItemDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.background
             )
         )
-    }
-    else {
+    } else {
         ListItem(
             headlineContent = {
                 Text(text = musicData.title, fontWeight = FontWeight.Medium)
@@ -71,9 +70,6 @@ fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick
                     enabled = true,
                     onClick = onClick
                 )
-
-
-
         )
     }
 }

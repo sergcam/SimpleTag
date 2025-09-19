@@ -83,7 +83,7 @@ fun SettingsScreen(
         ) {
             //  Appearance Section
             SimpleSectionHeader(
-                text = "Appearance",
+                text = stringResource(R.string.appearance),
                 modifier = Modifier
                     .padding(start = 16.dp)
             )
@@ -115,7 +115,7 @@ fun SettingsScreen(
 
             //  Editor Section
             SimpleSectionHeader(
-                text = "Editor",
+                text = stringResource(R.string.editor),
                 modifier = Modifier
                     .padding(start = 16.dp)
             )
@@ -137,7 +137,7 @@ fun SettingsScreen(
 
             //  About Section
             SimpleSectionHeader(
-                text = "About",
+                text = stringResource(R.string.about_title),
                 modifier = Modifier
                     .padding(start = 16.dp)
             )

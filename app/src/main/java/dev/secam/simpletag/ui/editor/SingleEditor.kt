@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.secam.simpletag.R
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.ui.components.SimpleSectionHeader
 import dev.secam.simpletag.ui.editor.components.EditorArtwork
@@ -68,7 +69,7 @@ fun SingleEditor(
                 .padding(top = 8.dp)
         )
         SimpleSectionHeader(
-            text = "File Location",
+            text = stringResource(R.string.file_location),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)

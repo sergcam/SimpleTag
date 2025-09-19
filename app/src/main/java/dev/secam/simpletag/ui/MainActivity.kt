@@ -35,15 +35,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val theme = preferencesRepo.preferencesFlow.collectAsState(null).value?.theme
-            val colorScheme = preferencesRepo.preferencesFlow.collectAsState(null).value?.colorScheme
-            val pureBlack = preferencesRepo.preferencesFlow.collectAsState(null).value?.pureBlack
-            val systemFont = preferencesRepo.preferencesFlow.collectAsState(null).value?.systemFont
+            val prefState = preferencesRepo.preferencesFlow.collectAsState(null).value
             SimpleTagTheme(
-                appTheme = theme,
-                appColorScheme = colorScheme,
-                pureBlack = pureBlack,
-                systemFont = systemFont
+                appTheme = prefState?.theme,
+                appColorScheme = prefState?.colorScheme,
+                pureBlack = prefState?.pureBlack,
+                systemFont = prefState?.systemFont
             ) {
                 SimpleTagApp()
             }

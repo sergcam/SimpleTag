@@ -43,6 +43,7 @@ package dev.secam.simpletag.ui.selector
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.input.nestedscroll.nestedScroll
  import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.res.stringResource
  import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
  import com.google.accompanist.permissions.ExperimentalPermissionsApi
  import com.google.accompanist.permissions.isGranted
@@ -80,9 +81,9 @@ fun SelectorScreen(
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = "SimpleTag",
+                title = stringResource(R.string.app_name),
                 actionIcon = painterResource(R.drawable.ic_settings_24px),
-                contentDescription = "save tag",
+                contentDescription = stringResource(R.string.cd_settings_icon),
                 action = { onNavigateToSettings() },
                 scrollBehavior = scrollBehavior
             )
@@ -97,7 +98,10 @@ fun SelectorScreen(
                         scope.launch { lazyListState.animateScrollToItem(0) }
                     },
                 ) {
-                    Icon(painterResource(R.drawable.ic_arrow_upward_24px), "scroll to top")
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_upward_24px), 
+                        contentDescription = stringResource(R.string.cd_scroll_top)
+                    )
                 }
             }
         }
@@ -129,24 +133,6 @@ fun SelectorScreen(
                         setSkipped = viewModel::setOptionalPermissionsSkipped
                     )
                 } else viewModel.setOptionalPermissionsSkipped(true)
-
         }
-//        if (readAudio && optionalPermissionsSkipped) {
-//            ListScreen(
-//                lazyListState = lazyListState,
-//                onNavigateToEditor = onNavigateToEditor,
-//                viewModel = viewModel,
-//                modifier = modifier
-//                    .padding(contentPadding)
-//                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-//            )
-//        } else {
-//            PermissionScreen(
-//                mediaPermissionState = mediaPermissionState,
-//                modifier = modifier
-//                    .padding(contentPadding)
-//            )
-//        }
-
     }
 }

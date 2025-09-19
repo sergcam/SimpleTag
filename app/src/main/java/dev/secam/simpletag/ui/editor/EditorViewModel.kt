@@ -177,7 +177,9 @@ class EditorViewModel @Inject constructor(
         activity: Activity?,
         context: Context?,
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>?,
-        snackbarHostState: SnackbarHostState
+        snackbarHostState: SnackbarHostState,
+        onCancelText: String,
+        onOkText: String
     ) {
         if (activity != null && context != null) {
             backgroundScope.launch {
@@ -200,10 +202,10 @@ class EditorViewModel @Inject constructor(
                 else {
                     try {
                         writeTags().await()
-                        snackbarHostState.showSnackbar("Tag(s) written successfully")
+                        snackbarHostState.showSnackbar(onOkText)
                     } catch (e: AccessDeniedException) {
                         e.printStackTrace()
-                        snackbarHostState.showSnackbar("Permission Denied")
+                        snackbarHostState.showSnackbar(onCancelText)
                     }
                 }
             }

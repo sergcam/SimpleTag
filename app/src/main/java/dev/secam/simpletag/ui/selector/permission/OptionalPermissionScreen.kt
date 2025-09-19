@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector.permission
 
 import android.Manifest
@@ -99,7 +116,7 @@ fun OptionalPermissionScreen(
                 .padding(bottom = 6.dp)
         )
         Text(
-            text = "The following permissions are optional and allow tags to be written without device confirmation prompt:",//stringResource(R.string.missing_permission),
+            text = stringResource(R.string.optional_permissions_long),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(bottom = 16.dp)
@@ -109,7 +126,7 @@ fun OptionalPermissionScreen(
             val color =
                 if (manageMedia) Color(0xff4c996e) else MaterialTheme.colorScheme.error
             Text(
-                text = "Manage Media:",
+                text = stringResource(R.string.manage_media),
                 color = color,
                 fontWeight = FontWeight.Medium
             )
@@ -117,7 +134,7 @@ fun OptionalPermissionScreen(
                 painter =
                     if (manageMedia) painterResource(R.drawable.ic_check_24px)
                     else painterResource(R.drawable.ic_close_24px),
-                contentDescription = "permission not granted",
+                contentDescription = stringResource(R.string.cd_permission_not_granted),
                 tint = color,
 
                 )
@@ -129,7 +146,7 @@ fun OptionalPermissionScreen(
             val color =
                 if (mediaLocation) Color(0xff4c996e) else MaterialTheme.colorScheme.error
             Text(
-                text = "Access Media Location:",
+                text = stringResource(R.string.access_media_location),
                 color = color,
                 fontWeight = FontWeight.Medium
             )
@@ -137,13 +154,13 @@ fun OptionalPermissionScreen(
                 painter =
                     if (mediaLocation) painterResource(R.drawable.ic_check_24px)
                     else painterResource(R.drawable.ic_close_24px),
-                contentDescription = "permission not granted",
+                contentDescription = stringResource(R.string.cd_permission_not_granted),
                 tint = color,
                 modifier = Modifier
             )
         }
         Text(
-            text = "Note: Access Media Location will show up as access photos and videos. You must allow all or else the permission won't have any effect",//stringResource(R.string.missing_permission),
+            text = stringResource(R.string.optional_permission_note),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             fontSize = 14.sp,
@@ -167,7 +184,7 @@ fun OptionalPermissionScreen(
         }
         TextButton({skip = true}) {
             Text(
-                text = "Skip"
+                text = stringResource(R.string.skip)
             )
         }
     }

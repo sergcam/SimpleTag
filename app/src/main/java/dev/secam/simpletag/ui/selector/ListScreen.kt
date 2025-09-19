@@ -34,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.secam.simpletag.R
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
 import dev.secam.simpletag.ui.selector.components.SimpleMusicItem
@@ -98,10 +100,10 @@ fun ListScreen(
             if (!filesLoaded) {
                 LoadingScreen()
             }
-            //  if list is empty and not loading
+            //  if loaded and list is empty
             else if (musicList.isEmpty()) {
                 Text(
-                    text = "No Results Found",
+                    text = stringResource(R.string.no_results),
                     modifier = Modifier
                         .padding(start = 16.dp)
                 )

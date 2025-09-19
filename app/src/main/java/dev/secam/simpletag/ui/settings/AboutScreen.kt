@@ -141,7 +141,7 @@ fun AppInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
             SimpleListItem(
                 headlineContent = stringResource(R.string.license),
                 icon = painterResource(R.drawable.ic_balance_24px),
-                supportingContent = "GPL v3",
+                supportingContent = "GPL-3.0",
             ) { showDialog = true }
         }
     }
@@ -176,17 +176,17 @@ fun AuthorInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
 
         Column {
             SimpleListItem(
-                headlineContent = "Sergio Camacho",
+                headlineContent = stringResource(R.string.author_name),
                 icon = painterResource(R.drawable.ic_person_24px),
             )
             SimpleListItem(
-                headlineContent = "Github",
+                headlineContent = stringResource(R.string.github),
                 supportingContent = "sergcam",
                 icon = painterResource(R.drawable.ic_github_logo),
             ) { uriHandler.openUri("https://github.com/sergcam/") }
             SimpleListItem(
                 headlineContent = stringResource(R.string.donate),
-                supportingContent = "give me money",
+                supportingContent = stringResource(R.string.donate_long),
                 icon = painterResource(R.drawable.ic_kofi_24px),
             ) { uriHandler.openUri("https://ko-fi.com/sergcam") }
         }
@@ -219,7 +219,7 @@ fun SupportInfo(uriHandler: UriHandler, modifier: Modifier = Modifier) {
         Column {
             SimpleListItem(
                 headlineContent = stringResource(R.string.bugs),
-                supportingContent = "Open an issue on GitHub",
+                supportingContent = stringResource(R.string.bugs_long),
                 icon = painterResource(R.drawable.ic_feedback_24px),
             ) { uriHandler.openUri("https://github.com/sergcam/SimpleTag/issues/new") }
             SimpleListItem(

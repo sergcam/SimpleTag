@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
 import org.jaudiotagger.tag.images.Artwork
@@ -46,7 +47,6 @@ fun EditorArtwork(
 ) {
     Box(
         modifier = modifier
-//            .padding(top = 16.dp)
             .clip(
                 shape =
                     if (roundCovers) RoundedCornerShape(16.dp)
@@ -60,7 +60,7 @@ fun EditorArtwork(
                     0,
                     artwork.binaryData.size
                 ).asImageBitmap(),
-                contentDescription = "Album Art",
+                contentDescription = stringResource(R.string.cd_album_art),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxSize()
@@ -74,7 +74,7 @@ fun EditorArtwork(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_music_note_24),
-                    contentDescription = "blank cover",
+                    contentDescription = stringResource(R.string.cd_empty_art),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxSize(.5f)

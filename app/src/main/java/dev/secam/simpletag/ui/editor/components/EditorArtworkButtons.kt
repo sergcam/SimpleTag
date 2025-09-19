@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
@@ -51,12 +52,12 @@ fun EditorArtworkButtons(
         ) {
             Icon(
                 painter = painterResource((R.drawable.ic_photo_24px)),
-                contentDescription = "add artwork",
+                contentDescription = stringResource(R.string.cd_add_cover_icon),
                 modifier = Modifier
                     .padding(end = 4.dp)
             )
             Text(
-                text = "Add Cover",
+                text = stringResource(R.string.add_cover),
                 fontWeight = FontWeight.Bold
             )
         }
@@ -70,12 +71,12 @@ fun EditorArtworkButtons(
         ) {
             Icon(
                 painter = painterResource((R.drawable.ic_delete_24px)),
-                contentDescription = "delete artwork",
+                contentDescription = stringResource(R.string.cd_delete_cover_icon),
                 modifier = Modifier
                     .padding(end = 4.dp)
             )
             Text(
-                text = "Delete Cover",
+                text = stringResource(R.string.delete_cover),
                 fontWeight = FontWeight.Bold
             )
         }
