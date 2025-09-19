@@ -44,7 +44,7 @@ SimpleTag is a Material You audio tagger built with Jetpack Compose. Supports mo
     From [google](https://developer.android.com/reference/android/Manifest.permission#ACCESS_MEDIA_LOCATION): `Allows an application to access any geographic locations persisted in the user's shared collection.` However it is also for some reason required in conjunction with `MANAGE_MEDIA` to disable the write permission prompt [(docs)](https://developer.android.com/reference/android/Manifest.permission#MANAGE_MEDIA). Also, it shows up as access to photos and videos and "allow all" must be selected because the limited access prompt doesnt let you choose audio files
 
 ## Installation
-**Recommended:** Click on the Obtainium badge to add SimpleTag to your Obtainium library (download Obtainium [here](https://obtainium.imranr.dev/))
+**Recommended:** Click on the Obtainium badge to add SimpleTag to your Obtainium library (download Obtainium [here](https://obtainium.imranr.dev/)) **or** Click on the IzzyOnDroid badge to download through IzzyOnDroid F-Droid repo
 
 **Alternatively** download the apk directly from the [releases](https://github.com/sergcam/SimpleTag/releases) section
 
