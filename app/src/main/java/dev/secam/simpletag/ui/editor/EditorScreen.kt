@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +44,7 @@ import dev.secam.simpletag.R
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
+import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
 import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
@@ -74,10 +76,14 @@ fun EditorScreen(
     val fieldStates = uiState.fieldStates
     val showSaveDialog = uiState.showSaveDialog
     val showBackDialog = uiState.showBackDialog
+    val showLogDialog = uiState.showLogDialog
+    val log = uiState.log
 
     // permission request (API30+)
     val onCancelText = stringResource(R.string.permission_denied)
     val onOkText = stringResource(R.string.tag_written)
+    val onErrorText = stringResource(R.string.tag_written_error)
+    val actionText = stringResource(R.string.log)
     val getPermissionResult = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         rememberActivityResult(
             onResultCanceled = {
@@ -87,8 +93,10 @@ fun EditorScreen(
             }
         ) {
             scope.launch {
-                viewModel.writeTags(context).await()
-                snackbarHostState.showSnackbar(onOkText)
+                if(!viewModel.writeTags(context)){
+                    if (snackbarHostState.showSnackbar(onErrorText, actionText) == SnackbarResult.ActionPerformed)
+                        viewModel.setShowLogDialog(true)
+                } else snackbarHostState.showSnackbar(onOkText)
             }
         }
     } else null
@@ -158,7 +166,9 @@ fun EditorScreen(
                         launcher = getPermissionResult,
                         snackbarHostState = snackbarHostState,
                         onCancelText = onCancelText,
-                        onOkText = onOkText
+                        onOkText = onOkText,
+                        onErrorText = onErrorText,
+                        actionText = actionText
                     )
                     viewModel.setShowSaveDialog(false)
                 }
@@ -170,6 +180,14 @@ fun EditorScreen(
                 onLeave = {
                     viewModel.setShowBackDialog(false)
                     onNavigateBack()
+                }
+            )
+        }
+        if(showLogDialog){
+            LogDialog(
+                log = log,
+                onDismissRequest = {
+                    viewModel.setShowLogDialog(false)
                 }
             )
         }

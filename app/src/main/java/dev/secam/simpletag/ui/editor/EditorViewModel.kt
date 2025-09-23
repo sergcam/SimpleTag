@@ -24,25 +24,27 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.media.MusicData
-import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.util.tag.oggFileWriter
+import dev.secam.simpletag.util.tag.setArtworkField
 import dev.secam.simpletag.util.tag.simpleFileReader
 import dev.secam.simpletag.util.tag.simpleFileWriter
-import dev.secam.simpletag.util.tag.setArtworkField
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,6 +53,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withTimeout
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.tag.Tag
 import org.jaudiotagger.tag.asf.AsfTag
@@ -64,6 +67,7 @@ import java.io.File
 import java.nio.file.AccessDeniedException
 import javax.inject.Inject
 
+const val WRITE_TIMEOUT = 1000L
 
 @HiltViewModel
 class EditorViewModel @Inject constructor(
@@ -77,13 +81,14 @@ class EditorViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = null
     )
-    val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
-    private val backgroundScope = viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
+    private val backgroundScope =
+        viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
     fun initEditor(musicList: List<MusicData>) {
-        backgroundScope.launch{
+        backgroundScope.launch {
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
                 val firstTag = simpleFileReader(musicList[0].path).tag
@@ -104,8 +109,9 @@ class EditorViewModel @Inject constructor(
             }
         }
     }
+
     fun createTag(ext: String): Tag {
-        return when (ext){
+        return when (ext) {
             "flac" -> FlacTag()
             "mp4", "m4a", "m4p", "aac" -> Mp4Tag()
             "ogg" -> VorbisCommentTag()
@@ -115,7 +121,7 @@ class EditorViewModel @Inject constructor(
         }!!
     }
 
-    fun getArtworkFromUri(contentResolver: ContentResolver, uri: Uri): Artwork?{
+    fun getArtworkFromUri(contentResolver: ContentResolver, uri: Uri): Artwork? {
         var path: String? = null
         val projection = arrayOf(
             MediaStore.Images.Media.DATA
@@ -135,51 +141,80 @@ class EditorViewModel @Inject constructor(
         return artwork
     }
 
-    fun writeTags(context: Context): Deferred<Unit> {
-        return backgroundScope.async{
-            val fields = uiState.value.fieldStates
-            val artwork = uiState.value.artwork
-            val musicList = uiState.value.editorMusicList
-            if (musicList.size == 1) {
-                val file: AudioFile = simpleFileReader(musicList[0].path)
-                if(file.tag == null) {
-                    file.tag = createTag(file.ext)
-                }
-                val tag = file.tag
-                tag.deleteArtworkField()
-                if (artwork != null) {
-                    when (tag.javaClass) {
-                        FlacTag().javaClass -> {
-                            (tag as FlacTag).setArtworkField(artwork)
+    suspend fun writeTags(context: Context): Boolean {
+        _uiState.update { it.copy(log = "") }
+        backgroundScope.async {
+            var log = ""
+            try {
+                withTimeout(WRITE_TIMEOUT) {
+                    log = "Entered writeTags()\n"
+                    val fields = uiState.value.fieldStates
+                    val artwork = uiState.value.artwork
+                    val musicList = uiState.value.editorMusicList
+                    if (musicList.size == 1) {
+                        log += "Writing single file\n"
+                        val file: AudioFile = simpleFileReader(musicList[0].path)
+                        log += "Opened file: ${file.file.path}\n"
+                        if (file.tag == null) {
+                            log += "No tag. Creating tag\n"
+                            file.tag = createTag(file.ext)
+                            log += "Tag created\n"
                         }
-                        VorbisCommentTag().javaClass -> {
-                            (tag as VorbisCommentTag).setArtworkField(artwork)
+                        val tag = file.tag
+                        log += "Tag opened\n"
+                        tag.deleteArtworkField()
+                        log += "Deleted old artwork\n"
+                        if (artwork != null) {
+                            when (tag.javaClass) {
+                                FlacTag().javaClass -> {
+                                    (tag as FlacTag).setArtworkField(artwork)
+                                }
+                                VorbisCommentTag().javaClass -> {
+                                    (tag as VorbisCommentTag).setArtworkField(artwork)
+                                }
+                                else -> tag.setField(artwork)
+                            }
+                            log += "Wrote new artwork as ${tag.javaClass}\n"
                         }
-                        else -> tag.setField(artwork)
+                        for (field in fields) {
+                            if (!field.value.text.isEmpty()) {
+                                tag.setField(field.key.fieldKey, field.value.text as String)
+                                log += "Wrote field ${field.key.fieldKey} with content: ${field.value.text}\n"
+                            } else {
+                                tag.deleteField(field.key.fieldKey)
+                                log += "Cleared field ${field.key.fieldKey}\n"
+                            }
+                        }
+                        if (file.ext == "ogg") {
+                            log += "Writing file using ogg writer\n"
+                            oggFileWriter(file, context)
+                            log += "Wrote file: ${file.file.path} \n"
+                        } else {
+                            log += "Writing file using default writer\n"
+                            simpleFileWriter(file)
+                            log += "Wrote file: ${file.file.path} \n"
+                        }
+                    } else {
+                        log += "Writing multiple files\n"
+                        //TODO: batch tagging support
                     }
-
+                    log += "Resetting change tracking\n"
+                    //  reset change tracking
+                    setArtworkChanged(false)
+                    setSavedFields()
+                    log += "Change tracking reset\n"
+                    //  refresh mediastore to reflect changes
+                    log += "Refreshing mediastore\n"
+                    mediaRepo.refreshMediaStore(uiState.value.editorMusicList)
+                    log += "Mediastore refreshed\n"
+                    log += "Finished saving\n"
+                    Log.d("EditorVM", log)
                 }
-
-                for (field in fields) {
-                    if(!field.value.text.isEmpty()) {
-                        tag.setField(field.key.fieldKey, field.value.text as String)
-                    }
-                    else {
-                        tag.deleteField(field.key.fieldKey)
-                    }
-                }
-                if(file.ext != "ogg") simpleFileWriter(file)
-                else oggFileWriter(file, context)
-            } else {
-                //TODO: batch tagging support
+            } catch (e: TimeoutCancellationException) {
+                _uiState.update { it.copy(log = e.toString() + "\n$log") }
             }
-            //  reset change tracking
-            setArtworkChanged(false)
-            setSavedFields()
-
-            //  refresh mediastore to reflect changes
-            mediaRepo.refreshMediaStore(uiState.value.editorMusicList)
-        }
+        }.await()
+        return uiState.value.log == ""
     }
 
     fun onSave(
@@ -188,7 +223,9 @@ class EditorViewModel @Inject constructor(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>?,
         snackbarHostState: SnackbarHostState,
         onCancelText: String,
-        onOkText: String
+        onOkText: String,
+        onErrorText: String,
+        actionText: String
     ) {
         if (activity != null && context != null) {
             backgroundScope.launch {
@@ -210,8 +247,15 @@ class EditorViewModel @Inject constructor(
                 // permission request not needed for api 29 and below
                 else {
                     try {
-                        writeTags(context).await()
-                        snackbarHostState.showSnackbar(onOkText)
+                        if (!writeTags(context)) {
+                            if (snackbarHostState.showSnackbar(
+                                    onErrorText,
+                                    actionText
+                                ) == SnackbarResult.ActionPerformed
+                            )
+                                setShowLogDialog(true)
+                        } else snackbarHostState.showSnackbar(onOkText)
+
                     } catch (e: AccessDeniedException) {
                         e.printStackTrace()
                         snackbarHostState.showSnackbar(onCancelText)
@@ -229,7 +273,7 @@ class EditorViewModel @Inject constructor(
     }
 
     /*------- Setters -------*/
-    fun setArtwork(artwork: Artwork?){
+    fun setArtwork(artwork: Artwork?) {
         _uiState.update { currentState ->
             currentState.copy(
                 artwork = artwork,
@@ -238,7 +282,7 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setFieldStates(fieldStates: Map<SimpleTagField,TextFieldState>){
+    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
         _uiState.update { currentState ->
             currentState.copy(
                 fieldStates = fieldStates
@@ -246,7 +290,7 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setEditorMusicList(editorMusicList: List<MusicData>){
+    fun setEditorMusicList(editorMusicList: List<MusicData>) {
         _uiState.update { currentState ->
             currentState.copy(
                 editorMusicList = editorMusicList
@@ -254,7 +298,7 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setInitialized(initialized: Boolean){
+    fun setInitialized(initialized: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
                 initialized = initialized
@@ -262,7 +306,7 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setShowBackDialog(showBackDialog: Boolean){
+    fun setShowBackDialog(showBackDialog: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
                 showBackDialog = showBackDialog
@@ -270,7 +314,7 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setShowSaveDialog(showSaveDialog: Boolean){
+    fun setShowSaveDialog(showSaveDialog: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
                 showSaveDialog = showSaveDialog
@@ -291,17 +335,22 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(artworkChanged = artworkChanged) }
     }
 
+    fun setShowLogDialog(showLogDialog: Boolean) {
+        _uiState.update { it.copy(showLogDialog = showLogDialog) }
+    }
 
 }
 
 data class EditorUiState(
     val initialized: Boolean = false,
     val artwork: Artwork? = null,
-    val fieldStates: Map<SimpleTagField,TextFieldState> = mapOf(),
+    val fieldStates: Map<SimpleTagField, TextFieldState> = mapOf(),
     val editorMusicList: List<MusicData> = listOf(),
     val artworkChanged: Boolean = false,
     val showBackDialog: Boolean = false,
     val showSaveDialog: Boolean = false,
-    val savedFields: List<String> = listOf()
+    val showLogDialog: Boolean = false,
+    val savedFields: List<String> = listOf(),
+    val log: String = ""
 )
 

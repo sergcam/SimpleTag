@@ -43,6 +43,7 @@ import org.jaudiotagger.tag.Tag
 import javax.inject.Inject
 
 val COMPATIBLE_TYPES = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac", "aac")
+const val JAUDIO_TIMEOUT = 10L
 class MediaRepo @Inject constructor(private val context: Context) {
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
@@ -106,7 +107,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     else if (COMPATIBLE_TYPES.contains(ext)) {
                         val loader = backgroundScope.async {
                             try {
-                                withTimeout(50) {
+                                withTimeout(JAUDIO_TIMEOUT) {
                                     val file = simpleFileReader(path)
                                     val tag: Tag? = file.getTag()
                                     var tagged = 0
