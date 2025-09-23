@@ -20,26 +20,29 @@ package dev.secam.simpletag.data
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.provider.MediaStore
+import android.util.Log
 import coil3.imageLoader
 import coil3.memory.MemoryCache
 import coil3.request.Options
 import dev.secam.simpletag.data.coil.MusicDataKeyer
+import dev.secam.simpletag.util.simpleFileReader
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withTimeout
 import org.jaudiotagger.audio.AudioFile
-import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
-import java.io.File
 import javax.inject.Inject
 
+val COMPATIBLE_TYPES = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac", "aac")
 class MediaRepo @Inject constructor(private val context: Context) {
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
@@ -81,11 +84,11 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     val id = it.getLong(idColumn)
                     val path = it.getString(pathColumn)
                     val ext = path.substringAfterLast(".").lowercase()
+                    val title = it.getString(titleColumn)
+                    val album = it.getString(albumColumn)
+                    val artist = it.getString(artistColumn)
                     // Use MediaStore metadata for mp3 and flac files
                     if (ext == "mp3" || ext == "flac") {
-                        val title = it.getString(titleColumn)
-                        val album = it.getString(albumColumn)
-                        val artist = it.getString(artistColumn)
                         music.put(
                             key = id,
                             MusicData(
@@ -100,45 +103,72 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         )
                     }
                     // Use jaudiotagger for non-mp3/flac files (better compatibility / more accurate but slower)
-                    else {
+                    else if (COMPATIBLE_TYPES.contains(ext)) {
                         val loader = backgroundScope.async {
-                            val file: AudioFile = AudioFileIO.read(File(path))
-                            val tag: Tag? = file.getTag()
-                            var tagged = 0
-                            val title: String
-                            val artist: String
-                            val album: String
-                            if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(FieldKey.TITLE) == null) {
-                                title = file.file.name
-                                tagged++
-                            } else {
-                                title = tag.getFirst(FieldKey.TITLE) ?: file.file.name
-                            }
-                            if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(FieldKey.ALBUM) == null) {
-                                album = "<unknown>"
-                                tagged++
-                            } else {
-                                album = tag.getFirst(FieldKey.ALBUM) ?: "<unknown>"
-                            }
-                            if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(FieldKey.ARTIST) == null) {
-                                artist = "<unknown>"
-                                tagged++
-                            } else {
-                                artist = tag.getFirst(FieldKey.ARTIST) ?: "<unknown>"
-                            }
-                            val hasArt = tag?.firstArtwork != null
-                            music.put(
-                                key = id,
-                                MusicData(
-                                    id = id,
-                                    path = path,
-                                    title = title,
-                                    artist = artist,
-                                    album = album,
-                                    hasArtwork = hasArt,
-                                    tagged = tagged == 0 // TODO: Fix this
+                            try {
+                                withTimeout(50) {
+                                    val file = simpleFileReader(path)
+                                    val tag: Tag? = file.getTag()
+                                    var tagged = 0
+                                    val jTitle: String
+                                    val jArtist: String
+                                    val jAlbum: String
+                                    if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(
+                                            FieldKey.TITLE
+                                        ) == null
+                                    ) {
+                                        jTitle = file.file.name
+                                        tagged++
+                                    } else {
+                                        jTitle = tag.getFirst(FieldKey.TITLE) ?: file.file.name
+                                    }
+                                    if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(
+                                            FieldKey.ALBUM
+                                        ) == null
+                                    ) {
+                                        jAlbum = "<unknown>"
+                                        tagged++
+                                    } else {
+                                        jAlbum = tag.getFirst(FieldKey.ALBUM) ?: "<unknown>"
+                                    }
+                                    if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(
+                                            FieldKey.ARTIST
+                                        ) == null
+                                    ) {
+                                        jArtist = "<unknown>"
+                                        tagged++
+                                    } else {
+                                        jArtist = tag.getFirst(FieldKey.ARTIST) ?: "<unknown>"
+                                    }
+                                    val hasArt = tag?.firstArtwork != null
+                                    music.put(
+                                        key = id,
+                                        MusicData(
+                                            id = id,
+                                            path = path,
+                                            title = jTitle,
+                                            artist = jArtist,
+                                            album = jAlbum,
+                                            hasArtwork = hasArt,
+                                            tagged = tagged == 0 // TODO: Fix this
+                                        )
+                                    )
+                                }
+                            } catch (e: TimeoutCancellationException) {
+                                Log.d("MediaRepo", e.toString() + path.toString())
+                                music.put(
+                                    key = id,
+                                    MusicData(
+                                        id = id,
+                                        path = path,
+                                        title = title,
+                                        artist = artist,
+                                        album = album,
+                                        hasArtwork = null,
+                                        tagged = artist != "<unknown>"
+                                    )
                                 )
-                            )
+                            }
                         }
                         musicLoaders.add(loader)
                     }
@@ -160,7 +190,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
             for (song in musicList) {
                 // remove old art from cache
                 MusicDataKeyer.key(song, Options(context)).let { imageLoader.memoryCache?.remove(MemoryCache.Key(it)) }
-                val file = AudioFileIO.read(File(song.path))
+                val file = simpleFileReader(song.path)
                 val tag = file.tag
                 var tagged = 0
                 val title: String
@@ -205,18 +235,16 @@ class MediaRepo @Inject constructor(private val context: Context) {
     }
     suspend fun rescanMediaStore(scanListener: MediaScannerConnection.OnScanCompletedListener? = null) {
         backgroundScope.async{
-            val mimeTypes = arrayOf("audio/mp3", "audio/flac")
             val paths = musicMapState.value.map { mapEntry ->
                 mapEntry.value.path
             }.toTypedArray()
-        MediaScannerConnection.scanFile(context, paths, mimeTypes, scanListener)
+        MediaScannerConnection.scanFile(context, paths, null, scanListener)
         }.await()
-//        loadFiles()
     }
     suspend fun updateHasArt(id: Long){
         backgroundScope.async {
             val data = musicMapState.value[id]!!
-            val file: AudioFile = AudioFileIO.read(File(data.path))
+            val file: AudioFile = simpleFileReader(data.path)
             val tag: Tag? = file.getTag()
             val hasArt = tag?.firstArtwork != null
             val newData = MusicData(

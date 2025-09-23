@@ -27,13 +27,12 @@ import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
 import coil3.request.Options
 import dev.secam.simpletag.data.MusicData
-import org.jaudiotagger.audio.AudioFileIO
-import java.io.File
+import dev.secam.simpletag.util.simpleFileReader
 import javax.inject.Inject
 
 class MusicDataFetcher(private val musicData: MusicData): Fetcher {
     override suspend fun fetch(): FetchResult? {
-        val artwork = AudioFileIO.read(File(musicData.path)).tag.firstArtwork?.binaryData
+        val artwork = simpleFileReader(musicData.path).tag.firstArtwork?.binaryData
 
         return if(artwork == null) {
             null
