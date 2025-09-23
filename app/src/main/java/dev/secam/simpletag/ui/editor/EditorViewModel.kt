@@ -36,6 +36,8 @@ import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.util.simpleFileReader
+import dev.secam.simpletag.util.simpleFileWriter
 import dev.secam.simpletag.util.setArtworkField
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
@@ -49,7 +51,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jaudiotagger.audio.AudioFile
-import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.Tag
 import org.jaudiotagger.tag.asf.AsfTag
 import org.jaudiotagger.tag.flac.FlacTag
@@ -84,7 +85,7 @@ class EditorViewModel @Inject constructor(
         backgroundScope.launch{
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
-                val firstTag = AudioFileIO.read(File(musicList[0].path)).tag
+                val firstTag = simpleFileReader(musicList[0].path).tag
                 setEditorMusicList(musicList)
                 setArtwork(firstTag?.firstArtwork)
                 setFieldStates(
@@ -105,7 +106,7 @@ class EditorViewModel @Inject constructor(
     fun createTag(ext: String): Tag {
         return when (ext){
             "flac" -> FlacTag()
-            "mp4", "m4a", "m4p" -> Mp4Tag()
+            "mp4", "m4a", "m4p", "aac" -> Mp4Tag()
             "ogg" -> VorbisCommentTag()
             "wma" -> AsfTag()
             "mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc" -> ID3v24Tag()
@@ -143,7 +144,7 @@ class EditorViewModel @Inject constructor(
             val artwork = uiState.value.artwork
             val musicList = uiState.value.editorMusicList
             if (musicList.size == 1) {
-                val file: AudioFile = AudioFileIO.read(File(musicList[0].path))
+                val file: AudioFile = simpleFileReader(musicList[0].path)
                 if(file.tag == null) {
                     file.tag = createTag(file.ext)
                 }
@@ -158,9 +159,14 @@ class EditorViewModel @Inject constructor(
                 }
 
                 for (field in fields) {
-                    tag.setField(field.key.fieldKey, field.value.text as String)
+                    if(!field.value.text.isEmpty()) {
+                        tag.setField(field.key.fieldKey, field.value.text as String)
+                    }
+                    else {
+                        tag.deleteField(field.key.fieldKey)
+                    }
                 }
-                AudioFileIO.write(file)
+                simpleFileWriter(file)
             } else {
                 //TODO: batch tagging support
             }
