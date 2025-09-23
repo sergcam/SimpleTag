@@ -87,7 +87,7 @@ fun EditorScreen(
             }
         ) {
             scope.launch {
-                viewModel.writeTags().await()
+                viewModel.writeTags(context).await()
                 snackbarHostState.showSnackbar(onOkText)
             }
         }

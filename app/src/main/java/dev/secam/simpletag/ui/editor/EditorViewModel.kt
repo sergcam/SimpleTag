@@ -36,6 +36,7 @@ import dev.secam.simpletag.data.MediaRepo
 import dev.secam.simpletag.data.MusicData
 import dev.secam.simpletag.data.SimpleTagField
 import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.util.oggFileWriter
 import dev.secam.simpletag.util.simpleFileReader
 import dev.secam.simpletag.util.simpleFileWriter
 import dev.secam.simpletag.util.setArtworkField
@@ -114,10 +115,6 @@ class EditorViewModel @Inject constructor(
         }!!
     }
 
-//    fun isCompatible(ext: String): Boolean {
-//        val types = listOf("mp3", "wav", "wave", "dsf", "aiff", "aif", "aifc", "wma", "ogg", "mp4", "m4a", "m4p", "flac")
-//        return types.contains(ext)
-//    }
     fun getArtworkFromUri(contentResolver: ContentResolver, uri: Uri): Artwork?{
         var path: String? = null
         val projection = arrayOf(
@@ -138,7 +135,7 @@ class EditorViewModel @Inject constructor(
         return artwork
     }
 
-    fun writeTags(): Deferred<Unit> {
+    fun writeTags(context: Context): Deferred<Unit> {
         return backgroundScope.async{
             val fields = uiState.value.fieldStates
             val artwork = uiState.value.artwork
@@ -151,10 +148,15 @@ class EditorViewModel @Inject constructor(
                 val tag = file.tag
                 tag.deleteArtworkField()
                 if (artwork != null) {
-                    if(tag.javaClass == FlacTag().javaClass) {
-                        (tag as FlacTag).setArtworkField(artwork)
+                    when (tag.javaClass) {
+                        FlacTag().javaClass -> {
+                            (tag as FlacTag).setArtworkField(artwork)
+                        }
+                        VorbisCommentTag().javaClass -> {
+                            (tag as VorbisCommentTag).setArtworkField(artwork)
+                        }
+                        else -> tag.setField(artwork)
                     }
-                    else tag.setField(artwork)
 
                 }
 
@@ -166,7 +168,8 @@ class EditorViewModel @Inject constructor(
                         tag.deleteField(field.key.fieldKey)
                     }
                 }
-                simpleFileWriter(file)
+                if(file.ext != "ogg") simpleFileWriter(file)
+                else oggFileWriter(file, context)
             } else {
                 //TODO: batch tagging support
             }
@@ -207,7 +210,7 @@ class EditorViewModel @Inject constructor(
                 // permission request not needed for api 29 and below
                 else {
                     try {
-                        writeTags().await()
+                        writeTags(context).await()
                         snackbarHostState.showSnackbar(onOkText)
                     } catch (e: AccessDeniedException) {
                         e.printStackTrace()
