@@ -49,7 +49,7 @@ package dev.secam.simpletag.ui.selector
  import com.google.accompanist.permissions.isGranted
  import com.google.accompanist.permissions.rememberPermissionState
  import dev.secam.simpletag.R
- import dev.secam.simpletag.data.MusicData
+ import dev.secam.simpletag.data.media.MusicData
  import dev.secam.simpletag.ui.components.SimpleTopBar
  import dev.secam.simpletag.ui.selector.permission.OptionalPermissionScreen
  import dev.secam.simpletag.ui.selector.permission.PermissionScreen

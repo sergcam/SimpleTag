@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import coil3.compose.rememberAsyncImagePainter
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 
 @Composable
 fun SimpleAlbumArtwork(musicData: MusicData, modifier: Modifier = Modifier) {

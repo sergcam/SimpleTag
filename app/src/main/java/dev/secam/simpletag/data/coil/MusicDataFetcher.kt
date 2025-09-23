@@ -26,8 +26,8 @@ import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
 import coil3.request.Options
-import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.util.simpleFileReader
+import dev.secam.simpletag.data.media.MusicData
+import dev.secam.simpletag.util.tag.simpleFileReader
 import javax.inject.Inject
 
 class MusicDataFetcher(private val musicData: MusicData): Fetcher {

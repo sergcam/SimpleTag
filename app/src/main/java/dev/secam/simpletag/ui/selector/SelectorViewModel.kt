@@ -20,10 +20,10 @@ package dev.secam.simpletag.ui.selector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.secam.simpletag.data.MediaRepo
-import dev.secam.simpletag.data.MusicData
-import dev.secam.simpletag.data.SortDirection
-import dev.secam.simpletag.data.SortOrder
+import dev.secam.simpletag.data.media.MediaRepo
+import dev.secam.simpletag.data.media.MusicData
+import dev.secam.simpletag.data.enums.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler

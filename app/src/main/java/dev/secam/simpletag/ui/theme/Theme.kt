@@ -31,8 +31,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import dev.secam.simpletag.data.AppColorScheme
-import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.enums.AppColorScheme
+import dev.secam.simpletag.data.enums.AppTheme
 
 
 @Composable

@@ -17,7 +17,7 @@
 
 package dev.secam.simpletag.ui
 
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 import kotlinx.serialization.Serializable
 
 

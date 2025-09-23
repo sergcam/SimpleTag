@@ -35,7 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.AppColorScheme
+import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.ui.components.SimpleDialog
 
 @Composable

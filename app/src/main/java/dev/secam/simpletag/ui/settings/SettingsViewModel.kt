@@ -24,8 +24,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.AppColorScheme
-import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.enums.AppColorScheme
+import dev.secam.simpletag.data.enums.AppTheme
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow

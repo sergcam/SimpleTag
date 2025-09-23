@@ -21,7 +21,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
-import dev.secam.simpletag.data.AppColorScheme
+import dev.secam.simpletag.data.enums.AppColorScheme
 
 private val YellowLightColorScheme = lightColorScheme(
     primary = Color(0xFF705D0D),

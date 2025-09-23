@@ -41,8 +41,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.SortOrder
-import dev.secam.simpletag.data.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
+import dev.secam.simpletag.data.enums.SortDirection
 import dev.secam.simpletag.ui.components.SimpleDialog
 import dev.secam.simpletag.ui.components.SimpleDialogOptions
 

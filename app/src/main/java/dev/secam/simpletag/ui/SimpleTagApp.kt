@@ -29,7 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.editor.EditorScreen
 import dev.secam.simpletag.ui.selector.SelectorScreen
 import dev.secam.simpletag.ui.settings.AboutScreen

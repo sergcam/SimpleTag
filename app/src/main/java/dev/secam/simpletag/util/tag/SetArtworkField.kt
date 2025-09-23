@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.util
+package dev.secam.simpletag.util.tag
 
 import org.jaudiotagger.tag.flac.FlacTag
 import org.jaudiotagger.tag.images.Artwork

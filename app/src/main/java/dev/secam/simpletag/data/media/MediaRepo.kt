@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.secam.simpletag.data
+package dev.secam.simpletag.data.media
 
 import android.content.Context
 import android.media.MediaScannerConnection
@@ -25,7 +25,7 @@ import coil3.imageLoader
 import coil3.memory.MemoryCache
 import coil3.request.Options
 import dev.secam.simpletag.data.coil.MusicDataKeyer
-import dev.secam.simpletag.util.simpleFileReader
+import dev.secam.simpletag.util.tag.simpleFileReader
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred

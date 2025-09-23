@@ -18,7 +18,7 @@
 package dev.secam.simpletag.ui.editor
 
 import androidx.compose.runtime.Composable
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 
 @Composable
 fun BatchEditor(musicList: List<MusicData>){

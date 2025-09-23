@@ -1,4 +1,21 @@
-package dev.secam.simpletag.util
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package dev.secam.simpletag.util.tag
 
 import android.content.Context
 import android.util.Log
@@ -11,7 +28,6 @@ import org.jaudiotagger.audio.ogg.OggFileWriter
 import java.io.File
 
 fun simpleFileReader(path: String): AudioFile {
-//    if(path.endsWith("aac", true))
     return when {
         path.endsWith("aac", true) ->
             Mp4FileReader().read(File(path))
@@ -21,6 +37,9 @@ fun simpleFileReader(path: String): AudioFile {
     }
 }
 
+/**
+ * for ogg/vorbis use [oggFileWriter] instead
+ */
 fun simpleFileWriter(file: AudioFile) {
     when {
         file.file.path.endsWith("aac", true) ->
@@ -30,6 +49,9 @@ fun simpleFileWriter(file: AudioFile) {
     }
 }
 
+/**
+ * need to use this to write ogg as jaudiotagger tries to create temp files which it doesn't have permissions for
+ */
 fun oggFileWriter(file: AudioFile, context: Context){
     val tempFile = File(context.filesDir, "ogg_temp")
     tempFile.writeBytes(file.file.readBytes())

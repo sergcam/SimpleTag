@@ -37,7 +37,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
 import dev.secam.simpletag.ui.selector.components.SimpleMusicItem
 import dev.secam.simpletag.ui.selector.dialogs.FilterDialog

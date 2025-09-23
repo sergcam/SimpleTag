@@ -26,7 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.secam.simpletag.data.MediaRepo
+import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.PreferencesRepoImpl
 import javax.inject.Singleton

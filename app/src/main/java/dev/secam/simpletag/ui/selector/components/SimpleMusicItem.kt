@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.secam.simpletag.data.MusicData
+import dev.secam.simpletag.data.media.MusicData
 
 @Composable
 fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick: () -> Unit) {

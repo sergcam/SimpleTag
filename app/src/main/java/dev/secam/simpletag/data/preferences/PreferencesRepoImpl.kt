@@ -25,8 +25,8 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import dev.secam.simpletag.data.AppColorScheme
-import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.enums.AppColorScheme
+import dev.secam.simpletag.data.enums.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

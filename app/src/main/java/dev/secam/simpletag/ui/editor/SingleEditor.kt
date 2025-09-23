@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.data.SimpleTagField
+import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.ui.components.SimpleSectionHeader
 import dev.secam.simpletag.ui.editor.components.EditorArtwork
 import dev.secam.simpletag.ui.editor.components.EditorArtworkButtons

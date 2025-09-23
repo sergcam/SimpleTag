@@ -17,8 +17,8 @@
 
 package dev.secam.simpletag.data.preferences
 
-import dev.secam.simpletag.data.AppColorScheme
-import dev.secam.simpletag.data.AppTheme
+import dev.secam.simpletag.data.enums.AppColorScheme
+import dev.secam.simpletag.data.enums.AppTheme
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesRepo {
