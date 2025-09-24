@@ -721,7 +721,7 @@ copy of the Program in return for a fee.\n\n
     <string name="script_field">Script</string>
     <string name="tags_field">Tags</string>
     <string name="tempo_field">Tempo</string>
-    <string name="title_sort_order_field">TitleSortOrder</string>
+    <string name="title_sort_order_field">Title Sort Order</string>
     <string name="total_discs_field">Total Discs</string>
     <string name="total_tracks_field">Total Tracks</string>
     <string name="wikipedia_artist_site_url_field">Wikipedia Artist Site Url</string>
