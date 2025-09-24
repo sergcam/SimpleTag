@@ -4,7 +4,7 @@
 <p align="center">
     <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge">
     <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label=">
-    <img alt="API" src="https://img.shields.io/badge/Api%2027+-50f270?logo=android&logoColor=black&style=for-the-badge"><br>
+    <img alt="API" src="https://img.shields.io/badge/Api%2026+-50f270?logo=android&logoColor=black&style=for-the-badge"><br>
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/sergcam/SimpleTag?color=a1168e&include_prereleases&style=for-the-badge&labelColor=700f63">
     <img alt="GitHub License" src="https://img.shields.io/github/license/sergcam/SimpleTag?style=for-the-badge&labelColor=A6572C">
     <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/sergcam/SimpleTag/total?link=https%3A%2F%2Fgithub.com%2Fsergcam%2FSimpleTag%2Freleases&style=for-the-badge&labelColor=97790E">
