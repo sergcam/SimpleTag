@@ -51,6 +51,15 @@ SimpleTag is a Material You audio tagger built with Jetpack Compose. Supports mo
 
 **Alternatively** download the apk directly from the [releases](https://github.com/sergcam/SimpleTag/releases) section
 
+## Contribute 
+Like SimpleTag and want to support it in some way? Help translate it into your language. Donations are also appreciated.
+#### Translate
+[![crowdin](assets/badges/crowdin.svg)](https://crowdin.com/project/simpletag/invite?h=7cec4bb41937bfa72da41c388c28f8d12559962)
+
+#### Donate
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/sergcam)
+[![Liberapay](https://img.shields.io/badge/Liberapay-F6C915?logo=liberapay&logoColor=black&style=for-the-badge)](https://liberapay.com/sergcam)
+
 ## License
 Copyright (C) 2025  Sergio Camacho
 
