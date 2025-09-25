@@ -175,7 +175,4 @@
     <string name="appearance">Appearance</string>
     <string name="editor">Editor</string>
     <!--    Uncategorized   -->
-    <string name="tag_written_error">Error writing tag</string>
-    <string name="dialog_copy">Copy</string>
-    <string name="log">Log</string>
 </resources>
