@@ -151,7 +151,7 @@
     <string name="unsaved_changes">Unsaved Changes</string>
     <string name="unsaved_changes_long">There are unsaved changes to the file(s). Leave without saving?</string>
     <string name="confirm_changes">Confirm Changes</string>
-    <string name="overwrite">Overwrite (#) tag(s)?</string>
+    <string name="overwrite" comment="the &quot;(#)&quot; should be kept as is and it will be replaced by a number.&#10; e.g.&#10;Overwrite 5 tag(s)?">Overwrite (#) tag(s)?</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="tag_written">Tag(s) written successfully</string>
     <string name="edit_tag">Edit Tag</string>
