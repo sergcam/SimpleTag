@@ -96,7 +96,7 @@
     <string name="script_field">Script</string>
     <string name="tags_field">Étiquettes</string>
     <string name="tempo_field">Tempo</string>
-    <string name="title_sort_order_field">Title Sort Order</string>
+    <string name="title_sort_order_field">Ordre de tri du titre</string>
     <string name="total_discs_field">Total des disques</string>
     <string name="total_tracks_field">Total des pistes</string>
     <string name="wikipedia_artist_site_url_field">URL du site Wikipédia de l\'artiste</string>
@@ -151,7 +151,7 @@
     <string name="unsaved_changes">Modifications non enregistrées</string>
     <string name="unsaved_changes_long">Il y a des modifications non enregistrées dans le(s) fichier(s). Voulez-vous quitter sans enregistrer ?</string>
     <string name="confirm_changes">Confirmer les modifications</string>
-    <string name="overwrite">Remplacer la ou les étiquettes (#) ?</string>
+    <string name="overwrite" comment="the &quot;(#)&quot; should be kept as is and it will be replaced by a number.&#10; e.g.&#10;Overwrite 5 tag(s)?">Remplacer (#) étiquette(s) ?</string>
     <string name="permission_denied">Autorisation refusée</string>
     <string name="tag_written">Étiquette(s) écrite(s) avec succès</string>
     <string name="edit_tag">Modifier l\'étiquette</string>
