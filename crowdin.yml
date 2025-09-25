@@ -1,0 +1,7 @@
+files:
+  - source: /app/src/main/res/values/strings.xml
+    translation: /app/src/main/res/values-%two_letters_code%/strings.xml
+    translate_attributes: 0
+    content_segmentation: 0
+  - source: /fastlane/metadata/android/en-US/*_description.txt
+    translation: /fastlane/metadata/android/%osx_locale%/%original_file_name%
