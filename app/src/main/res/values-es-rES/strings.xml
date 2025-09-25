@@ -3,8 +3,8 @@
     <!--    License     -->
     <!--    Titles    -->
     <string name="app_name">SimpleTag</string>
-    <string name="settings_title">Settings</string>
-    <string name="about_title">About</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="about_title">Acerca De</string>
     <!--     Content Desc    -->
     <string name="cd_back_button">back button</string>
     <string name="cd_settings_button">settings button</string>
@@ -22,14 +22,14 @@
     <string name="cd_add_cover_icon">Add Cover Icon</string>
     <string name="cd_delete_cover_icon">Delete Cover Icon</string>
     <!--    Tag Fields    -->
-    <string name="title_field">Title</string>
-    <string name="artist_field">Artist</string>
-    <string name="album_field">Album</string>
-    <string name="year_field">Year</string>
+    <string name="title_field">Título</string>
+    <string name="artist_field">Artista</string>
+    <string name="album_field">Álbum</string>
+    <string name="year_field">Año</string>
     <string name="track_field">Track</string>
-    <string name="genre_field">Genre</string>
+    <string name="genre_field">Género</string>
     <string name="album_artist_field">Album Artist</string>
-    <string name="composer_field">Composer</string>
+    <string name="composer_field">Compositor</string>
     <string name="disc_number_field">Disc Number</string>
     <string name="comment_field">Comment</string>
     <string name="acoustid_fingerprint_field">AcoustId Fingerprint</string>
@@ -106,24 +106,24 @@
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
     <!--    Color Schemes       -->
-    <string name="dynamic">Dynamic</string>
-    <string name="red">Red</string>
-    <string name="orange">Orange</string>
-    <string name="yellow">Yellow</string>
-    <string name="green">Green</string>
-    <string name="blue">Blue</string>
-    <string name="purple">Purple</string>
+    <string name="dynamic">Dinámico</string>
+    <string name="red">Rojo</string>
+    <string name="orange">Naranja</string>
+    <string name="yellow">Amarillo</string>
+    <string name="green">Verde</string>
+    <string name="blue">Azul</string>
+    <string name="purple">Morado</string>
     <!--    Dialog Options      -->
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_leave">Leave</string>
-    <string name="dialog_close">Close</string>
-    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_leave">Salir</string>
+    <string name="dialog_close">Cerrar</string>
+    <string name="dialog_confirm">Confirmar</string>
     <string name="dialog_ok">OK</string>
     <!--    UI      -->
-    <string name="welcome">Welcome</string>
+    <string name="welcome">Bienvenido</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="missing_permission">Access to audio files is required to use the app</string>
-    <string name="theme">Theme</string>
+    <string name="theme">Tema</string>
     <string name="color_scheme">Color Scheme</string>
     <string name="pure_black">Pure Black Dark Theme</string>
     <string name="advanced_editor">Advanced Editor</string>
@@ -134,9 +134,9 @@
     <string name="source_code">Source Code</string>
     <string name="license">License</string>
     <string name="author">Author</string>
-    <string name="website">Website</string>
-    <string name="email">Email</string>
-    <string name="donate">Donate</string>
+    <string name="website">Sitio Web</string>
+    <string name="email">Correo Electrónico</string>
+    <string name="donate">Donar</string>
     <string name="support">Support</string>
     <string name="bugs_features">Bug or Feature request?</string>
     <string name="bugs">Found a bug?</string>
@@ -146,8 +146,8 @@
     <string name="ascending">Ascending</string>
     <string name="system_font">Use System Font</string>
     <string name="optional_permissions">Optional Permissions</string>
-    <string name="add_cover">Add Cover</string>
-    <string name="delete_cover">Delete Cover</string>
+    <string name="add_cover">Agregar Portada</string>
+    <string name="delete_cover">Remover Portada</string>
     <string name="unsaved_changes">Unsaved Changes</string>
     <string name="unsaved_changes_long">There are unsaved changes to the file(s). Leave without saving?</string>
     <string name="confirm_changes">Confirm Changes</string>
@@ -175,7 +175,4 @@
     <string name="appearance">Appearance</string>
     <string name="editor">Editor</string>
     <!--    Uncategorized   -->
-    <string name="tag_written_error">Error writing tag</string>
-    <string name="dialog_copy">Copy</string>
-    <string name="log">Log</string>
 </resources>
