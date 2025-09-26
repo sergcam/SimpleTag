@@ -1,0 +1,19 @@
+SimpleTag is a Material You audio tagger with support for most major audio and tag formats.
+
+Features:
+
+- MP3, MP4(audio), OGG, FLAC, WAV, AIF, DSF, and WMA audio format support
+- ID3v1, ID3v11, ID3v22, ID3v23, ID3v24, and FLAC tag format support
+- Supports 50+ of the most popular tag fields
+- Batch tag editing (Planned)
+
+Permissions:
+
+- WRITE_EXTERNAL_STORAGE API29 and below. Used to read and write audio files
+- READ_EXTERNAL_STORAGE API30-API32. Used to read audio files
+- READ_MEDIA_AUDIO API33+. Used to read audio files
+
+Optional permissions (API31+):
+
+- MANAGE_MEDIA Used in combination with ACCESS_MEDIA_LOCATION to write to audio files without system pop-up
+- ACCESS_MEDIA_LOCATION required in conjunction with MANAGE_MEDIA to disable the write permission prompt
