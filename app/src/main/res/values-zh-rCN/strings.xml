@@ -160,10 +160,10 @@
     <string name="filter">Filter</string>
     <string name="untagged_files_filter">Only show untagged files</string>
     <string name="sort_by">Sort by</string>
-    <string name="optional_permissions_long">The following permissions are optional and allow tags to be written without device confirmation prompt:</string>
+    <string name="optional_permissions_long">以下权限可选，允许在没有设备确认提示的情况下写入标签：</string>
     <string name="manage_media">Manage Media:</string>
     <string name="access_media_location">Access Media Location:</string>
-    <string name="optional_permission_note">Note: Access Media Location will show up as access photos and videos. You must allow all or else the permission won\'t have any effect</string>
+    <string name="optional_permission_note">注意：访问媒体位置将显示为访问照片和视频。你必须允许全部，不忍权限不会有任何效果</string>
     <string name="skip">Skip</string>
     <string name="no_results">No Results Found</string>
     <string name="loading_music">Loading Music</string>
