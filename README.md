@@ -2,12 +2,12 @@
 <h1 align="center"><b>SimpleTag</b></h1>
 <h4 align="center">A simple, powerful, audio tagger for Android </h4>
 <p align="center">
-    <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge">
-    <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label=">
-    <img alt="API" src="https://img.shields.io/badge/Api%2027+-50f270?logo=android&logoColor=black&style=for-the-badge"><br>
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/sergcam/SimpleTag?color=a1168e&include_prereleases&style=for-the-badge&labelColor=700f63">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/sergcam/SimpleTag?style=for-the-badge&labelColor=A6572C">
-    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/sergcam/SimpleTag/total?link=https%3A%2F%2Fgithub.com%2Fsergcam%2FSimpleTag%2Freleases&style=for-the-badge&labelColor=97790E">
+    <a href=""><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge"></a>
+    <a href=""><img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="></a>
+    <a href=""><img alt="API" src="https://img.shields.io/badge/Api%2026+-50f270?logo=android&logoColor=black&style=for-the-badge"></a><br>
+    <a href="https://github.com/sergcam/SimpleTag/releases/latest"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/sergcam/SimpleTag?color=a1168e&include_prereleases&style=for-the-badge&labelColor=700f63"></a>
+    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="GitHub License" src="https://img.shields.io/github/license/sergcam/SimpleTag?style=for-the-badge&labelColor=A6572C"></a>
+    <a href="https://github.com/sergcam/SimpleTag/releases"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/sergcam/SimpleTag/total?link=https%3A%2F%2Fgithub.com%2Fsergcam%2FSimpleTag%2Freleases&style=for-the-badge&labelColor=97790E"></a>
 </p><br>
 <p align="center">
     <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22dev.secam.simpletag%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fsergcam%2FSimpleTag%22%2C%22author%22%3A%22sergcam%22%2C%22name%22%3A%22SimpleTag%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22sortMethodChoice%5C%22%3A%5C%22date%5C%22%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22releaseTitleAsVersion%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22SimpleTag%5C%22%2C%5C%22appAuthor%5C%22%3A%5C%22sergcam%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22Simple%2C%20Powerful%2C%20Audio%20Tagger%20for%20Android%5C%22%2C%5C%22refreshBeforeDownload%5C%22%3Afalse%7D%22%2C%22overrideSource%22%3Anull%7D"><img src="assets/badges/obtain.svg" width="200"></a>
@@ -50,6 +50,15 @@ SimpleTag is a Material You audio tagger built with Jetpack Compose. Supports mo
 **Recommended:** Click on the Obtainium badge to add SimpleTag to your Obtainium library (download Obtainium [here](https://obtainium.imranr.dev/)) **or** Click on the IzzyOnDroid badge to download through IzzyOnDroid F-Droid repo
 
 **Alternatively** download the apk directly from the [releases](https://github.com/sergcam/SimpleTag/releases) section
+
+## Contribute 
+Like SimpleTag and want to support it in some way? Help translate it into your language. Donations are also appreciated.
+#### Translate
+[![crowdin](assets/badges/crowdin.svg)](https://crowdin.com/project/simpletag/invite?h=7cec4bb41937bfa72da41c388c28f8d12559962)
+
+#### Donate
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/sergcam)
+[![Liberapay](https://img.shields.io/badge/Liberapay-F6C915?logo=liberapay&logoColor=black&style=for-the-badge)](https://liberapay.com/sergcam)
 
 ## License
 Copyright (C) 2025  Sergio Camacho
