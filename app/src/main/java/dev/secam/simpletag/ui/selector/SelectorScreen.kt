@@ -19,26 +19,15 @@ package dev.secam.simpletag.ui.selector
 
  import android.Manifest
  import android.os.Build
- import androidx.compose.animation.AnimatedVisibility
- import androidx.compose.animation.core.tween
- import androidx.compose.animation.fadeIn
- import androidx.compose.animation.fadeOut
- import androidx.compose.animation.scaleIn
- import androidx.compose.animation.scaleOut
  import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.lazy.rememberLazyListState
  import androidx.compose.material3.ExperimentalMaterial3Api
- import androidx.compose.material3.FloatingActionButton
- import androidx.compose.material3.Icon
  import androidx.compose.material3.Scaffold
  import androidx.compose.material3.TopAppBarDefaults
  import androidx.compose.runtime.Composable
  import androidx.compose.runtime.collectAsState
- import androidx.compose.runtime.derivedStateOf
  import androidx.compose.runtime.getValue
  import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberCoroutineScope
  import androidx.compose.runtime.setValue
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -53,7 +42,6 @@ package dev.secam.simpletag.ui.selector
  import dev.secam.simpletag.ui.components.SimpleTopBar
  import dev.secam.simpletag.ui.selector.permission.OptionalPermissionScreen
  import dev.secam.simpletag.ui.selector.permission.PermissionScreen
- import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -63,10 +51,7 @@ fun SelectorScreen(
     onNavigateToEditor: (List<MusicData>) -> Unit,
     onNavigateToSettings: () -> Unit,
 ) {
-    val lazyListState = rememberLazyListState()
-    val firstVisible = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
     val optionalPermissionsSkipped = viewModel.prefState.collectAsState().value.optionalPermissionsSkipped
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val mediaPermissionState = rememberPermissionState(
         permission =
@@ -87,23 +72,6 @@ fun SelectorScreen(
                 action = { onNavigateToSettings() },
                 scrollBehavior = scrollBehavior
             )
-        }, floatingActionButton = {
-            AnimatedVisibility(
-                visible = firstVisible.value != 0,
-                enter = scaleIn(tween(150)) + fadeIn(),
-                exit = scaleOut(tween(150)) + fadeOut()
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        scope.launch { lazyListState.animateScrollToItem(0) }
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_upward_24px), 
-                        contentDescription = stringResource(R.string.cd_scroll_top)
-                    )
-                }
-            }
         }
     ) { contentPadding ->
         var readAudio by remember { mutableStateOf(mediaPermissionState.status.isGranted) }
@@ -112,7 +80,6 @@ fun SelectorScreen(
         when {
             readAudio && optionalPermissionsSkipped ->
                 ListScreen(
-                    lazyListState = lazyListState,
                     onNavigateToEditor = onNavigateToEditor,
                     viewModel = viewModel,
                     modifier = modifier

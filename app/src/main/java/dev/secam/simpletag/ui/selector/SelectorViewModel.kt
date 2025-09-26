@@ -17,13 +17,15 @@
 
 package dev.secam.simpletag.ui.selector
 
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.secam.simpletag.data.media.MediaRepo
-import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.data.enums.SortDirection
 import dev.secam.simpletag.data.enums.SortOrder
+import dev.secam.simpletag.data.media.MediaRepo
+import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -58,18 +60,29 @@ class SelectorViewModel @Inject constructor(
     }
     private val backgroundScope = viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
-    fun loadList() {
+    fun loadList(snackbarHostState: SnackbarHostState, message: String, actionLabel: String) {
         backgroundScope.launch {
-            mediaRepo.loadFiles()
-            _uiState.update { currentState ->
-                currentState.copy(
-                    musicList = sortList(
-                        musicMapState.value.map { entry ->
-                            entry.value
-                        },
-                    ),
-                    filesLoaded = true
-                )
+            val result = mediaRepo.loadFiles()
+            if(result == null) {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        musicList = sortList(
+                            musicMapState.value.map { entry ->
+                                entry.value
+                            },
+                        ),
+                        filesLoaded = true
+                    )
+                }
+            } else {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        filesLoaded = true,
+                        log = result
+                    )
+                }
+                if (snackbarHostState.showSnackbar(message, actionLabel) == SnackbarResult.ActionPerformed)
+                    setShowLogDialog(true)
             }
         }
     }
@@ -260,6 +273,13 @@ class SelectorViewModel @Inject constructor(
             preferencesRepo.saveOptionalPermissionsSkipped(optionalPermissionsSkipped)
         }
     }
+    fun setShowLogDialog( showLogDialog: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                showLogDialog = showLogDialog
+            )
+        }
+    }
 
 }
 
@@ -274,4 +294,6 @@ data class SelectorUiState(
     val isRefreshing: Boolean = false,
     val searchQuery: String = "",
     val searchEnabled: Boolean = false,
+    val log: String = "",
+    val showLogDialog: Boolean = false,
 )

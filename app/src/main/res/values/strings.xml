@@ -809,6 +809,7 @@ copy of the Program in return for a fee.\n\n
     <string name="tag_written_error">Error writing tag</string>
     <string name="dialog_copy">Copy</string>
     <string name="log">Log</string>
+    <string name="list_screen_error">Error loading library</string>
 
 
 </resources>
