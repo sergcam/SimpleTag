@@ -151,7 +151,7 @@
     <string name="unsaved_changes">Nicht gespeicherte Änderungen</string>
     <string name="unsaved_changes_long">Es gibt ungespeicherte Änderungen an der/den Datei(en). Ohne zu speichern verlassen?</string>
     <string name="confirm_changes">Änderungen bestätigen</string>
-    <string name="overwrite" comment="the &quot;(#)&quot; should be kept as is and it will be replaced by a number.&#10; e.g.&#10;Overwrite 5 tag(s)?">Tag(s) überschreiben (#)?</string>
+    <string name="overwrite">Tag(s) überschreiben (#)?</string>
     <string name="permission_denied">Berechtigung abgelehnt</string>
     <string name="tag_written">Tag(s) erfolgreich geschrieben</string>
     <string name="edit_tag">Tag bearbeiten</string>
@@ -175,4 +175,8 @@
     <string name="appearance">Appearance</string>
     <string name="editor">Editor</string>
     <!--    Uncategorized   -->
+    <string name="tag_written_error">Error writing tag</string>
+    <string name="dialog_copy">Copy</string>
+    <string name="log">Log</string>
+    <string name="list_screen_error">Error loading library</string>
 </resources>
