@@ -151,7 +151,7 @@
     <string name="unsaved_changes">Modifications non enregistrées</string>
     <string name="unsaved_changes_long">Il y a des modifications non enregistrées dans le(s) fichier(s). Voulez-vous quitter sans enregistrer ?</string>
     <string name="confirm_changes">Confirmer les modifications</string>
-    <string name="overwrite" comment="the &quot;(#)&quot; should be kept as is and it will be replaced by a number.&#10; e.g.&#10;Overwrite 5 tag(s)?">Remplacer (#) étiquette(s) ?</string>
+    <string name="overwrite">Remplacer (#) étiquette(s) ?</string>
     <string name="permission_denied">Autorisation refusée</string>
     <string name="tag_written">Étiquette(s) écrite(s) avec succès</string>
     <string name="edit_tag">Modifier l\'étiquette</string>
@@ -175,4 +175,8 @@
     <string name="appearance">Apparence</string>
     <string name="editor">Éditeur</string>
     <!--    Uncategorized   -->
+    <string name="tag_written_error">Error writing tag</string>
+    <string name="dialog_copy">Copy</string>
+    <string name="log">Log</string>
+    <string name="list_screen_error">Error loading library</string>
 </resources>
