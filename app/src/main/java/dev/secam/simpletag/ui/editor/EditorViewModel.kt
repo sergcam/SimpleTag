@@ -87,29 +87,54 @@ class EditorViewModel @Inject constructor(
     private val backgroundScope =
         viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
-    fun initEditor(musicList: List<MusicData>) {
+    fun initEditor(musicList: List<MusicData>, tagNames: Map<SimpleTagField, String>) {
         backgroundScope.launch {
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        invisibleTags = SimpleTagField.entries.toSet(),
+                        tagNames = tagNames
+                        )
+                }
                 val firstTag = simpleFileReader(musicList[0].path).tag
                 setEditorMusicList(musicList)
                 setArtwork(firstTag?.firstArtwork)
-                setFieldStates(
-                    buildMap {
-                        SimpleTagField.entries.forEachIndexed { index, field ->
-                            if (index <= SimpleTagField.ADVANCED_CUTOFF || advancedEditor) {
-                                put(field, TextFieldState(firstTag?.getFirst(field.fieldKey) ?: ""))
-                            }
+                SimpleTagField.entries.forEachIndexed { index, field ->
+                    if(!advancedEditor && index <= SimpleTagField.ADVANCED_CUTOFF){
+                        addField(field, firstTag.getFirst(field.fieldKey))
+                    }
+                    else {
+                        if(!firstTag.getFirst(field.fieldKey).isEmpty()) {
+                            addField(field, firstTag.getFirst(field.fieldKey))
                         }
                     }
-                )
+                }
                 setSavedFields()
                 setArtworkChanged(false)
                 setInitialized(true)
+                onSearch()
             }
         }
     }
 
+    fun addField(field: SimpleTagField, content: String = ""){
+        _uiState.update {
+            it.copy(
+                fieldStates = uiState.value.fieldStates + Pair(field, TextFieldState(content)),
+                invisibleTags = uiState.value.invisibleTags - field
+            )
+        }
+    }
+    fun removeField(field: SimpleTagField){
+        _uiState.update {
+            it.copy(
+                fieldStates = uiState.value.fieldStates - field,
+                invisibleTags = uiState.value.invisibleTags + field,
+                deletedFields = uiState.value.deletedFields + field
+            )
+        }
+    }
     fun createTag(ext: String): Tag {
         return when (ext) {
             "flac" -> FlacTag()
@@ -175,6 +200,9 @@ class EditorViewModel @Inject constructor(
                                 else -> tag.setField(artwork)
                             }
                             log += "Wrote new artwork as ${tag.javaClass}\n"
+                        }
+                        for(field in uiState.value.deletedFields){
+                            tag.deleteField(field.fieldKey)
                         }
                         for (field in fields) {
                             if (!field.value.text.isEmpty()) {
@@ -272,6 +300,26 @@ class EditorViewModel @Inject constructor(
         return (uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
     }
 
+    fun onSearch(query: String = "") {
+        val list = uiState.value.tagNames .filterKeys { it in uiState.value.invisibleTags }
+        if(!query.isEmpty()){
+            val list1 = mutableListOf<SimpleTagField>()
+            val list2 = mutableListOf<SimpleTagField>()
+            for (entry in list) {
+                if(entry.key in uiState.value.invisibleTags){
+                    if (entry.value.startsWith(query, true)) {
+                        list1.add(entry.key)
+                    } else if (entry.value.contains(query, true)) {
+                        list2.add(entry.key)
+                    }
+                }
+            }
+            _uiState.update { it.copy(searchResults = list1 + list2) }
+        } else _uiState.update { currentState ->
+            currentState.copy(searchResults = list.map { it.key })
+        }
+    }
+
     /*------- Setters -------*/
     fun setArtwork(artwork: Artwork?) {
         _uiState.update { currentState ->
@@ -282,13 +330,13 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                fieldStates = fieldStates
-            )
-        }
-    }
+//    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
+//        _uiState.update { currentState ->
+//            currentState.copy(
+//                fieldStates = fieldStates
+//            )
+//        }
+//    }
 
     fun setEditorMusicList(editorMusicList: List<MusicData>) {
         _uiState.update { currentState ->
@@ -339,6 +387,10 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(showLogDialog = showLogDialog) }
     }
 
+    fun setShowAddFieldDialog(showAddFieldDialog: Boolean){
+        _uiState.update { it.copy(showAddFieldDialog = showAddFieldDialog) }
+    }
+
 }
 
 data class EditorUiState(
@@ -350,7 +402,12 @@ data class EditorUiState(
     val showBackDialog: Boolean = false,
     val showSaveDialog: Boolean = false,
     val showLogDialog: Boolean = false,
+    val showAddFieldDialog: Boolean = false,
     val savedFields: List<String> = listOf(),
-    val log: String = ""
+    val log: String = "",
+    val tagNames: Map<SimpleTagField, String> = mapOf(),
+    val invisibleTags: Set<SimpleTagField> = setOf(),
+    val searchResults: List<SimpleTagField> = listOf(),
+    val deletedFields: Set<SimpleTagField> = setOf()
 )
 

@@ -25,29 +25,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.SimpleTagField
-import dev.secam.simpletag.ui.components.SimpleSectionHeader
+import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.editor.components.EditorArtwork
 import dev.secam.simpletag.ui.editor.components.EditorArtworkButtons
 import dev.secam.simpletag.ui.editor.components.EditorTextField
+import dev.secam.simpletag.ui.editor.components.FileInfo
+import dev.secam.simpletag.ui.editor.components.NoFieldTip
 import org.jaudiotagger.tag.images.Artwork
 
 @Composable
 fun SingleEditor(
-    path: String,
+    musicData: MusicData,
     roundCovers: Boolean?,
     modifier: Modifier = Modifier,
     setArtwork: (Artwork?) -> Unit,
     artwork: Artwork?,
     fieldStates: Map<SimpleTagField, TextFieldState>,
-    pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
+    pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
+    removeField: (SimpleTagField) -> Unit,
+    advancedEditor: Boolean
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,35 +68,41 @@ fun SingleEditor(
             onDelete = { setArtwork(null) },
             deleteEnabled = artwork != null,
             modifier = Modifier
-                .padding(top = 8.dp)
+                .padding(top = 10.dp, bottom = 6.dp)
         )
-        SimpleSectionHeader(
-            text = stringResource(R.string.file_location),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
-        Text(
-            text = path,
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-        )
+        if (advancedEditor){
+            FileInfo(
+                musicData = musicData,
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+            )
+        }
+
+        //  Field List
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp)
+                .padding(bottom = 72.dp)
         ) {
-            for (field in fieldStates) {
-                EditorTextField(
-                    state = field.value,
-                    label = stringResource(field.key.displayNameRes),
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                )
+            if(fieldStates.isEmpty()){
+                NoFieldTip()
+            } else {
+                for (field in fieldStates) {
+                    EditorTextField(
+                        state = field.value,
+                        label = stringResource(field.key.displayNameRes),
+                        hasDelete = advancedEditor,
+                        action = { removeField(field.key) },
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                }
             }
         }
     }
 }
+
+
 
 
 
