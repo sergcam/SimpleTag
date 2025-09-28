@@ -64,7 +64,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     MediaStore.Audio.Media.TITLE,
                     MediaStore.Audio.Media.ARTIST,
                     MediaStore.Audio.Media.ALBUM,
-                    MediaStore.Audio.Media.DATA
+                    MediaStore.Audio.Media.DATA,
+                    MediaStore.Audio.Media.BITRATE,
+                    MediaStore.Audio.Media.DURATION
                 )
                 val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
                 val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
@@ -92,6 +94,10 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         log += "Found artistColumn at: $artistColumn\n"
                         val pathColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
                         log += "Found pathColumn at: $pathColumn\n"
+                        val bitrateColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE)
+                        log += "Found bitrateColumn at: $bitrateColumn\n"
+                        val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                        log += "Found durationColumn at: $durationColumn\n"
                         // Read Music from MediaStore
                         val musicLoaders = mutableListOf<Deferred<Any>>()
                         log += "Iterating through mediastore\n"
@@ -100,6 +106,8 @@ class MediaRepo @Inject constructor(private val context: Context) {
                             val id = it.getLong(idColumn)
                             val path = it.getString(pathColumn)
                             val ext = path.substringAfterLast(".").lowercase()
+                            val bitrate = it.getInt(bitrateColumn)
+                            val duration = it.getInt(durationColumn)
                             val title = it.getString(titleColumn)
                             val album = it.getString(albumColumn)
                             val artist = it.getString(artistColumn)
@@ -115,7 +123,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                         artist = artist,
                                         album = album,
                                         hasArtwork = null,
-                                        tagged = artist != "<unknown>"
+                                        tagged = artist != "<unknown>",
+                                        bitrate = bitrate,
+                                        duration = duration
                                     )
                                 )
                                 log += "$id: imported $path\n"
@@ -178,7 +188,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                     artist = jArtist,
                                                     album = jAlbum,
                                                     hasArtwork = hasArt,
-                                                    tagged = tagged == 0 // TODO: Fix this
+                                                    tagged = tagged == 0, // TODO: Fix this
+                                                    bitrate = bitrate,
+                                                    duration = duration
                                                 )
                                             )
                                             log += "$id: imported $path using jaudiotagger\n"
@@ -195,7 +207,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                 artist = artist,
                                                 album = album,
                                                 hasArtwork = null,
-                                                tagged = artist != "<unknown>"
+                                                tagged = artist != "<unknown>",
+                                                bitrate = bitrate,
+                                                duration = duration
                                             )
                                         )
                                         log += "$id: imported $path using mediastore\n"
@@ -267,7 +281,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     artist = artist,
                     album = album,
                     hasArtwork = hasArt,
-                    tagged = tagged == 0
+                    tagged = tagged == 0,
+                    bitrate = song.bitrate,
+                    duration = song.duration
                 )
             }
             musicMapState.update { updatedMap }
@@ -295,6 +311,8 @@ class MediaRepo @Inject constructor(private val context: Context) {
                 album = data.album,
                 tagged = data.tagged,
                 hasArtwork = hasArt,
+                bitrate = data.bitrate,
+                duration = data.duration
             )
             musicMapState.update {
                 musicMapState.value + Pair(id,newData)
