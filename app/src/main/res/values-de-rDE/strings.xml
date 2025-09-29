@@ -26,7 +26,7 @@
     <string name="artist_field">Künstler</string>
     <string name="album_field">Album</string>
     <string name="year_field">Jahr</string>
-    <string name="track_field">Titel</string>
+    <string name="track_field" comment="track as in track #">Titelnummer</string>
     <string name="genre_field">Genre</string>
     <string name="album_artist_field">Album Künstler</string>
     <string name="composer_field">Autor</string>
