@@ -1,0 +1,19 @@
+SimpleTag est une application d'édition d'étiquettes audio Material You avec support pour les principaux formats audio et étiquettes.
+
+Caractéristiques :
+
+- Prise en charge des formats audio MP3, MP4 (audio), OGG, FLAC, WAV, AIF, DSF et WMA
+- Prise en charge des formats d'étiquettes ID3v1, ID3v11, ID3v22, ID3v23, ID3v24 et FLAC
+- Prend en charge plus de 50 champs d'étiquettes parmi les plus populaires
+- Modification groupée d'étiquettes (prévue)
+
+Permissions :
+
+- WRITE_EXTERNAL_STORAGE API29 et versions antérieures. Utilisé pour lire et écrire des fichiers audio
+- READ_EXTERNAL_STORAGE API30-API32. Utilisé pour lire des fichiers audio
+- READ_MEDIA_AUDIO API33+. Utilisé pour lire des fichiers audio
+
+Autorisations facultatives (API31+) :
+
+- MANAGE_MEDIA Utilisé en combinaison avec ACCESS_MEDIA_LOCATION pour écrire dans des fichiers audio sans fenêtre contextuelle du système
+- ACCESS_MEDIA_LOCATION requis en conjonction avec MANAGE_MEDIA pour désactiver l'invite d'autorisation d'écriture
