@@ -114,16 +114,12 @@ fun ListScreenTopBar(
                     modifier = Modifier
                         .focusRequester(focusRequester)
                         .onGloballyPositioned {
-//                                if (showSearch && !showingIme) {
                             focusRequester.requestFocus()
-//                                    onShowSearchChange(false)
                         },
                     shape = RectangleShape,
                     colors = SearchBarDefaults.colors(
                         containerColor = Color.Transparent
                     ),
-//                        tonalElevation = TODO(),
-//                        shadowElevation = TODO()
                 )
             } else {
                 IconButton(
@@ -137,8 +133,6 @@ fun ListScreenTopBar(
                 }
             }
         },
-//                modifier = TODO(),
-//                navigationIcon = TODO(),
         actions = {
             if (searchEnabled) { Unit
             } else {
@@ -161,8 +155,6 @@ fun ListScreenTopBar(
             }
         },
         windowInsets = WindowInsets(0),
-//                expandedHeight = 1.dp,
-//                colors = TODO(),
         scrollBehavior = scrollBehavior
     )
 }

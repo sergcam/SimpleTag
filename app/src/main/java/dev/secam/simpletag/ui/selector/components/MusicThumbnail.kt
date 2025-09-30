@@ -33,8 +33,6 @@ import dev.secam.simpletag.data.media.MusicData
 
 @Composable
 fun SimpleAlbumArtwork(musicData: MusicData, modifier: Modifier = Modifier) {
-
-
     Box(
         modifier = modifier
     ) {
@@ -53,7 +51,6 @@ fun SimpleAlbumArtwork(musicData: MusicData, modifier: Modifier = Modifier) {
                 )
             }
         } else {
-
             Image(
                 rememberAsyncImagePainter(musicData),
                 contentDescription = null,
