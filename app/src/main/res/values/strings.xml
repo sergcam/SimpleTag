@@ -756,7 +756,7 @@ copy of the Program in return for a fee.\n\n
     <string name="color_scheme">Color Scheme</string>
     <string name="pure_black">Pure Black Dark Theme</string>
     <string name="advanced_editor">Advanced Editor</string>
-    <string name="advanced_editor_subtext">Show all editable tags</string>
+    <string name="advanced_editor_subtext">Include more field options</string>
     <string name="round_album_cover">Rounded Album Covers</string>
     <string name="app_logo">App Logo</string>
     <string name="version">Version</string>
@@ -810,6 +810,12 @@ copy of the Program in return for a fee.\n\n
     <string name="dialog_copy">Copy</string>
     <string name="log">Log</string>
     <string name="list_screen_error">Error loading library</string>
+    <string name="bitrate">Bit Rate</string>
+    <string name="sample_rate">Sample Rate</string>
+    <string name="duration">Duration</string>
+    <string name="basic_fields">Basic Fields</string>
+    <string name="cd_add_field">Add Field</string>
+    <string name="add_field_tip">Press the + to add a field</string>
 
 
 </resources>

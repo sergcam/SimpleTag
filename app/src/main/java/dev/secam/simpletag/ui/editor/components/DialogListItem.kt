@@ -17,40 +17,32 @@
 
 package dev.secam.simpletag.ui.editor.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import dev.secam.simpletag.R
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun EditorTextField(
-    state: TextFieldState,
-    label: String,
-    modifier: Modifier = Modifier,
-    hasDelete: Boolean = false,
-    action: (() -> Unit)? = null,
-) {
-    OutlinedTextField(
-        state = state,
-        label = {
+fun DialogListItem(text: String, onClick: (() -> Unit)? = null){
+    ListItem(
+        headlineContent = {
             Text(
-                text = label
+                text = text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        trailingIcon = if (hasDelete && action != null) {
-            {
-                IconButton(action) {
-                    Icon(painterResource(R.drawable.ic_delete_24px), "delete")
-                }
-            }
-        } else null,
-        modifier = modifier
-            .fillMaxWidth()
+        colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        ),
+        modifier = Modifier
+            .height(48.dp)
+            .clickable(
+                enabled = true
+            ) { onClick?.invoke() }
     )
 }
