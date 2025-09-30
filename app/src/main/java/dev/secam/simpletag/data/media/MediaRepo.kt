@@ -64,7 +64,8 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     MediaStore.Audio.Media.TITLE,
                     MediaStore.Audio.Media.ARTIST,
                     MediaStore.Audio.Media.ALBUM,
-                    MediaStore.Audio.Media.DATA
+                    MediaStore.Audio.Media.DATA,
+                    MediaStore.Audio.Media.TRACK
                 )
                 val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
                 val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
@@ -92,6 +93,8 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         log += "Found artistColumn at: $artistColumn\n"
                         val pathColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
                         log += "Found pathColumn at: $pathColumn\n"
+                        val trackColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK)
+                        log += "Found trackColumn at: $trackColumn\n"
                         // Read Music from MediaStore
                         val musicLoaders = mutableListOf<Deferred<Any>>()
                         log += "Iterating through mediastore\n"
@@ -103,6 +106,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                             val title = it.getString(titleColumn)
                             val album = it.getString(albumColumn)
                             val artist = it.getString(artistColumn)
+                            val track = it.getInt(trackColumn)
                             // Use MediaStore metadata for mp3 and flac files
                             if (ext == "mp3" || ext == "flac") {
                                 log += "$id: Using mediastore metadata for $path\n"
@@ -115,7 +119,8 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                         artist = artist,
                                         album = album,
                                         hasArtwork = null,
-                                        tagged = artist != "<unknown>"
+                                        tagged = artist != "<unknown>",
+                                        track = track
                                     )
                                 )
                                 log += "$id: imported $path\n"
@@ -178,6 +183,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                     artist = jArtist,
                                                     album = jAlbum,
                                                     hasArtwork = hasArt,
+                                                    track = track,
                                                     tagged = tagged == 0 // TODO: Fix this
                                                 )
                                             )
@@ -195,6 +201,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                 artist = artist,
                                                 album = album,
                                                 hasArtwork = null,
+                                                track = track,
                                                 tagged = artist != "<unknown>"
                                             )
                                         )
@@ -267,6 +274,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                     artist = artist,
                     album = album,
                     hasArtwork = hasArt,
+                    track = song.track,
                     tagged = tagged == 0
                 )
             }
@@ -295,6 +303,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                 album = data.album,
                 tagged = data.tagged,
                 hasArtwork = hasArt,
+                track = data.track
             )
             musicMapState.update {
                 musicMapState.value + Pair(id,newData)
