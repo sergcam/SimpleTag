@@ -17,10 +17,27 @@
 
 package dev.secam.simpletag.ui.editor
 
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
+import org.jaudiotagger.tag.images.Artwork
 
 @Composable
-fun BatchEditor(musicList: List<MusicData>){
+fun BatchEditor(
+    musicList: List<MusicData>,
+    artwork: Artwork?,
+    setArtwork: (Artwork?) -> Unit,
+    roundCovers: Boolean?,
+    fieldStates: Map<SimpleTagField, TextFieldState>,
+    pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
+    advancedEditor: Boolean,
+    removeField: (SimpleTagField) -> Unit,
+    modifier: Modifier
+){
     //TODO: Implement Batch Editor
 }
