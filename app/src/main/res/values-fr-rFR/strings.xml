@@ -127,7 +127,7 @@
     <string name="color_scheme">Palette de couleurs</string>
     <string name="pure_black">Thème noir pur foncé</string>
     <string name="advanced_editor">Éditeur avancé</string>
-    <string name="advanced_editor_subtext">Afficher toutes les étiquettes modifiables</string>
+    <string name="advanced_editor_subtext">Include more field options</string>
     <string name="round_album_cover">Pochettes d\'album arrondies</string>
     <string name="app_logo">Logo de l\'application</string>
     <string name="version">Version</string>
@@ -179,4 +179,10 @@
     <string name="dialog_copy">Copy</string>
     <string name="log">Log</string>
     <string name="list_screen_error">Error loading library</string>
+    <string name="bitrate">Bit Rate</string>
+    <string name="sample_rate">Sample Rate</string>
+    <string name="duration">Duration</string>
+    <string name="basic_fields">Basic Fields</string>
+    <string name="cd_add_field">Add Field</string>
+    <string name="add_field_tip">Press the + to add a field</string>
 </resources>
