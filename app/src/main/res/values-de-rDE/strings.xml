@@ -83,8 +83,8 @@
     <string name="official_artist_site_url_field">Offizielle Künstler-Website Url</string>
     <string name="official_release_site_url_field">Offizielle Veröffentlichungs-Website Url</string>
     <string name="original_album_field">Originales Album</string>
-    <string name="original_artist_field">Orginaler Künstler</string>
-    <string name="original_lyricist_field">Orginaler Texter</string>
+    <string name="original_artist_field">Originaler Künstler</string>
+    <string name="original_lyricist_field">Originaler Texter</string>
     <string name="original_release_date_field">Originales Veröffentlichungsdatum</string>
     <string name="producer_field">Produzent</string>
     <string name="quality_field">Qualität</string>
@@ -178,7 +178,7 @@
     <string name="tag_written_error">Error writing tag</string>
     <string name="dialog_copy">Copy</string>
     <string name="log">Log</string>
-    <string name="list_screen_error">Error loading library</string>
+    <string name="list_screen_error">Error(s) while loading library</string>
     <string name="bitrate">Bit Rate</string>
     <string name="sample_rate">Sample Rate</string>
     <string name="duration">Duration</string>
