@@ -204,20 +204,19 @@ class SelectorViewModel @Inject constructor(
         }
     }
 
-    // TODO: Fix this
     fun refreshMediaStore() {
         backgroundScope.launch{
-            var count = 0
-            mediaRepo.rescanMediaStore {path, uri ->
-                count++
-                if(count == musicMapState.value.size){
-                    backgroundScope.launch {
+//            var count = 0
+//            mediaRepo.rescanMediaStore {path, uri ->
+//                count++
+//                if(count == musicMapState.value.size){
+//                    backgroundScope.launch {
                         suspendLoadList()
                         updateMusicList()
                         _uiState.update { it.copy(isRefreshing = false) }
-                    }
-                }
-            }
+//                    }
+//                }
+//            }
         }
     }
 

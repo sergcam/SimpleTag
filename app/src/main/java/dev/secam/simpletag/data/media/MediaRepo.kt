@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import javax.inject.Inject
@@ -156,79 +157,81 @@ class MediaRepo @Inject constructor(private val context: Context) {
                             else if (COMPATIBLE_TYPES.contains(ext)) {
                                 log += "$id: Using jaudiotagger metadata for $path\n"
                                 val loader = backgroundScope.launch {
-
-
                                     log += "$id: Opening file\n"
                                     try {
-                                        val file = simpleFileReader(path)!!
-                                        log += "$id: File opened\n"
-                                        log += "$id: Getting tag\n"
-                                        val tag: Tag? = file.getTag()
-                                        log += "$id: Got tag\n"
-                                        var tagged = 0
-                                        val jTitle: String
-                                        val jArtist: String
-                                        val jAlbum: String
-                                        if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(
-                                                FieldKey.TITLE
-                                            ) == null
-                                        ) {
-                                            jTitle = file.file.name
-                                            tagged++
-                                        } else {
-                                            jTitle =
-                                                tag.getFirst(FieldKey.TITLE)
-                                                    ?: file.file.name
-                                        }
-                                        log += "$id: Got title\n"
-                                        if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(
-                                                FieldKey.ALBUM
-                                            ) == null
-                                        ) {
-                                            jAlbum = "<unknown>"
-                                            tagged++
-                                        } else {
-                                            jAlbum =
-                                                tag.getFirst(FieldKey.ALBUM)
-                                                    ?: "<unknown>"
-                                        }
-                                        log += "$id: Got album\n"
-                                        if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(
-                                                FieldKey.ARTIST
-                                            ) == null
-                                        ) {
-                                            jArtist = "<unknown>"
-                                            tagged++
-                                        } else {
-                                            jArtist =
-                                                tag.getFirst(FieldKey.ARTIST)
-                                                    ?: "<unknown>"
-                                        }
-                                        log += "$id: Got artist\n"
-                                        val hasArt = tag?.firstArtwork != null
-                                        music.put(
-                                            key = id,
-                                            MusicData(
-                                                id = id,
-                                                path = path,
-                                                title = jTitle,
-                                                artist = jArtist,
-                                                album = jAlbum,
-                                                hasArtwork = hasArt,
-                                                tagged = tagged == 0, // TODO: Fix this
-                                                bitrate = bitrate,
-                                                duration = duration
+                                        val file = simpleFileReader(path)
+                                        if (file != null) {
+                                            log += "$id: File opened\n"
+                                            log += "$id: Getting tag\n"
+                                            val tag: Tag? = file.getTag()
+                                            log += "$id: Got tag\n"
+                                            var tagged = 0
+                                            val jTitle: String
+                                            val jArtist: String
+                                            val jAlbum: String
+                                            if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(
+                                                    FieldKey.TITLE
+                                                ) == null
+                                            ) {
+                                                jTitle = file.file.name
+                                                tagged++
+                                            } else {
+                                                jTitle =
+                                                    tag.getFirst(FieldKey.TITLE)
+                                                        ?: file.file.name
+                                            }
+                                            log += "$id: Got title\n"
+                                            if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(
+                                                    FieldKey.ALBUM
+                                                ) == null
+                                            ) {
+                                                jAlbum = "<unknown>"
+                                                tagged++
+                                            } else {
+                                                jAlbum =
+                                                    tag.getFirst(FieldKey.ALBUM)
+                                                        ?: "<unknown>"
+                                            }
+                                            log += "$id: Got album\n"
+                                            if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(
+                                                    FieldKey.ARTIST
+                                                ) == null
+                                            ) {
+                                                jArtist = "<unknown>"
+                                                tagged++
+                                            } else {
+                                                jArtist =
+                                                    tag.getFirst(FieldKey.ARTIST)
+                                                        ?: "<unknown>"
+                                            }
+                                            log += "$id: Got artist\n"
+                                            val hasArt = tag?.firstArtwork != null
+                                            music.put(
+                                                key = id,
+                                                MusicData(
+                                                    id = id,
+                                                    path = path,
+                                                    title = jTitle,
+                                                    artist = jArtist,
+                                                    album = jAlbum,
+                                                    hasArtwork = hasArt,
+                                                    tagged = tagged == 0, // TODO: Fix this
+                                                    bitrate = bitrate,
+                                                    duration = duration
+                                                )
                                             )
-                                        )
-                                        log += "$id: imported $path using jaudiotagger\n"
-                                        Log.d(
-                                            TAG,
-                                            "$id: imported $path using jaudiotagger"
-                                        )
+                                            log += "$id: imported $path using jaudiotagger\n"
+                                            Log.d(
+                                                TAG,
+                                                "$id: imported $path using jaudiotagger"
+                                            )
+                                        } else {
+                                            throw CannotReadException()
+                                        }
                                     } catch (e: Exception) {
                                         error = true
-                                        Log.d("MediaRepo", e.toString() + path.toString())
-                                        log += e.toString() + path.toString() + "\n"
+                                        Log.w("MediaRepo", "$e: Failed to read $path")
+                                        log += "$e: failed to read $path\n"
                                         log += "$id: jaudiotagger error. falling back to mediastore\n"
                                         music.put(
                                             key = id,
@@ -250,8 +253,6 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                             "$id: imported $path using mediastore fallback"
                                         )
                                     }
-
-
                                 }
                                 musicLoaders.add(loader)
                             }
@@ -333,14 +334,14 @@ class MediaRepo @Inject constructor(private val context: Context) {
         }.await()
     }
 
-    suspend fun rescanMediaStore(scanListener: MediaScannerConnection.OnScanCompletedListener? = null) {
-        backgroundScope.async {
-            val paths = musicMapState.value.map { mapEntry ->
-                mapEntry.value.path
-            }.toTypedArray()
-            MediaScannerConnection.scanFile(context, paths, null, scanListener)
-        }.await()
-    }
+//    suspend fun rescanMediaStore(scanListener: MediaScannerConnection.OnScanCompletedListener? = null) {
+//        backgroundScope.async {
+//            val paths = musicMapState.value.map { mapEntry ->
+//                mapEntry.value.path
+//            }.toTypedArray()
+//            MediaScannerConnection.scanFile(context, paths, null, scanListener)
+//        }.await()
+//    }
 
     suspend fun updateHasArt(id: Long) {
         backgroundScope.async {
