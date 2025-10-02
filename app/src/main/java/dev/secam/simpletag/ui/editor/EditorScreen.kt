@@ -138,27 +138,39 @@ fun EditorScreen(
         topBar = {
             SimpleTopBar(
                 title = stringResource(R.string.edit_tag),
-                actionIcon = painterResource(R.drawable.ic_save_24px),
-                contentDescription = stringResource(R.string.cd_save_tag_icon),
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
                     } else onNavigateBack()
                 },
-                action = {
-                    viewModel.setShowSaveDialog(true)
-
+                actions = {
+                    IconButton(
+                        onClick = { viewModel.openExternal(context, musicList[0]) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_open_in_new_24px),
+                            contentDescription = stringResource(R.string.cd_save_tag_icon)
+                        )
+                    }
+                    IconButton(
+                        onClick = { viewModel.setShowSaveDialog(true) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_save_24px),
+                            contentDescription = stringResource(R.string.cd_save_tag_icon)
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior
             )
         },
-//        floatingActionButton = {
-//            AnimatedFloatingActionButton(
-//                visible = advancedEditor ?: false,
-//                icon = painterResource(R.drawable.ic_add_24px),
-//                iconDescription = stringResource(R.string.cd_add_field)
-//            ) { viewModel.setShowAddFieldDialog(true) }
-//        },
+        floatingActionButton = {
+            AnimatedFloatingActionButton(
+                visible = advancedEditor ?: false,
+                icon = painterResource(R.drawable.ic_add_24px),
+                iconDescription = stringResource(R.string.cd_add_field)
+            ) { viewModel.setShowAddFieldDialog(true) }
+        },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
