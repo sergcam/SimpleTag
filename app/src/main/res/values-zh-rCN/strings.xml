@@ -26,7 +26,7 @@
     <string name="artist_field">艺术家</string>
     <string name="album_field">专辑</string>
     <string name="year_field">年份</string>
-    <string name="track_field" comment="track as in track #">曲目</string>
+    <string name="track_field">曲目</string>
     <string name="genre_field">流派</string>
     <string name="album_artist_field">专辑艺术家</string>
     <string name="composer_field">作曲家</string>
@@ -127,7 +127,7 @@
     <string name="color_scheme">颜色主题</string>
     <string name="pure_black">纯黑深色主题</string>
     <string name="advanced_editor">高级编辑器</string>
-    <string name="advanced_editor_subtext">显示所有可编辑标签</string>
+    <string name="advanced_editor_subtext">包含更多字段选项</string>
     <string name="round_album_cover">圆角专辑封面</string>
     <string name="app_logo">应用标志</string>
     <string name="version">版本</string>
@@ -178,5 +178,11 @@
     <string name="tag_written_error">写入标签出错</string>
     <string name="dialog_copy">复制</string>
     <string name="log">日志</string>
-    <string name="list_screen_error">库加载出错</string>
+    <string name="list_screen_error">Error(s) while loading library</string>
+    <string name="bitrate">比特率</string>
+    <string name="sample_rate">采样率</string>
+    <string name="duration">持续时间</string>
+    <string name="basic_fields">基础字段</string>
+    <string name="cd_add_field">添加字段</string>
+    <string name="add_field_tip">按“+”添加字段</string>
 </resources>
