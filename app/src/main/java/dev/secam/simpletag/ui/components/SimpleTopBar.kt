@@ -150,6 +150,39 @@ fun SimpleTopBar(
         modifier = modifier
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleTopBar(
+    title: String,
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    actions: @Composable () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_back_24px),
+                    contentDescription = stringResource(R.string.cd_back_button)
+                )
+            }
+        },
+        actions = { actions() },
+        scrollBehavior = scrollBehavior,
+        modifier = modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

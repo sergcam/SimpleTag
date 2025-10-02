@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -49,6 +51,7 @@ import dev.secam.simpletag.ui.editor.dialogs.AddFieldDialog
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
+import dev.secam.simpletag.ui.selector.LoadingScreen
 import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
@@ -144,23 +147,24 @@ fun EditorScreen(
                 },
                 action = {
                     viewModel.setShowSaveDialog(true)
+
                 },
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = {
-            AnimatedFloatingActionButton(
-                visible = advancedEditor ?: false,
-                icon = painterResource(R.drawable.ic_add_24px),
-                iconDescription = stringResource(R.string.cd_add_field)
-            ) { viewModel.setShowAddFieldDialog(true) }
-        },
+//        floatingActionButton = {
+//            AnimatedFloatingActionButton(
+//                visible = advancedEditor ?: false,
+//                icon = painterResource(R.drawable.ic_add_24px),
+//                iconDescription = stringResource(R.string.cd_add_field)
+//            ) { viewModel.setShowAddFieldDialog(true) }
+//        },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
     ) { contentPadding ->
-        if(musicList.size == 1) {
-            if (advancedEditor != null) {
+        if (initialized) {
+            if (musicList.size == 1) {
                 SingleEditor(
                     musicData = musicList[0],
                     artwork = artwork,
@@ -168,7 +172,22 @@ fun EditorScreen(
                     roundCovers = roundCovers,
                     fieldStates = fieldStates,
                     pickArtwork = pickArtwork,
-                    advancedEditor = advancedEditor,
+                    advancedEditor = advancedEditor!!,
+                    removeField = viewModel::removeField,
+                    modifier = modifier
+                        .padding(contentPadding)
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .verticalScroll(rememberScrollState())
+                )
+            } else {
+                BatchEditor(
+                    musicList = musicList,
+                    artwork = artwork,
+                    setArtwork = viewModel::setArtwork,
+                    roundCovers = roundCovers,
+                    fieldStates = fieldStates,
+                    pickArtwork = pickArtwork,
+                    advancedEditor = advancedEditor!!,
                     removeField = viewModel::removeField,
                     modifier = modifier
                         .padding(contentPadding)
@@ -176,9 +195,8 @@ fun EditorScreen(
                         .verticalScroll(rememberScrollState())
                 )
             }
-        }
-        else {
-            BatchEditor(musicList)
+        } else {
+            LoadingScreen()
         }
 
         //  Show dialogs

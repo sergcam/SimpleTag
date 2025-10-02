@@ -185,4 +185,5 @@
     <string name="basic_fields">Basic Fields</string>
     <string name="cd_add_field">Add Field</string>
     <string name="add_field_tip">Press the + to add a field</string>
+
 </resources>
