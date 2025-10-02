@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 data class MusicData(
     val id: Long,
     val path: String,
+    val bitrate: Int,
+    val duration: Int,
     val title: String,
     val artist: String,
     val album: String,

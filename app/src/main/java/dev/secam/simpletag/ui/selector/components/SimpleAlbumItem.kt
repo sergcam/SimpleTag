@@ -16,23 +16,18 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.secam.simpletag.data.media.MusicData
+import dev.secam.simpletag.util.durationFormatter
 
 const val ANIMATION_DURATION = 200
 @Composable
-fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
+fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit, expanded: Boolean, onClick: () -> Unit) {
     Column {
         ListItem(
             headlineContent = {
@@ -60,7 +55,7 @@ fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit
             modifier = Modifier
                 .clickable(
                     enabled = true,
-                    onClick = { expanded = !expanded }
+                    onClick = onClick
                 )
         )
         AnimatedVisibility(
@@ -103,9 +98,14 @@ fun AlbumSubItems(
                         Text(
                             text = song.track.toString(),
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            fontSize = 18.sp
                         )
                     }
+                },
+                supportingContent = {
+                    Text(
+                        text = durationFormatter(song.duration),
+                    )
                 },
                 colors = ListItemDefaults.colors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -119,46 +119,46 @@ fun AlbumSubItems(
         }
     }
 }
-
-val eg = listOf(
-    MusicData(
-        id = 2,
-        path = "null",
-        title = "two",
-        artist = "bob",
-        album = "bob songs",
-        hasArtwork = false,
-        track = 2,
-        tagged = true
-    ),
-    MusicData(
-        id = 3,
-        path = "null",
-        title = "three",
-        artist = "bob",
-        album = "bob songs",
-        hasArtwork = false,
-        track = 3,
-        tagged = true
-    ),
-    MusicData(
-        id = 1,
-        path = "null",
-        title = "one",
-        artist = "bob",
-        album = "bob songs",
-        hasArtwork = false,
-        track = 1,
-        tagged = true
-    ),
-)
-
-@Preview
-@Composable
-fun AlbumItemPrev() {
-    Column {
-        SimpleAlbumItem(eg) { }
-        SimpleAlbumItem(eg) { }
-    }
-}
+//
+//val eg = listOf(
+//    MusicData(
+//        id = 2,
+//        path = "null",
+//        title = "two",
+//        artist = "artist name",
+//        album = "album title",
+//        hasArtwork = false,
+//        track = 2,
+//        tagged = true
+//    ),
+//    MusicData(
+//        id = 3,
+//        path = "null",
+//        title = "three",
+//        artist = "artist name",
+//        album = "album title",
+//        hasArtwork = false,
+//        track = 3,
+//        tagged = true
+//    ),
+//    MusicData(
+//        id = 1,
+//        path = "null",
+//        title = "one",
+//        artist = "artist name",
+//        album = "album title",
+//        hasArtwork = false,
+//        track = 1,
+//        tagged = true
+//    ),
+//)
+//
+//@Preview
+//@Composable
+//fun AlbumItemPrev() {
+//    Column {
+//        SimpleAlbumItem(eg) { }
+//        SimpleAlbumItem(eg) { }
+//    }
+//}
 
