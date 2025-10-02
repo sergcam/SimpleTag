@@ -102,18 +102,16 @@ class EditorViewModel @Inject constructor(
                 val firstTag = simpleFileReader(musicList[0].path)?.tag
                 if (firstTag != null) {
                     setEditorMusicList(musicList)
-                    setArtwork(firstTag.firstArtwork)
-                    SimpleTagField.entries.forEachIndexed { index, field ->
-                        if (!advancedEditor) {
-                            if (index <= SimpleTagField.ADVANCED_CUTOFF) {
-                                addField(field, firstTag.getFirst(field.fieldKey))
-                            }
-                        } else {
-                            if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
-                                addField(field, firstTag.getFirst(field.fieldKey))
+                    setArtwork(firstTag?.firstArtwork)
+                    setFieldStates(
+                        buildMap {
+                            SimpleTagField.entries.forEachIndexed { index, field ->
+                                if (index <= SimpleTagField.ADVANCED_CUTOFF || advancedEditor) {
+                                    put(field, TextFieldState(firstTag?.getFirst(field.fieldKey) ?: ""))
+                                }
                             }
                         }
-                    }
+                    )
                 }
 
                 setSavedFields()
@@ -346,13 +344,13 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-//    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
-//        _uiState.update { currentState ->
-//            currentState.copy(
-//                fieldStates = fieldStates
-//            )
-//        }
-//    }
+    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                fieldStates = fieldStates
+            )
+        }
+    }
 
     fun setEditorMusicList(editorMusicList: List<MusicData>) {
         _uiState.update { currentState ->
