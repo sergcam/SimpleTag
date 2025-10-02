@@ -148,7 +148,10 @@ fun ListScreen(
         ) {
             //  Loading bar while loading music
             if (!filesLoaded) {
-                LoadingScreen()
+                LoadingScreen(
+                    text = stringResource(R.string.loading_music),
+                    subtext = stringResource(R.string.loading_music_long)
+                )
             }
             //  if loaded and list is empty
             else if (musicList.isEmpty()) {

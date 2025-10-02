@@ -21,6 +21,7 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -31,6 +32,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,6 +40,7 @@ import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.data.preferences.PreferencesRepo
+import dev.secam.simpletag.util.getMimeType
 import dev.secam.simpletag.util.tag.oggFileWriter
 import dev.secam.simpletag.util.tag.setArtworkField
 import dev.secam.simpletag.util.tag.simpleFileReader
@@ -54,7 +57,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeout
-import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.tag.Tag
 import org.jaudiotagger.tag.asf.AsfTag
 import org.jaudiotagger.tag.flac.FlacTag
@@ -87,29 +89,57 @@ class EditorViewModel @Inject constructor(
     private val backgroundScope =
         viewModelScope.plus(Dispatchers.Default + coroutineExceptionHandler)
 
-    fun initEditor(musicList: List<MusicData>) {
+    fun initEditor(musicList: List<MusicData>, tagNames: Map<SimpleTagField, String>) {
         backgroundScope.launch {
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
-                val firstTag = simpleFileReader(musicList[0].path).tag
-                setEditorMusicList(musicList)
-                setArtwork(firstTag?.firstArtwork)
-                setFieldStates(
-                    buildMap {
-                        SimpleTagField.entries.forEachIndexed { index, field ->
-                            if (index <= SimpleTagField.ADVANCED_CUTOFF || advancedEditor) {
-                                put(field, TextFieldState(firstTag?.getFirst(field.fieldKey) ?: ""))
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        invisibleTags = SimpleTagField.entries.toSet(),
+                        tagNames = tagNames
+                        )
+                }
+                val firstTag = simpleFileReader(musicList[0].path)?.tag
+                if (firstTag != null) {
+                    setEditorMusicList(musicList)
+                    setArtwork(firstTag.firstArtwork)
+                    SimpleTagField.entries.forEachIndexed { index, field ->
+                        if (!advancedEditor) {
+                            if (index <= SimpleTagField.ADVANCED_CUTOFF) {
+                                addField(field, firstTag.getFirst(field.fieldKey))
+                            }
+                        } else {
+                            if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
+                                addField(field, firstTag.getFirst(field.fieldKey))
                             }
                         }
                     }
-                )
+                }
                 setSavedFields()
                 setArtworkChanged(false)
                 setInitialized(true)
+                onSearch()
             }
         }
     }
 
+    fun addField(field: SimpleTagField, content: String = ""){
+        _uiState.update {
+            it.copy(
+                fieldStates = uiState.value.fieldStates + Pair(field, TextFieldState(content)),
+                invisibleTags = uiState.value.invisibleTags - field
+            )
+        }
+    }
+    fun removeField(field: SimpleTagField){
+        _uiState.update {
+            it.copy(
+                fieldStates = uiState.value.fieldStates - field,
+                invisibleTags = uiState.value.invisibleTags + field,
+                deletedFields = uiState.value.deletedFields + field
+            )
+        }
+    }
     fun createTag(ext: String): Tag {
         return when (ext) {
             "flac" -> FlacTag()
@@ -140,7 +170,15 @@ class EditorViewModel @Inject constructor(
         }
         return artwork
     }
+    fun openExternal(context: Context, data: MusicData){
+        val tempFile = File(context.filesDir, "open_external_temp")
+        tempFile.writeBytes(File(data.path).readBytes())
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", tempFile), tempFile.getMimeType() )
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
+        context.startActivity(intent)
+    }
     suspend fun writeTags(context: Context): Boolean {
         _uiState.update { it.copy(log = "") }
         backgroundScope.async {
@@ -153,46 +191,51 @@ class EditorViewModel @Inject constructor(
                     val musicList = uiState.value.editorMusicList
                     if (musicList.size == 1) {
                         log += "Writing single file\n"
-                        val file: AudioFile = simpleFileReader(musicList[0].path)
-                        log += "Opened file: ${file.file.path}\n"
-                        if (file.tag == null) {
-                            log += "No tag. Creating tag\n"
-                            file.tag = createTag(file.ext)
-                            log += "Tag created\n"
-                        }
-                        val tag = file.tag
-                        log += "Tag opened\n"
-                        tag.deleteArtworkField()
-                        log += "Deleted old artwork\n"
-                        if (artwork != null) {
-                            when (tag.javaClass) {
-                                FlacTag().javaClass -> {
-                                    (tag as FlacTag).setArtworkField(artwork)
-                                }
-                                VorbisCommentTag().javaClass -> {
-                                    (tag as VorbisCommentTag).setArtworkField(artwork)
-                                }
-                                else -> tag.setField(artwork)
+                        val file = simpleFileReader(musicList[0].path)
+                        if(file != null) {
+                            log += "Opened file: ${file.file.path}\n"
+                            if (file.tag == null) {
+                                log += "No tag. Creating tag\n"
+                                file.tag = createTag(file.ext)
+                                log += "Tag created\n"
                             }
-                            log += "Wrote new artwork as ${tag.javaClass}\n"
-                        }
-                        for (field in fields) {
-                            if (!field.value.text.isEmpty()) {
-                                tag.setField(field.key.fieldKey, field.value.text as String)
-                                log += "Wrote field ${field.key.fieldKey} with content: ${field.value.text}\n"
+                            val tag = file.tag
+                            log += "Tag opened\n"
+                            tag.deleteArtworkField()
+                            log += "Deleted old artwork\n"
+                            if (artwork != null) {
+                                when (tag.javaClass) {
+                                    FlacTag().javaClass -> {
+                                        (tag as FlacTag).setArtworkField(artwork)
+                                    }
+                                    VorbisCommentTag().javaClass -> {
+                                        (tag as VorbisCommentTag).setArtworkField(artwork)
+                                    }
+                                    else -> tag.setField(artwork)
+                                }
+                                log += "Wrote new artwork as ${tag.javaClass}\n"
+                            }
+                            for(field in uiState.value.deletedFields){
+                                tag.deleteField(field.fieldKey)
+                            }
+                            for (field in fields) {
+                                if (!field.value.text.isEmpty()) {
+                                    tag.setField(field.key.fieldKey, field.value.text as String)
+                                    log += "Wrote field ${field.key.fieldKey} with content: ${field.value.text}\n"
+                                } else {
+                                    tag.deleteField(field.key.fieldKey)
+                                    log += "Cleared field ${field.key.fieldKey}\n"
+                                }
+                            }
+                            if (file.ext == "ogg") {
+                                log += "Writing file using ogg writer\n"
+                                oggFileWriter(file, context)
+                                log += "Wrote file: ${file.file.path} \n"
                             } else {
-                                tag.deleteField(field.key.fieldKey)
-                                log += "Cleared field ${field.key.fieldKey}\n"
+                                log += "Writing file using default writer\n"
+                                simpleFileWriter(file)
+                                log += "Wrote file: ${file.file.path} \n"
                             }
-                        }
-                        if (file.ext == "ogg") {
-                            log += "Writing file using ogg writer\n"
-                            oggFileWriter(file, context)
-                            log += "Wrote file: ${file.file.path} \n"
-                        } else {
-                            log += "Writing file using default writer\n"
-                            simpleFileWriter(file)
-                            log += "Wrote file: ${file.file.path} \n"
                         }
                     } else {
                         log += "Writing multiple files\n"
@@ -272,6 +315,26 @@ class EditorViewModel @Inject constructor(
         return (uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
     }
 
+    fun onSearch(query: String = "") {
+        val list = uiState.value.tagNames .filterKeys { it in uiState.value.invisibleTags }
+        if(!query.isEmpty()){
+            val list1 = mutableListOf<SimpleTagField>()
+            val list2 = mutableListOf<SimpleTagField>()
+            for (entry in list) {
+                if(entry.key in uiState.value.invisibleTags){
+                    if (entry.value.startsWith(query, true)) {
+                        list1.add(entry.key)
+                    } else if (entry.value.contains(query, true)) {
+                        list2.add(entry.key)
+                    }
+                }
+            }
+            _uiState.update { it.copy(searchResults = list1 + list2) }
+        } else _uiState.update { currentState ->
+            currentState.copy(searchResults = list.map { it.key })
+        }
+    }
+
     /*------- Setters -------*/
     fun setArtwork(artwork: Artwork?) {
         _uiState.update { currentState ->
@@ -282,13 +345,13 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                fieldStates = fieldStates
-            )
-        }
-    }
+//    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
+//        _uiState.update { currentState ->
+//            currentState.copy(
+//                fieldStates = fieldStates
+//            )
+//        }
+//    }
 
     fun setEditorMusicList(editorMusicList: List<MusicData>) {
         _uiState.update { currentState ->
@@ -339,6 +402,10 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(showLogDialog = showLogDialog) }
     }
 
+    fun setShowAddFieldDialog(showAddFieldDialog: Boolean){
+        _uiState.update { it.copy(showAddFieldDialog = showAddFieldDialog) }
+    }
+
 }
 
 data class EditorUiState(
@@ -350,7 +417,12 @@ data class EditorUiState(
     val showBackDialog: Boolean = false,
     val showSaveDialog: Boolean = false,
     val showLogDialog: Boolean = false,
+    val showAddFieldDialog: Boolean = false,
     val savedFields: List<String> = listOf(),
-    val log: String = ""
+    val log: String = "",
+    val tagNames: Map<SimpleTagField, String> = mapOf(),
+    val invisibleTags: Set<SimpleTagField> = setOf(),
+    val searchResults: List<SimpleTagField> = listOf(),
+    val deletedFields: Set<SimpleTagField> = setOf()
 )
 

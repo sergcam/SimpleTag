@@ -17,6 +17,7 @@
 
 package dev.secam.simpletag.ui.selector
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
@@ -77,11 +78,16 @@ class SelectorViewModel @Inject constructor(
             } else {
                 _uiState.update { currentState ->
                     currentState.copy(
+                        musicList = sortList(
+                            musicMapState.value.map { entry ->
+                                entry.value
+                            },
+                        ),
                         filesLoaded = true,
                         log = result
                     )
                 }
-                if (snackbarHostState.showSnackbar(message, actionLabel) == SnackbarResult.ActionPerformed)
+                if (snackbarHostState.showSnackbar(message, actionLabel, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed)
                     setShowLogDialog(true)
             }
         }
@@ -258,23 +264,20 @@ class SelectorViewModel @Inject constructor(
             }
         }
     }
+
     fun refreshMediaStore() {
         backgroundScope.launch{
-            var count = 0
-            mediaRepo.rescanMediaStore {path, uri ->
-                count++
-                if(count == musicMapState.value.size){
-                    backgroundScope.launch {
+//            var count = 0
+//            mediaRepo.rescanMediaStore {path, uri ->
+//                count++
+//                if(count == musicMapState.value.size){
+//                    backgroundScope.launch {
                         suspendLoadList()
                         updateMusicList()
-                        _uiState.update { it.copy(
-                            isRefreshing = false,
-                            albumList = listOf(),
-                            albumMap = mapOf()
-                            ) }
-                    }
-                }
-            }
+                        _uiState.update { it.copy(isRefreshing = false) }
+//                    }
+//                }
+//            }
         }
     }
 

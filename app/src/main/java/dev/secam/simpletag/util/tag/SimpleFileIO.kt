@@ -21,19 +21,25 @@ import android.content.Context
 import android.util.Log
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.audio.mp4.Mp4FileReader
 import org.jaudiotagger.audio.mp4.Mp4FileWriter
 import org.jaudiotagger.audio.ogg.OggFileReader
 import org.jaudiotagger.audio.ogg.OggFileWriter
 import java.io.File
 
-fun simpleFileReader(path: String): AudioFile {
-    return when {
-        path.endsWith("aac", true) ->
-            Mp4FileReader().read(File(path))
+fun simpleFileReader(path: String): AudioFile? {
+    return try {
+        when {
+            path.endsWith("aac", true) ->
+                Mp4FileReader().read(File(path))
 
-        else ->
-            AudioFileIO.read(File(path))
+            else ->
+                AudioFileIO.read(File(path))
+        }
+    } catch (e: CannotReadException) {
+        e.printStackTrace()
+        null
     }
 }
 

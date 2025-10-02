@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -41,15 +43,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.secam.simpletag.R
+import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
+import dev.secam.simpletag.ui.components.AnimatedFloatingActionButton
 import dev.secam.simpletag.ui.components.SimpleTopBar
+import dev.secam.simpletag.ui.editor.dialogs.AddFieldDialog
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
+import dev.secam.simpletag.ui.selector.LoadingScreen
 import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +73,7 @@ fun EditorScreen(
     // prefs
     val prefs = viewModel.prefState.collectAsState().value
     val roundCovers = prefs?.roundCovers
+    val advancedEditor = prefs?.advancedEditor
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
@@ -77,6 +83,8 @@ fun EditorScreen(
     val showSaveDialog = uiState.showSaveDialog
     val showBackDialog = uiState.showBackDialog
     val showLogDialog = uiState.showLogDialog
+    val showAddFieldDialog = uiState.showAddFieldDialog
+    val searchResults = uiState.searchResults
     val log = uiState.log
 
     // permission request (API30+)
@@ -100,6 +108,7 @@ fun EditorScreen(
             }
         }
     } else null
+
     // image picker
     val pickArtwork = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -108,51 +117,98 @@ fun EditorScreen(
     }
 
     // initialize editor fields
-    if(!initialized){
-        viewModel.initEditor(musicList)
+    if (!initialized) {
+        viewModel.initEditor(
+            musicList,
+            tagNames = buildMap {
+                SimpleTagField.entries.forEach { field ->
+                    put(field, stringResource(field.displayNameRes))
+                }
+            }
+        )
     }
+
     BackPressHandler {
         if (viewModel.changesMade()) {
             viewModel.setShowBackDialog(true)
         } else onNavigateBack()
     }
+
     Scaffold(
         topBar = {
             SimpleTopBar(
                 title = stringResource(R.string.edit_tag),
-                actionIcon = painterResource(R.drawable.ic_save_24px),
-                contentDescription = stringResource(R.string.cd_save_tag_icon),
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
                     } else onNavigateBack()
                 },
-                action = {
-                    viewModel.setShowSaveDialog(true)
+                actions = {
+                    IconButton(
+                        onClick = { viewModel.openExternal(context, musicList[0]) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_open_in_new_24px),
+                            contentDescription = stringResource(R.string.cd_save_tag_icon)
+                        )
+                    }
+                    IconButton(
+                        onClick = { viewModel.setShowSaveDialog(true) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_save_24px),
+                            contentDescription = stringResource(R.string.cd_save_tag_icon)
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior
             )
+        },
+        floatingActionButton = {
+            AnimatedFloatingActionButton(
+                visible = advancedEditor ?: false,
+                icon = painterResource(R.drawable.ic_add_24px),
+                iconDescription = stringResource(R.string.cd_add_field)
+            ) { viewModel.setShowAddFieldDialog(true) }
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
     ) { contentPadding ->
-        if(musicList.size == 1) {
-            SingleEditor(
-                path = musicList[0].path,
-                artwork = artwork,
-                setArtwork = viewModel::setArtwork,
-                roundCovers = roundCovers,
-                fieldStates = fieldStates,
-                modifier = modifier
-                    .padding(contentPadding)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .verticalScroll(rememberScrollState()),
-                pickArtwork = pickArtwork
-            )
-        }
-        else {
-            BatchEditor(musicList)
+        if (initialized) {
+            if (musicList.size == 1) {
+                SingleEditor(
+                    musicData = musicList[0],
+                    artwork = artwork,
+                    setArtwork = viewModel::setArtwork,
+                    roundCovers = roundCovers,
+                    fieldStates = fieldStates,
+                    pickArtwork = pickArtwork,
+                    advancedEditor = advancedEditor!!,
+                    removeField = viewModel::removeField,
+                    modifier = modifier
+                        .padding(contentPadding)
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .verticalScroll(rememberScrollState())
+                )
+            } else {
+                BatchEditor(
+                    musicList = musicList,
+                    artwork = artwork,
+                    setArtwork = viewModel::setArtwork,
+                    roundCovers = roundCovers,
+                    fieldStates = fieldStates,
+                    pickArtwork = pickArtwork,
+                    advancedEditor = advancedEditor!!,
+                    removeField = viewModel::removeField,
+                    modifier = modifier
+                        .padding(contentPadding)
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .verticalScroll(rememberScrollState())
+                )
+            }
+        } else {
+            LoadingScreen()
         }
 
         //  Show dialogs
@@ -190,6 +246,13 @@ fun EditorScreen(
                     viewModel.setShowLogDialog(false)
                 }
             )
+        }
+        if(showAddFieldDialog){
+            AddFieldDialog(
+                entryList = searchResults,
+                onSearch = viewModel::onSearch,
+                onAdd = viewModel::addField
+            ) { viewModel.setShowAddFieldDialog(false) }
         }
     }
 }

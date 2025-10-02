@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 class MusicDataFetcher(private val musicData: MusicData): Fetcher {
     override suspend fun fetch(): FetchResult? {
-        val artwork = simpleFileReader(musicData.path).tag.firstArtwork?.binaryData
+        val artwork = simpleFileReader(musicData.path)?.tag?.firstArtwork?.binaryData
 
         return if(artwork == null) {
             null

@@ -27,16 +27,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.secam.simpletag.R
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier){
-    Column (
+fun LoadingScreen(
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    subtext: String? = null
+) {
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
@@ -45,17 +47,21 @@ fun LoadingScreen(modifier: Modifier = Modifier){
             .padding(bottom = 80.dp)
     ) {
         CircularProgressIndicator()
-        Text(
-            text = stringResource(R.string.loading_music),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier
-                .padding(top = 12.dp, bottom = 8.dp)
-        )
-        Text(
-            text = stringResource(R.string.loading_music_long),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        text?.let {
+            Text(
+                text = it,//stringResource(R.string.loading_music),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 8.dp)
+            )
+        }
+        subtext?.let {
+            Text(
+                text = it,// stringResource(R.string.loading_music_long),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
