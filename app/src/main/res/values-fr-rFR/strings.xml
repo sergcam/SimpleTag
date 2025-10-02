@@ -178,7 +178,7 @@
     <string name="tag_written_error">Error writing tag</string>
     <string name="dialog_copy">Copy</string>
     <string name="log">Log</string>
-    <string name="list_screen_error">Error loading library</string>
+    <string name="list_screen_error">Error(s) while loading library</string>
     <string name="bitrate">Bit Rate</string>
     <string name="sample_rate">Sample Rate</string>
     <string name="duration">Duration</string>
