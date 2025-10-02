@@ -51,9 +51,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
+import dev.secam.simpletag.data.enums.SortOrder
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
+import dev.secam.simpletag.ui.selector.components.SimpleAlbumItem
 import dev.secam.simpletag.ui.selector.components.SimpleMusicItem
 import dev.secam.simpletag.ui.selector.dialogs.FilterDialog
 import dev.secam.simpletag.ui.selector.dialogs.SortDialog
@@ -87,6 +89,8 @@ fun ListScreen(
     val searchEnabled = uiState.searchEnabled
     val searchQuery = uiState.searchQuery
     val showLogDialog = uiState.showLogDialog
+    val albumList = uiState.albumList
+    val albumMap = uiState.albumMap
     val log = uiState.log
 
     val searchFieldState = rememberTextFieldState(searchQuery)
@@ -169,23 +173,55 @@ fun ListScreen(
                         viewModel.refreshMediaStore()
                     },
                 ) {
-                    LazyColumn(
-                        state = lazyListState,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
+                    if ( sortOrder == SortOrder.Album) {
 
-                        items(
-                            count = musicList.size,
-                            key = null,//{ musicList[it].id },
-                            contentType = { MusicData }
-                        ) { index ->
-
-                            if (musicList[index].hasArtwork == null) {
-                                viewModel.updateHasArt(index)
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            if(albumList.isEmpty() && !musicList.isEmpty()) {
+                                viewModel.setAlbumList()
                             }
-                            SimpleMusicItem(musicList[index]) {
-                                onNavigateToEditor(listOf(musicList[index]))
+                            items(
+                                count = albumList.size,
+                                key = null,//{ musicList[it].id },
+                                contentType = { String }
+                            ) { index ->
+                                if (viewModel.hasArtwork(albumList[index].first) == null) {
+                                    viewModel.updateHasArt(index, true)
+                                }
+                                if (albumMap[albumList[index].first] != null) {
+//                                    var expanded by remember { mutableStateOf(false) }
+                                    SimpleAlbumItem(
+                                        albumMap[albumList[index].first]!!,
+                                        onSongClick = { data ->
+                                            onNavigateToEditor(listOf(data))
+                                        },
+                                        expanded = albumList[index].second,
+                                        onClick = { viewModel.expandAlbum(index) }
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            items(
+                                count = musicList.size,
+                                key = null,//{ musicList[it].id },
+                                contentType = { MusicData }
+                            ) { index ->
+
+                                if (musicList[index].hasArtwork == null) {
+                                    viewModel.updateHasArt(index)
+                                }
+                                SimpleMusicItem(musicList[index]) {
+                                    onNavigateToEditor(listOf(musicList[index]))
+                                }
                             }
                         }
                     }

@@ -105,51 +105,83 @@ class SelectorViewModel @Inject constructor(
             )
         }
     }
+    fun hasArtwork(album: String): Boolean?{
+        return uiState.value.albumMap[album]?.get(0)?.hasArtwork
+    }
     fun updateMusicList() {
         backgroundScope.launch {
-            val musicList = musicMapState.value.map{ entry ->
-                entry.value
-            }
-            val newList = mutableListOf<MusicData>()
+            if(uiState.value.sortOrder == SortOrder.Album){
+                val newList: MutableList<Pair<String, Boolean>> = mutableListOf()
 
-            //  Check query and filter
-            val scanners = mutableListOf<Deferred<Boolean>>()
-            for (song in musicList) {
-                val scanner = backgroundScope.async {
-                    if (matchesQuery(song)) {
-                        if (uiState.value.taggedFilter) {
-                            if (!song.tagged) {
-                                newList.add(song)
-                            } else false
-                        } else {
-                            newList.add(song)
-                        }
-                    } else false
+                //  Check query and filter
+                val scanners = mutableListOf<Deferred<Boolean>>()
+                for (album in uiState.value.albumMap) {
+                    val scanner = backgroundScope.async {
+                        if (matchesQuery(album.key)) {
+                            newList.add(Pair(album.key,false))
+                        } else false
+                    }
+                    scanners.add(scanner)
                 }
-                scanners.add(scanner)
-            }
-            scanners.awaitAll()
+                scanners.awaitAll()
 
-            //  Sort files
-            newList.sortBy { selector ->
-                when(uiState.value.sortOrder){
-                    SortOrder.Album ->
-                        selector.album?.lowercase()
-                    SortOrder.Title ->
-                        selector.title?.lowercase()
-                    SortOrder.Artist ->
-                        selector.artist?.lowercase()
+                //  Sort files
+                newList.sortBy { it.first }
+                if (uiState.value.sortDirection == SortDirection.Descending) {
+                    newList.reverse()
+                }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        albumList = newList
+                    )
+                }
+            } else {
+                val musicList = musicMapState.value.map { entry ->
+                    entry.value
+                }
+                val newList = mutableListOf<MusicData>()
+
+                //  Check query and filter
+                val scanners = mutableListOf<Deferred<Boolean>>()
+                for (song in musicList) {
+                    val scanner = backgroundScope.async {
+                        if (matchesQuery(song)) {
+                            if (uiState.value.taggedFilter) {
+                                if (!song.tagged) {
+                                    newList.add(song)
+                                } else false
+                            } else {
+                                newList.add(song)
+                            }
+                        } else false
+                    }
+                    scanners.add(scanner)
+                }
+                scanners.awaitAll()
+
+                //  Sort files
+                newList.sortBy { selector ->
+                    when (uiState.value.sortOrder) {
+                        SortOrder.Album ->
+                            selector.album.lowercase()
+
+                        SortOrder.Title ->
+                            selector.title.lowercase()
+
+                        SortOrder.Artist ->
+                            selector.artist.lowercase()
 //                    SortOrder.DateAdded ->
 //                        selector.artist?.lowercase()
+                    }
                 }
-            }
-            if(uiState.value.sortDirection == SortDirection.Descending){
-                newList.reverse()
-            }
-            _uiState.update { currentState ->
-                currentState.copy(
-                    musicList = newList
-                )
+                if (uiState.value.sortDirection == SortDirection.Descending) {
+                    newList.reverse()
+                }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        musicList = newList
+                    )
+                }
             }
         }
     }
@@ -159,11 +191,11 @@ class SelectorViewModel @Inject constructor(
         newList.sortBy { selector ->
             when(uiState.value.sortOrder){
                 SortOrder.Album ->
-                    selector.album?.lowercase()
+                    selector.album.lowercase()
                 SortOrder.Title ->
-                    selector.title?.lowercase()
+                    selector.title.lowercase()
                 SortOrder.Artist ->
-                    selector.artist?.lowercase()
+                    selector.artist.lowercase()
 //                    SortOrder.DateAdded ->
 //                        selector.artist?.lowercase()
             }
@@ -178,28 +210,57 @@ class SelectorViewModel @Inject constructor(
         return when {
             query.isEmpty() ->
                 true
-            song.title?.contains(query, true) ?: false ->
+            song.title.contains(query, true) ->
                 true
 
-            song.artist?.contains(query, true) ?: false ->
+            song.artist.contains(query, true) ->
                 true
 
-            song.album?.contains(query, true) ?: false ->
+            song.album.contains(query, true) ->
                 true
             else ->
                 false
         }
     }
-    fun updateHasArt(index: Int){
+
+    fun matchesQuery(text: String): Boolean {
+        val query = uiState.value.searchQuery
+        return when {
+            query.isEmpty() ->
+                true
+            text.contains(query, true) ->
+                true
+            else ->
+                false
+        }
+    }
+    fun expandAlbum(index: Int) {
+        val newList = uiState.value.albumList.toMutableList()
+        newList[index] = Pair(newList[index].first, !newList[index].second)
+        _uiState.update { it.copy( albumList = newList) }
+    }
+    fun updateHasArt(index: Int, isAlbum: Boolean = false) {
         backgroundScope.launch {
-            val id = uiState.value.musicList[index].id
-            mediaRepo.updateHasArt(id)
-            _uiState.update { currentState ->
-                val newList = uiState.value.musicList.toMutableList()
-                newList[index] = musicMapState.value[id]!!
-                currentState.copy(
-                    musicList = newList
-                )
+            if (isAlbum) {
+                val id = uiState.value.albumMap[uiState.value.albumList[index].first]!![0].id
+                mediaRepo.updateHasArt(id)
+                val newList = uiState.value.albumMap[uiState.value.albumList[index].first]!!.toMutableList()
+                newList[0] = musicMapState.value[id]!!
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        albumMap = uiState.value.albumMap + Pair(uiState.value.albumList[index].first, newList)
+                    )
+                }
+            } else {
+                val id = uiState.value.musicList[index].id
+                mediaRepo.updateHasArt(id)
+                _uiState.update { currentState ->
+                    val newList = uiState.value.musicList.toMutableList()
+                    newList[index] = musicMapState.value[id]!!
+                    currentState.copy(
+                        musicList = newList
+                    )
+                }
             }
         }
     }
@@ -217,6 +278,25 @@ class SelectorViewModel @Inject constructor(
 //                    }
 //                }
 //            }
+        }
+    }
+
+    fun setAlbumList() {
+        backgroundScope.launch {
+            val albumMap = mutableMapOf<String, List<MusicData>>()
+            for (song in uiState.value.musicList) {
+                if (albumMap[song.album] == null) {
+                    albumMap[song.album] = listOf(song)
+                } else {
+                    albumMap[song.album] = albumMap[song.album]!! + song
+                }
+            }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    albumMap = albumMap,
+                    albumList = albumMap.map { Pair(it.key,false) }
+                )
+            }
         }
     }
 
@@ -303,4 +383,6 @@ data class SelectorUiState(
     val searchEnabled: Boolean = false,
     val log: String = "",
     val showLogDialog: Boolean = false,
+    val albumMap: Map<String, List<MusicData>> = mapOf(),
+    val albumList: List<Pair<String, Boolean>> = listOf()
 )

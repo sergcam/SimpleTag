@@ -34,42 +34,33 @@ import dev.secam.simpletag.data.media.MusicData
 
 @Composable
 fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    if (musicData.title == null) {
-        ListItem(
-            headlineContent = {},
-            colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.background
+    ListItem(
+        headlineContent = {
+            Text(text = musicData.title, fontWeight = FontWeight.Medium)
+        },
+        supportingContent = {
+            Text(
+                text = "${musicData.album} - ${musicData.artist}"
             )
-        )
-    } else {
-        ListItem(
-            headlineContent = {
-                Text(text = musicData.title, fontWeight = FontWeight.Medium)
-            },
-            supportingContent = {
-                Text(
-                    text = "${musicData.album} - ${musicData.artist}"
-                )
-            },
-            leadingContent = {
-                Box(
-                    modifier = modifier
-                        .size(48.dp)
-                        .clip(
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                ) {
-                    SimpleAlbumArtwork(musicData)
-                }
-            },
-            colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.background
-            ),
-            modifier = modifier
-                .clickable(
-                    enabled = true,
-                    onClick = onClick
-                )
-        )
-    }
+        },
+        leadingContent = {
+            Box(
+                modifier = modifier
+                    .size(48.dp)
+                    .clip(
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            ) {
+                SimpleAlbumArtwork(musicData)
+            }
+        },
+        colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+        modifier = modifier
+            .clickable(
+                enabled = true,
+                onClick = onClick
+            )
+    )
 }

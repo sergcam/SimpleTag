@@ -80,6 +80,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.TRACK,
             MediaStore.Audio.Media.BITRATE,
             MediaStore.Audio.Media.DURATION
         )
@@ -114,11 +115,11 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         val pathColumn =
                             it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
                         log += "Found pathColumn at: $pathColumn\n"
-                        val bitrateColumn =
-                            it.getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE)
+                        val trackColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK)
+                        log += "Found trackColumn at: $trackColumn\n"
+                        val bitrateColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE)
                         log += "Found bitrateColumn at: $bitrateColumn\n"
-                        val durationColumn =
-                            it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                        val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
                         log += "Found durationColumn at: $durationColumn\n"
                         // Read Music from MediaStore
                         val musicLoaders = mutableListOf<Job>()
@@ -133,6 +134,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                             val title = it.getString(titleColumn)
                             val album = it.getString(albumColumn)
                             val artist = it.getString(artistColumn)
+                            val track = it.getInt(trackColumn) % 1000
                             // Use MediaStore metadata for mp3 and flac files
                             if (ext == "mp3" || ext == "flac") {
                                 log += "$id: Using mediastore metadata for $path\n"
@@ -146,6 +148,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                         album = album,
                                         hasArtwork = null,
                                         tagged = artist != "<unknown>",
+                                        track = track,
                                         bitrate = bitrate,
                                         duration = duration
                                     )
@@ -206,6 +209,10 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                             }
                                             log += "$id: Got artist\n"
                                             val hasArt = tag?.firstArtwork != null
+                                            val track =
+                                                if(tag?.getFirst(FieldKey.TRACK)?.isEmpty() == false) tag.getFirst(FieldKey.TRACK)?.toInt()
+                                                else 0
+
                                             music.put(
                                                 key = id,
                                                 MusicData(
@@ -215,9 +222,10 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                     artist = jArtist,
                                                     album = jAlbum,
                                                     hasArtwork = hasArt,
-                                                    tagged = tagged == 0, // TODO: Fix this
+                                                    track = track,
                                                     bitrate = bitrate,
-                                                    duration = duration
+                                                    duration = duration,
+                                                    tagged = tagged == 0 // TODO: Fix this
                                                 )
                                             )
                                             log += "$id: imported $path using jaudiotagger\n"
@@ -242,6 +250,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                 artist = artist,
                                                 album = album,
                                                 hasArtwork = null,
+                                                track = track,
                                                 tagged = artist != "<unknown>",
                                                 bitrate = bitrate,
                                                 duration = duration
@@ -300,7 +309,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         title = tag.getFirst(FieldKey.TITLE)
                     }
                     if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(FieldKey.ALBUM) == null) {
-                        album = if (file.ext == "mp3" || file.ext == "flac") {
+MediaStore.Audio.Media.TRACK,
+                    MediaStore.Audio.Media.BITRATE,
+                    MediaStore.Audio.Media.DURATION                        album = if (file.ext == "mp3" || file.ext == "flac") {
                             song.path.substringBeforeLast("/").substringAfterLast("/")
                         } else {
                             "<unknown>"
@@ -357,6 +368,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                 album = data.album,
                 tagged = data.tagged,
                 hasArtwork = hasArt,
+                track = data.track,
                 bitrate = data.bitrate,
                 duration = data.duration
             )

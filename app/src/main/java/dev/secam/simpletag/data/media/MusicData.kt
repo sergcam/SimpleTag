@@ -8,9 +8,10 @@ data class MusicData(
     val path: String,
     val bitrate: Int,
     val duration: Int,
-    val title: String? = null,
-    val artist: String? = null,
-    val album: String? = null,
+    val title: String,
+    val artist: String,
+    val album: String,
     val hasArtwork: Boolean? = null,
+    val track: Int? = null,
     val tagged: Boolean
 )
