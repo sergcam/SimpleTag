@@ -54,7 +54,8 @@ SimpleTag is a Material You audio tagger built with Jetpack Compose. Supports mo
 ## Contribute 
 Like SimpleTag and want to support it in some way? Help translate it into your language. Donations are also appreciated.
 #### Translate
-[![crowdin](assets/badges/crowdin.svg)](https://crowdin.com/project/simpletag/invite?h=7cec4bb41937bfa72da41c388c28f8d12559962)
+[![crowdin](https://img.shields.io/badge/crowdin-263238?style=for-the-badge&logo=crowdin&logoColor=ffffff
+)](https://crowdin.com/project/simpletag/invite?h=7cec4bb41937bfa72da41c388c28f8d12559962)
 
 #### Donate
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/sergcam)
