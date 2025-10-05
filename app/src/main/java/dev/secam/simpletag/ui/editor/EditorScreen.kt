@@ -42,6 +42,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
@@ -147,6 +149,9 @@ fun EditorScreen(
                     IconButton(
                         onClick = { viewModel.openExternal(context, musicList[0]) }
                     ) {
+                        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                            viewModel.clearCache(context)
+                        }
                         Icon(
                             painter = painterResource(R.drawable.ic_open_in_new_24px),
                             contentDescription = stringResource(R.string.cd_save_tag_icon)

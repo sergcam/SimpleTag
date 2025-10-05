@@ -171,13 +171,17 @@ class EditorViewModel @Inject constructor(
         return artwork
     }
     fun openExternal(context: Context, data: MusicData){
-        val tempFile = File(context.filesDir, "open_external_temp")
+        val tempFile = File.createTempFile("open_external_temp", null,context.cacheDir)
         tempFile.writeBytes(File(data.path).readBytes())
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", tempFile), tempFile.getMimeType() )
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         context.startActivity(intent)
+    }
+
+    fun clearCache(context: Context) {
+        context.cacheDir.delete()
     }
     suspend fun writeTags(context: Context): Boolean {
         _uiState.update { it.copy(log = "") }

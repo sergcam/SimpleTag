@@ -266,18 +266,10 @@ class SelectorViewModel @Inject constructor(
     }
 
     fun refreshMediaStore() {
-        backgroundScope.launch{
-//            var count = 0
-//            mediaRepo.rescanMediaStore {path, uri ->
-//                count++
-//                if(count == musicMapState.value.size){
-//                    backgroundScope.launch {
-                        suspendLoadList()
-                        updateMusicList()
-                        _uiState.update { it.copy(isRefreshing = false) }
-//                    }
-//                }
-//            }
+        backgroundScope.launch {
+            suspendLoadList()
+            updateMusicList()
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
@@ -297,6 +289,7 @@ class SelectorViewModel @Inject constructor(
                     albumList = albumMap.map { Pair(it.key,false) }
                 )
             }
+            updateMusicList()
         }
     }
 

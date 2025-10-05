@@ -309,14 +309,11 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         title = tag.getFirst(FieldKey.TITLE)
                     }
                     if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(FieldKey.ALBUM) == null) {
-MediaStore.Audio.Media.TRACK,
-                    MediaStore.Audio.Media.BITRATE,
-                    MediaStore.Audio.Media.DURATION                        album = if (file.ext == "mp3" || file.ext == "flac") {
+                        album = if (file.ext == "mp3" || file.ext == "flac") {
                             song.path.substringBeforeLast("/").substringAfterLast("/")
                         } else {
                             "<unknown>"
                         }
-
                         tagged++
                     } else {
                         album = tag.getFirst(FieldKey.ALBUM) ?: "<unknown>"
