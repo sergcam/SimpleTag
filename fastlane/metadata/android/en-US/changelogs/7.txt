@@ -1,7 +1,6 @@
-v0.2.0-beta
+v0.2.0-beta:
 What's Fixed:
 - Pull to refresh should work better now
-
 What's New:
 - Redesigned advanced editor. Now much less cluttered and more functional 
 - Added album grouping when using album sort
