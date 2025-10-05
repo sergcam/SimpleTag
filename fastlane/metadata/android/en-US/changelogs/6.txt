@@ -1,0 +1,5 @@
+v0.1.5: 
+What's Fixed:
+- Fixed music loading issues
+What's New:
+- Added German translation 
