@@ -174,15 +174,14 @@ fun ListScreen(
                     },
                 ) {
                     if ( sortOrder == SortOrder.Album) {
-
+                        if(albumList.isEmpty() && !musicList.isEmpty()) {
+                            viewModel.setAlbumList()
+                        }
                         LazyColumn(
                             state = lazyListState,
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            if(albumList.isEmpty() && !musicList.isEmpty()) {
-                                viewModel.setAlbumList()
-                            }
                             items(
                                 count = albumList.size,
                                 key = null,//{ musicList[it].id },
