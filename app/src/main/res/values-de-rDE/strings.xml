@@ -57,7 +57,7 @@
     <string name="discogs_release_site_url_field">Discogs-Releaseseite Url</string>
     <string name="dj_mixer_field">DJ Mixer</string>
     <string name="encoded_by_field">Kodiert durch</string>
-    <string name="engineer_field">Ingenieur</string>
+    <string name="engineer_field">Techniker</string>
     <string name="floating_point_bpm_field">Gleitkomma-BPM</string>
     <string name="gapless_playback_field">Lückenloses Abspielen</string>
     <string name="grouping_field">Gruppierung</string>
