@@ -175,13 +175,13 @@
     <string name="appearance">Aussehen</string>
     <string name="editor">Editor</string>
     <!--    Uncategorized   -->
-    <string name="tag_written_error">Error writing tag</string>
-    <string name="dialog_copy">Copy</string>
+    <string name="tag_written_error">Fehler beim Schreiben des Tags</string>
+    <string name="dialog_copy">Kopieren</string>
     <string name="log">Log</string>
-    <string name="list_screen_error">Error(s) while loading library</string>
+    <string name="list_screen_error">(Mehrere) Fehler beim Laden der Bibliothek</string>
     <string name="bitrate">Bit Rate</string>
     <string name="sample_rate">Sample Rate</string>
-    <string name="duration">Duration</string>
+    <string name="duration">Dauer</string>
     <string name="basic_fields">Basic Fields</string>
     <string name="cd_add_field">Add Field</string>
     <string name="add_field_tip">Press the + to add a field</string>
