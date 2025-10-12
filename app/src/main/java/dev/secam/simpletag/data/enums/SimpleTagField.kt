@@ -77,6 +77,8 @@ enum class SimpleTagField (val displayNameRes: Int, val fieldKey: FieldKey) {
     ReleaseStatus(R.string.release_status_field, FieldKey.MUSICBRAINZ_RELEASE_STATUS),
     ReleaseType(R.string.release_type_field, FieldKey.MUSICBRAINZ_RELEASE_TYPE),
     Remixer(R.string.remixer_field, FieldKey.REMIXER),
+    ReplayGainTrack(R.string.replaygain_track_field, FieldKey.REPLAYGAIN_TRACK_GAIN),
+    ReplayGainAlbum(R.string.replaygain_album_field, FieldKey.REPLAYGAIN_ALBUM_GAIN),
     Script(R.string.script_field, FieldKey.SCRIPT),
     Tags(R.string.tags_field, FieldKey.TAGS),
     Tempo(R.string.tempo_field, FieldKey.TEMPO),

@@ -1,5 +1,8 @@
 package org.jaudiotagger.tag.vorbiscomment;
 
+import org.jaudiotagger.tag.id3.ID3v23Frames;
+import org.jaudiotagger.tag.id3.Id3FieldType;
+import org.jaudiotagger.tag.id3.framebody.FrameBodyTXXX;
 import org.jaudiotagger.tag.reference.Tagger;
 
 import java.util.EnumSet;
@@ -187,6 +190,8 @@ public enum VorbisCommentFieldKey
     RECORDINGLOCATION("RECORDINGLOCATION",EnumSet.of(Tagger.ROON)),
     RELEASECOUNTRY("RELEASECOUNTRY",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     REMIXER("REMIXER",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    REPLAYGAIN_TRACK_GAIN("REPLAYGAIN_TRACK_GAIN"),
+    REPLAYGAIN_ALBUM_GAIN("REPLAYGAIN_ALBUM_GAIN"),
     ROONALBUMTAG("ROONALBUMTAG",EnumSet.of(Tagger.ROON)),
     ROONTRACKTAG("ROONTRACKTAG",EnumSet.of(Tagger.ROON)),
     SCRIPT("SCRIPT",EnumSet.of(Tagger.JAIKOZ)),

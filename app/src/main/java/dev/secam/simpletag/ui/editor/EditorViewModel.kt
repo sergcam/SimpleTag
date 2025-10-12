@@ -70,6 +70,15 @@ import java.nio.file.AccessDeniedException
 import javax.inject.Inject
 
 const val WRITE_TIMEOUT = 1000L
+val SUPPORTS_RG = listOf(
+    "mp3",
+    "wav",
+    "wave",
+    "dsf",
+    "wma",
+    "ogg",
+    "flac",
+)
 
 @HiltViewModel
 class EditorViewModel @Inject constructor(
@@ -97,20 +106,34 @@ class EditorViewModel @Inject constructor(
                     currentState.copy(
                         invisibleTags = SimpleTagField.entries.toSet(),
                         tagNames = tagNames
-                        )
+                    )
                 }
-                val firstTag = simpleFileReader(musicList[0].path)?.tag
-                if (firstTag != null) {
+                val firstFile = simpleFileReader(musicList[0].path)
+                if (firstFile != null) {
+                    if (!SUPPORTS_RG.contains(firstFile.ext)) {
+                        removeRG()
+                    }
+                    val firstTag = firstFile.tag
                     setEditorMusicList(musicList)
-                    setArtwork(firstTag.firstArtwork)
-                    SimpleTagField.entries.forEachIndexed { index, field ->
-                        if (!advancedEditor) {
-                            if (index <= SimpleTagField.ADVANCED_CUTOFF) {
-                                addField(field, firstTag.getFirst(field.fieldKey))
-                            }
-                        } else {
-                            if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
-                                addField(field, firstTag.getFirst(field.fieldKey))
+                    if(firstTag != null){
+                        setArtwork(firstTag.firstArtwork)
+                        SimpleTagField.entries.forEachIndexed { index, field ->
+                            if (!advancedEditor) {
+                                if (index <= SimpleTagField.ADVANCED_CUTOFF) {
+                                    addField(field, firstTag.getFirst(field.fieldKey))
+                                }
+                            } else {
+                                if(field == SimpleTagField.ReplayGainTrack || field == SimpleTagField.ReplayGainAlbum){
+                                    if(SUPPORTS_RG.contains(firstFile.ext)){
+                                        if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
+                                            addField(field, firstTag.getFirst(field.fieldKey))
+                                        }
+                                    }
+                                } else {
+                                    if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
+                                        addField(field, firstTag.getFirst(field.fieldKey))
+                                    }
+                                }
                             }
                         }
                     }
@@ -128,6 +151,16 @@ class EditorViewModel @Inject constructor(
             it.copy(
                 fieldStates = uiState.value.fieldStates + Pair(field, TextFieldState(content)),
                 invisibleTags = uiState.value.invisibleTags - field
+            )
+        }
+    }
+    fun removeRG() {
+        _uiState.update {
+            it.copy(
+                invisibleTags = uiState.value.invisibleTags - setOf(
+                    SimpleTagField.ReplayGainAlbum,
+                    SimpleTagField.ReplayGainTrack
+                ),
             )
         }
     }

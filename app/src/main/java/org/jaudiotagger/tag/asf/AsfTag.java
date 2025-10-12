@@ -243,6 +243,8 @@ public final class AsfTag extends AbstractTag
         tagFieldToAsfField.put(FieldKey.RECORDINGENDDATE, AsfFieldKey.RECORDINGENDDATE);
         tagFieldToAsfField.put(FieldKey.RECORDINGLOCATION, AsfFieldKey.RECORDINGLOCATION);
         tagFieldToAsfField.put(FieldKey.REMIXER, AsfFieldKey.REMIXER);
+        tagFieldToAsfField.put(FieldKey.REPLAYGAIN_TRACK_GAIN, AsfFieldKey.REPLAYGAIN_TRACK_GAIN);
+        tagFieldToAsfField.put(FieldKey.REPLAYGAIN_ALBUM_GAIN, AsfFieldKey.REPLAYGAIN_ALBUM_GAIN);
         tagFieldToAsfField.put(FieldKey.ROONALBUMTAG, AsfFieldKey.ROONALBUMTAG);
         tagFieldToAsfField.put(FieldKey.ROONTRACKTAG, AsfFieldKey.ROONTRACKTAG);
         tagFieldToAsfField.put(FieldKey.SCRIPT, AsfFieldKey.SCRIPT);
