@@ -69,10 +69,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
-    implementation(libs.jaudiotagger)
+//    implementation(libs.jaudiotagger)
     implementation(libs.accompanist.permissions)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
+
 
     //coil
     implementation(libs.coil.compose)
