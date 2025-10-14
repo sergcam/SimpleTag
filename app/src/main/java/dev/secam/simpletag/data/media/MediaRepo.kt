@@ -238,29 +238,29 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                         }
                                     } catch (e: Exception) {
                                         error = true
-                                        Log.w("MediaRepo", "$e: Failed to read $path")
-                                        log += "$e: failed to read $path\n"
-                                        log += "$id: jaudiotagger error. falling back to mediastore\n"
-                                        music.put(
-                                            key = id,
-                                            MusicData(
-                                                id = id,
-                                                path = path,
-                                                title = title,
-                                                artist = artist,
-                                                album = album,
-                                                hasArtwork = null,
-                                                track = track,
-                                                tagged = artist != "<unknown>",
-                                                bitrate = bitrate,
-                                                duration = duration
-                                            )
-                                        )
-                                        log += "$id: imported $path using mediastore fallback\n"
-                                        Log.d(
-                                            TAG,
-                                            "$id: imported $path using mediastore fallback"
-                                        )
+                                        Log.w("MediaRepo", "$e: Failed to read $path. skipping")
+                                        log += "$e: failed to read $path. skipping\n"
+//                                        log += "$id: jaudiotagger error. falling back to mediastore\n"
+//                                        music.put(
+//                                            key = id,
+//                                            MusicData(
+//                                                id = id,
+//                                                path = path,
+//                                                title = title,
+//                                                artist = artist,
+//                                                album = album,
+//                                                hasArtwork = null,
+//                                                track = track,
+//                                                tagged = artist != "<unknown>",
+//                                                bitrate = bitrate,
+//                                                duration = duration
+//                                            )
+//                                        )
+//                                        log += "$id: imported $path using mediastore fallback\n"
+//                                        Log.d(
+//                                            TAG,
+//                                            "$id: imported $path using mediastore fallback"
+//                                        )
                                     }
                                 }
                                 musicLoaders.add(loader)

@@ -17,9 +17,7 @@
 
 package dev.secam.simpletag.ui.selector
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,8 +85,8 @@ class SelectorViewModel @Inject constructor(
                         log = result
                     )
                 }
-                if (snackbarHostState.showSnackbar(message, actionLabel, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed)
-                    setShowLogDialog(true)
+//                if (snackbarHostState.showSnackbar(message, actionLabel, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed)
+//                    setShowLogDialog(true)
             }
         }
     }
