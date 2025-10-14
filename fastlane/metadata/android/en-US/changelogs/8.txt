@@ -1,0 +1,5 @@
+v0.2.1
+What's Fixed:
+- Skip over broken / unreadable files
+What's New:
+- experimental support for replaygain fields (mp4 and aiff not supported)

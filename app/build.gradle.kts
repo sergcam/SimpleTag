@@ -18,8 +18,8 @@ android {
         applicationId = "dev.secam.simpletag"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.2.0-beta"
+        versionCode = 8
+        versionName = "0.2.1-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -69,7 +69,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
-//    implementation(libs.jaudiotagger)
     implementation(libs.accompanist.permissions)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
