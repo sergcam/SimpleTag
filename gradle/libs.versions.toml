@@ -16,6 +16,7 @@ kotlinxSerializationJson = "1.9.0"
 
 
 [libraries]
+javax-imageio = { module = "javax.imageio:imageio"}
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
