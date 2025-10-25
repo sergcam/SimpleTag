@@ -13,8 +13,8 @@
     <string name="cd_add_art_icon">アルバムアートを追加</string>
     <string name="cd_back">戻る</string>
     <string name="cd_clear_button">テキストを消去する</string>
-    <string name="cd_search_button">検索</string>
-    <string name="cd_filter_button">絞り込む</string>
+    <string name="cd_search_button">検索ボタン</string>
+    <string name="cd_filter_button">フィルターボタン</string>
     <string name="cd_permission_not_granted">権限が付与されていません</string>
     <string name="cd_settings_icon">Settings icon</string>
     <string name="cd_scroll_top">一番上へスクロール</string>
@@ -102,30 +102,30 @@
     <string name="wikipedia_artist_site_url_field">Wikipedia Artist Site Url</string>
     <string name="wikipedia_release_site_url_field">Wikipedia Release Site Url</string>
     <!--    Themes      -->
-    <string name="system_theme">System</string>
-    <string name="light_theme">Light</string>
-    <string name="dark_theme">Dark</string>
+    <string name="system_theme">システムテーマ</string>
+    <string name="light_theme">ライトテーマ</string>
+    <string name="dark_theme">ダークテーマ</string>
     <!--    Color Schemes       -->
-    <string name="dynamic">Dynamic</string>
-    <string name="red">Red</string>
-    <string name="orange">Orange</string>
-    <string name="yellow">Yellow</string>
-    <string name="green">Green</string>
-    <string name="blue">Blue</string>
-    <string name="purple">Purple</string>
+    <string name="dynamic">ダイナミック カラー</string>
+    <string name="red">レッド</string>
+    <string name="orange">オレンジ</string>
+    <string name="yellow">イエロー</string>
+    <string name="green">グリーン</string>
+    <string name="blue">ブルー</string>
+    <string name="purple">パープル</string>
     <!--    Dialog Options      -->
-    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_cancel">キャンセル</string>
     <string name="dialog_leave">Leave</string>
-    <string name="dialog_close">Close</string>
+    <string name="dialog_close">閉じる</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_ok">OK</string>
     <!--    UI      -->
     <string name="welcome">Welcome</string>
-    <string name="grant_permission">Grant Permission</string>
+    <string name="grant_permission">権限を付与する</string>
     <string name="missing_permission">Access to audio files is required to use the app</string>
-    <string name="theme">Theme</string>
+    <string name="theme">テーマ</string>
     <string name="color_scheme">Color Scheme</string>
-    <string name="pure_black">Pure Black Dark Theme</string>
+    <string name="pure_black">ピュアブラックテーマ</string>
     <string name="advanced_editor">Advanced Editor</string>
     <string name="advanced_editor_subtext">Include more field options</string>
     <string name="round_album_cover">Rounded Album Covers</string>
@@ -139,12 +139,12 @@
     <string name="donate">Donate</string>
     <string name="support">Support</string>
     <string name="bugs_features">Bug or Feature request?</string>
-    <string name="bugs">Found a bug?</string>
+    <string name="bugs">バグを見つけましたか？</string>
     <string name="advanced_fields">Advanced Fields</string>
     <string name="date_added">Date Added</string>
-    <string name="descending">Descending</string>
-    <string name="ascending">Ascending</string>
-    <string name="system_font">Use System Font</string>
+    <string name="descending">降順</string>
+    <string name="ascending">昇順</string>
+    <string name="system_font">システムフォントへ切り替える</string>
     <string name="optional_permissions">Optional Permissions</string>
     <string name="add_cover">Add Cover</string>
     <string name="delete_cover">Delete Cover</string>
@@ -156,15 +156,15 @@
     <string name="tag_written">Tag(s) written successfully</string>
     <string name="edit_tag">Edit Tag</string>
     <string name="file_location">File Location</string>
-    <string name="sort_button">Sort Button</string>
-    <string name="filter">Filter</string>
+    <string name="sort_button">並び替える</string>
+    <string name="filter">絞り込み候補</string>
     <string name="untagged_files_filter">Only show untagged files</string>
-    <string name="sort_by">Sort by</string>
+    <string name="sort_by">並び替える</string>
     <string name="optional_permissions_long">The following permissions are optional and allow tags to be written without device confirmation prompt:</string>
     <string name="manage_media">Manage Media:</string>
     <string name="access_media_location">Access Media Location:</string>
     <string name="optional_permission_note">Note: Access Media Location will show up as access photos and videos. You must allow all or else the permission won\'t have any effect</string>
-    <string name="skip">Skip</string>
+    <string name="skip">スキップ</string>
     <string name="no_results">No Results Found</string>
     <string name="loading_music">Loading Music</string>
     <string name="loading_music_long">This may take a while for large libraries</string>
@@ -176,8 +176,8 @@
     <string name="editor">Editor</string>
     <!--    Uncategorized   -->
     <string name="tag_written_error">Error writing tag</string>
-    <string name="dialog_copy">Copy</string>
-    <string name="log">Log</string>
+    <string name="dialog_copy">コピー</string>
+    <string name="log">ログ</string>
     <string name="list_screen_error">Error(s) while loading library</string>
     <string name="bitrate">Bit Rate</string>
     <string name="sample_rate">Sample Rate</string>
