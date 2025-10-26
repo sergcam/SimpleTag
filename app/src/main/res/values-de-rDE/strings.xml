@@ -177,14 +177,14 @@
     <!--    Uncategorized   -->
     <string name="tag_written_error">Fehler beim Schreiben des Tags</string>
     <string name="dialog_copy">Kopieren</string>
-    <string name="log">Log</string>
+    <string name="log">Protokoll</string>
     <string name="list_screen_error">(Mehrere) Fehler beim Laden der Bibliothek</string>
     <string name="bitrate">Bit Rate</string>
-    <string name="sample_rate">Sample Rate</string>
+    <string name="sample_rate">Abtastrate</string>
     <string name="duration">Dauer</string>
-    <string name="basic_fields">Basic Fields</string>
-    <string name="cd_add_field">Add Field</string>
-    <string name="add_field_tip">Press the + to add a field</string>
-    <string name="replaygain_track_field">Track ReplayGain</string>
+    <string name="basic_fields">Grundlegende Felder</string>
+    <string name="cd_add_field">Feld hinzufügen</string>
+    <string name="add_field_tip">Drücke auf das +, um ein Feld hinzuzufügen</string>
+    <string name="replaygain_track_field">ReplayGain verfolgen</string>
     <string name="replaygain_album_field">Album ReplayGain</string>
 </resources>
