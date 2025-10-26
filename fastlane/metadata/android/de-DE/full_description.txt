@@ -1,19 +1,19 @@
-SimpleTag is a Material You audio tagger with support for most major audio and tag formats.
+SimpleTag ist ein Material You-Audio-Tagger, der die meisten gängigen Audio- und Tag-Formate unterstützt.
 
-Features:
+Funktionen:
 
 MP3, MP4 (Audio), OGG, FLAC, WAV, AIF, DSF und WMA -Audiodatei-Formatunterstützung
 ID3v1, ID3v11, ID3v22, ID3v23 und ID3v24 und FLAC-Tag-Formatunterstützung
-- Supports 50+ of the most popular tag fields
+- Unterstützt über 50 der beliebtesten Tag-Felder
 Batch-Tag-Bearbeitung (geplant)
 
-Permissions:
+Berechtigungen:
 
-- WRITE_EXTERNAL_STORAGE API29 and below. Used to read and write audio files
-- READ_EXTERNAL_STORAGE API30-API32. Used to read audio files
-- READ_MEDIA_AUDIO API33+. Used to read audio files
+- WRITE_EXTERNAL_STORAGE API29 und darunter. Zum Lesen und Schreiben von Audiodateien
+- READ_EXTERNAL_STORAGE API30-API32. Zum Lesen von Audiodateien
+- READ_MEDIA_AUDIO API33+. Zum Lesen von Audiodateien
 
-Optional permissions (API31+):
+Optionale Berechtigungen (API31+):
 
-- MANAGE_MEDIA Used in combination with ACCESS_MEDIA_LOCATION to write to audio files without system pop-up
-- ACCESS_MEDIA_LOCATION required in conjunction with MANAGE_MEDIA to disable the write permission prompt
+- MANAGE_MEDIA in Kombination mit ACCESS_MEDIA_LOCATION um Audiodateien zu bearbeiten, ohne dass ein System-Popup erscheint
+- ACCESS_MEDIA_LOCATION ist in Verbindung mit MANAGE_MEDIA erforderlich, um die Berarbeitungsberechtigungsabfrage zu deaktivieren
