@@ -17,7 +17,7 @@
 
 package dev.secam.simpletag.ui.selector.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +33,14 @@ import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.data.media.MusicData
 
 @Composable
-fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun SimpleMusicItem(
+    musicData: MusicData,
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    onLongClick: () -> Unit,
+    onClick: () -> Unit
+) {
+//    val selected by remember { mutableStateOf(false) }
     ListItem(
         headlineContent = {
             Text(text = musicData.title, fontWeight = FontWeight.Medium)
@@ -55,12 +62,18 @@ fun SimpleMusicItem(musicData: MusicData, modifier: Modifier = Modifier, onClick
             }
         },
         colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor =
+                if(selected) {
+                    MaterialTheme.colorScheme.surfaceContainer
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
         ),
         modifier = modifier
-            .clickable(
+            .combinedClickable(
                 enabled = true,
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
     )
 }

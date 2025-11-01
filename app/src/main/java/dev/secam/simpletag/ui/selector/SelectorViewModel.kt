@@ -292,6 +292,21 @@ class SelectorViewModel @Inject constructor(
             updateMusicList()
         }
     }
+    fun addSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems + musicData
+        ) }
+    }
+    fun removeSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems - musicData
+        ) }
+    }
+    fun clearSelection() {
+        _uiState.update { it.copy(
+            selectedItems = setOf()
+        ) }
+    }
 
     /*------- Setters -------*/
     fun setTaggedFilter(taggedFilter: Boolean){
@@ -360,6 +375,16 @@ class SelectorViewModel @Inject constructor(
             )
         }
     }
+    fun setMultiSelectedEnabled(multiSelectEnabled: Boolean) {
+        if(!multiSelectEnabled) {
+            clearSelection()
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                multiSelectEnabled = multiSelectEnabled
+            )
+        }
+    }
 
 }
 
@@ -377,5 +402,7 @@ data class SelectorUiState(
     val log: String = "",
     val showLogDialog: Boolean = false,
     val albumMap: Map<String, List<MusicData>> = mapOf(),
-    val albumList: List<Pair<String, Boolean>> = listOf()
+    val albumList: List<Pair<String, Boolean>> = listOf(),
+    val multiSelectEnabled: Boolean = false,
+    val selectedItems: Set<MusicData> = setOf()
 )

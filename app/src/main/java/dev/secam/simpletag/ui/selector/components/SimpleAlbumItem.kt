@@ -6,7 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -27,7 +27,13 @@ import dev.secam.simpletag.util.durationFormatter
 
 const val ANIMATION_DURATION = 200
 @Composable
-fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit, expanded: Boolean, onClick: () -> Unit) {
+fun SimpleAlbumItem(
+    musicList: List<MusicData>,
+    onSongClick: (MusicData) -> Unit,
+    expanded: Boolean,
+    onLongClick: (MusicData) -> Unit,
+    onClick: () -> Unit
+) {
     Column {
         ListItem(
             headlineContent = {
@@ -53,9 +59,11 @@ fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit
                 containerColor = MaterialTheme.colorScheme.background
             ),
             modifier = Modifier
-                .clickable(
+                .combinedClickable(
                     enabled = true,
-                    onClick = onClick
+                    onClick = onClick,
+                    // TODO: add long click for album item
+                    //onLongClick = onLongClick
                 )
         )
         AnimatedVisibility(
@@ -65,7 +73,7 @@ fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit
 //            modifier = Modifier
 //                .height(100.dp)
         ) {
-            AlbumSubItems(musicList, onSongClick)
+            AlbumSubItems(musicList, onSongClick, onLongClick)
         }
 //        if (expanded) {
 //            AlbumSubItems(musicList, onSongClick)
@@ -73,10 +81,12 @@ fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit
     }
 }
 
+// TODO: get selected state and visually update item
 @Composable
 fun AlbumSubItems(
     musicList: List<MusicData>,
     onClick: (MusicData) -> Unit,
+    onLongClick: (MusicData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val newList = musicList.sortedBy { it.track }
@@ -111,9 +121,10 @@ fun AlbumSubItems(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 modifier = Modifier
-                    .clickable(
+                    .combinedClickable(
                         enabled = true,
-                        onClick = { onClick(song) }
+                        onClick = { onClick(song) },
+                        onLongClick = { onLongClick(song) }
                     )
             )
         }

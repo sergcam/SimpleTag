@@ -818,6 +818,7 @@ copy of the Program in return for a fee.\n\n
     <string name="add_field_tip">Press the + to add a field</string>
     <string name="replaygain_track_field">Track ReplayGain</string>
     <string name="replaygain_album_field">Album ReplayGain</string>
+    <string name="multiselect_title">selected</string>
 
 
 </resources>

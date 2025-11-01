@@ -40,6 +40,7 @@ package dev.secam.simpletag.ui.selector
  import dev.secam.simpletag.R
  import dev.secam.simpletag.data.media.MusicData
  import dev.secam.simpletag.ui.components.SimpleTopBar
+ import dev.secam.simpletag.ui.selector.components.MultiSelectTopBar
  import dev.secam.simpletag.ui.selector.permission.OptionalPermissionScreen
  import dev.secam.simpletag.ui.selector.permission.PermissionScreen
 
@@ -53,6 +54,7 @@ fun SelectorScreen(
 ) {
     val optionalPermissionsSkipped = viewModel.prefState.collectAsState().value.optionalPermissionsSkipped
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehaviorPinned = TopAppBarDefaults.pinnedScrollBehavior()
     val mediaPermissionState = rememberPermissionState(
         permission =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -63,15 +65,25 @@ fun SelectorScreen(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             }
     )
+    val uiState = viewModel.uiState.collectAsState().value
     Scaffold(
         topBar = {
-            SimpleTopBar(
-                title = stringResource(R.string.app_name),
-                actionIcon = painterResource(R.drawable.ic_settings_24px),
-                contentDescription = stringResource(R.string.cd_settings_icon),
-                action = { onNavigateToSettings() },
-                scrollBehavior = scrollBehavior
-            )
+            if(!uiState.multiSelectEnabled) {
+                SimpleTopBar(
+                    title = stringResource(R.string.app_name),
+                    actionIcon = painterResource(R.drawable.ic_settings_24px),
+                    contentDescription = stringResource(R.string.cd_settings_icon),
+                    action = { onNavigateToSettings() },
+                    scrollBehavior = scrollBehavior
+                )
+            } else {
+                MultiSelectTopBar(
+                    numSelected = uiState.selectedItems.size,
+                    scrollBehavior = scrollBehaviorPinned,
+                    onEdit = { onNavigateToEditor(uiState.selectedItems.toList()) },
+                    onBack = { viewModel.setMultiSelectedEnabled(false)}
+                )
+            }
         }
     ) { contentPadding ->
         var readAudio by remember { mutableStateOf(mediaPermissionState.status.isGranted) }
@@ -85,6 +97,7 @@ fun SelectorScreen(
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .nestedScroll(scrollBehaviorPinned.nestedScrollConnection)
                 )
             !readAudio ->
                 PermissionScreen(

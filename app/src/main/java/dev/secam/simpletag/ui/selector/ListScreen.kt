@@ -92,6 +92,8 @@ fun ListScreen(
     val albumList = uiState.albumList
     val albumMap = uiState.albumMap
     val log = uiState.log
+    val multiSelectEnabled = uiState.multiSelectEnabled
+    val selectedItems = uiState.selectedItems
 
     val searchFieldState = rememberTextFieldState(searchQuery)
     if (searchEnabled && searchFieldState.text != searchQuery){
@@ -105,17 +107,41 @@ fun ListScreen(
             actionLabel = stringResource(R.string.log)
         )
     }
+    val onSongClick = { item: MusicData ->
+        if (multiSelectEnabled) {
+            if(selectedItems.contains(item)){
+                viewModel.removeSelection(item)
+            } else {
+                viewModel.addSelection(item)
+            }
+        } else {
+            onNavigateToEditor(listOf(item))
+        }
+    }
+    val onLongClick = { item: MusicData ->
+        if (multiSelectEnabled) {
+            onSongClick(item)
+        } else {
+            viewModel.setMultiSelectedEnabled(true)
+            viewModel.addSelection(item)
+        }
+    }
 
     Scaffold(
         topBar = {
-            ListScreenTopBar(
-                searchEnabled = searchEnabled,
-                textFieldState = searchFieldState,
-                scrollBehavior = scrollBehavior,
-                setSearchEnabled = viewModel::setSearchEnabled,
-                onFilter = { viewModel.setShowFilterDialog(true) },
-                onSort = { viewModel.setShowSortDialog(true) }
-            )
+            // TODO: make this animation look nice
+            AnimatedVisibility(
+                visible = !multiSelectEnabled
+            ) {
+                ListScreenTopBar(
+                    searchEnabled = searchEnabled,
+                    textFieldState = searchFieldState,
+                    scrollBehavior = scrollBehavior,
+                    setSearchEnabled = viewModel::setSearchEnabled,
+                    onFilter = { viewModel.setShowFilterDialog(true) },
+                    onSort = { viewModel.setShowSortDialog(true) }
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -198,7 +224,8 @@ fun ListScreen(
                                             onNavigateToEditor(listOf(data))
                                         },
                                         expanded = albumList[index].second,
-                                        onClick = { viewModel.expandAlbum(index) }
+                                        onClick = { viewModel.expandAlbum(index) },
+                                        onLongClick = onLongClick
                                     )
                                 }
                             }
@@ -218,9 +245,12 @@ fun ListScreen(
                                 if (musicList[index].hasArtwork == null) {
                                     viewModel.updateHasArt(index)
                                 }
-                                SimpleMusicItem(musicList[index]) {
-                                    onNavigateToEditor(listOf(musicList[index]))
-                                }
+                                SimpleMusicItem(
+                                    musicList[index],
+                                    onLongClick = { onLongClick(musicList[index]) },
+                                    selected = selectedItems.contains(musicList[index]),
+                                    onClick = { onSongClick(musicList[index]) },
+                                )
                             }
                         }
                     }
@@ -247,8 +277,3 @@ fun ListScreen(
         }
     }
 }
-
-
-
-
-
