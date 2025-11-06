@@ -301,6 +301,9 @@ class SelectorViewModel @Inject constructor(
         _uiState.update { it.copy(
             selectedItems = uiState.value.selectedItems - musicData
         ) }
+        if(uiState.value.selectedItems.isEmpty()){
+            setMultiSelectedEnabled(false)
+        }
     }
     fun clearSelection() {
         _uiState.update { it.copy(

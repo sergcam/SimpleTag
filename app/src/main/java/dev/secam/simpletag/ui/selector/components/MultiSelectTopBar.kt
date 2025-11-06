@@ -40,7 +40,6 @@ fun MultiSelectTopBar(
 ) {
     TopAppBar(
         title = { Text("$numSelected " + stringResource(R.string.multiselect_title)) },
-//        modifier = TODO(),
         navigationIcon = {
             IconButton(
                 onClick = onBack

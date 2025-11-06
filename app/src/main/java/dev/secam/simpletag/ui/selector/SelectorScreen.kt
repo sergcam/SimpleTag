@@ -19,15 +19,28 @@ package dev.secam.simpletag.ui.selector
 
  import android.Manifest
  import android.os.Build
+ import androidx.compose.animation.AnimatedVisibility
+ import androidx.compose.animation.core.tween
+ import androidx.compose.animation.fadeIn
+ import androidx.compose.animation.fadeOut
+ import androidx.compose.animation.scaleIn
+ import androidx.compose.animation.scaleOut
+ import androidx.compose.foundation.layout.Column
  import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.lazy.rememberLazyListState
+ import androidx.compose.foundation.text.input.rememberTextFieldState
  import androidx.compose.material3.ExperimentalMaterial3Api
+ import androidx.compose.material3.FloatingActionButton
+ import androidx.compose.material3.Icon
  import androidx.compose.material3.Scaffold
  import androidx.compose.material3.TopAppBarDefaults
  import androidx.compose.runtime.Composable
  import androidx.compose.runtime.collectAsState
+ import androidx.compose.runtime.derivedStateOf
  import androidx.compose.runtime.getValue
  import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
  import androidx.compose.runtime.setValue
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,9 +53,12 @@ package dev.secam.simpletag.ui.selector
  import dev.secam.simpletag.R
  import dev.secam.simpletag.data.media.MusicData
  import dev.secam.simpletag.ui.components.SimpleTopBar
+ import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
  import dev.secam.simpletag.ui.selector.components.MultiSelectTopBar
  import dev.secam.simpletag.ui.selector.permission.OptionalPermissionScreen
  import dev.secam.simpletag.ui.selector.permission.PermissionScreen
+ import dev.secam.simpletag.util.animateExpandTopBar
+ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -65,24 +81,69 @@ fun SelectorScreen(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             }
     )
+    val scope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+    val firstVisible = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
+
     val uiState = viewModel.uiState.collectAsState().value
+    val searchEnabled = uiState.searchEnabled
+    val searchQuery = uiState.searchQuery
+    val multiSelectEnabled = uiState.multiSelectEnabled
+    val selectedItems = uiState.selectedItems
+    val searchFieldState = rememberTextFieldState(searchQuery)
+    if (searchEnabled && searchFieldState.text != searchQuery){
+        viewModel.setSearchQuery(searchFieldState.text as String)
+    }
+
     Scaffold(
         topBar = {
-            if(!uiState.multiSelectEnabled) {
-                SimpleTopBar(
-                    title = stringResource(R.string.app_name),
-                    actionIcon = painterResource(R.drawable.ic_settings_24px),
-                    contentDescription = stringResource(R.string.cd_settings_icon),
-                    action = { onNavigateToSettings() },
-                    scrollBehavior = scrollBehavior
-                )
-            } else {
-                MultiSelectTopBar(
-                    numSelected = uiState.selectedItems.size,
+            Column {
+                if (!multiSelectEnabled) {
+                    SimpleTopBar(
+                        title = stringResource(R.string.app_name),
+                        actionIcon = painterResource(R.drawable.ic_settings_24px),
+                        contentDescription = stringResource(R.string.cd_settings_icon),
+                        action = { onNavigateToSettings() },
+                        scrollBehavior = scrollBehavior
+                    )
+                } else {
+                    MultiSelectTopBar(
+                        numSelected = selectedItems.size,
+                        scrollBehavior = scrollBehavior,
+                        onEdit = { onNavigateToEditor(selectedItems.toList()) },
+                        onBack = { viewModel.setMultiSelectedEnabled(false) }
+                    )
+                }
+                ListScreenTopBar(
+                    searchEnabled = searchEnabled,
+                    textFieldState = searchFieldState,
                     scrollBehavior = scrollBehaviorPinned,
-                    onEdit = { onNavigateToEditor(uiState.selectedItems.toList()) },
-                    onBack = { viewModel.setMultiSelectedEnabled(false)}
+                    setSearchEnabled = viewModel::setSearchEnabled,
+                    onFilter = { viewModel.setShowFilterDialog(true) },
+                    onSort = { viewModel.setShowSortDialog(true) }
                 )
+            }
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = firstVisible.value != 0,
+                enter = scaleIn(tween(150)) + fadeIn(),
+                exit = scaleOut(tween(150)) + fadeOut()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            lazyListState.animateScrollToItem(0)
+                            scrollBehavior.animateExpandTopBar()
+                        }
+
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_upward_24px),
+                        contentDescription = stringResource(R.string.cd_scroll_top)
+                    )
+                }
             }
         }
     ) { contentPadding ->
@@ -94,10 +155,12 @@ fun SelectorScreen(
                 ListScreen(
                     onNavigateToEditor = onNavigateToEditor,
                     viewModel = viewModel,
+                    lazyListState = lazyListState,
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .nestedScroll(scrollBehaviorPinned.nestedScrollConnection)
+                        .nestedScroll(scrollBehaviorPinned.nestedScrollConnection),
+                    scrollBehavior = scrollBehavior
                 )
             !readAudio ->
                 PermissionScreen(
@@ -116,3 +179,4 @@ fun SelectorScreen(
         }
     }
 }
+
