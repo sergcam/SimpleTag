@@ -18,6 +18,7 @@
 package dev.secam.simpletag.ui.editor
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -54,7 +55,6 @@ import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
 import dev.secam.simpletag.ui.selector.LoadingScreen
-import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
 
@@ -130,7 +130,7 @@ fun EditorScreen(
         )
     }
 
-    BackPressHandler {
+    BackHandler {
         if (viewModel.changesMade()) {
             viewModel.setShowBackDialog(true)
         } else onNavigateBack()
