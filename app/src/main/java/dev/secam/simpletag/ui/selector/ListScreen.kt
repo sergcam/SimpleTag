@@ -107,7 +107,21 @@ fun ListScreen(
             viewModel.addSelection(item)
         }
     }
-
+    val onAlbumLongClick = { musicList: List<MusicData> ->
+        if (!multiSelectEnabled) {
+            scope.launch { scrollBehavior.animateExpandTopBar(tween(250)) }
+            viewModel.setMultiSelectedEnabled(true)
+        }
+        if (selectedItems.containsAll(musicList)) {
+            for (song in musicList){
+                viewModel.removeSelection(song)
+            }
+        } else {
+            for (song in musicList){
+                viewModel.addSelection(song)
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -158,13 +172,13 @@ fun ListScreen(
                             }
                             if (albumMap[albumList[index].first] != null) {
                                 SimpleAlbumItem(
-                                    albumMap[albumList[index].first]!!,
-                                    onSongClick = { data ->
-                                        onNavigateToEditor(listOf(data))
-                                    },
+                                    musicList = albumMap[albumList[index].first]!!,
+                                    onSongClick = onSongClick,
                                     expanded = albumList[index].second,
+                                    selectedSet = selectedItems,
                                     onClick = { viewModel.expandAlbum(index) },
-                                    onLongClick = onLongClick
+                                    onSongLongClick = onLongClick,
+                                    onLongClick = onAlbumLongClick,
                                 )
                             }
                         }
@@ -185,7 +199,7 @@ fun ListScreen(
                                 viewModel.updateHasArt(index)
                             }
                             SimpleMusicItem(
-                                musicList[index],
+                                musicData = musicList[index],
                                 onLongClick = { onLongClick(musicList[index]) },
                                 selected = selectedItems.contains(musicList[index]),
                                 onClick = { onSongClick(musicList[index]) },
