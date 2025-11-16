@@ -32,6 +32,8 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -100,6 +102,7 @@ class EditorViewModel @Inject constructor(
 
     fun initEditor(musicList: List<MusicData>, tagNames: Map<SimpleTagField, String>) {
         backgroundScope.launch {
+            var supportsRG = true
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
                 _uiState.update { currentState ->
@@ -108,23 +111,32 @@ class EditorViewModel @Inject constructor(
                         tagNames = tagNames
                     )
                 }
+                // open file
                 val firstFile = simpleFileReader(musicList[0].path)
                 if (firstFile != null) {
+                    // check file replaygain support
                     if (!SUPPORTS_RG.contains(firstFile.ext)) {
                         removeRG()
+                        supportsRG = false
                     }
+                    // open tag
                     val firstTag = firstFile.tag
                     setEditorMusicList(musicList)
                     if(firstTag != null){
+                        // set artwork
                         setArtwork(firstTag.firstArtwork)
+                        // add fields to editor display
                         SimpleTagField.entries.forEachIndexed { index, field ->
+                            // basic fields
                             if (!advancedEditor) {
                                 if (index <= SimpleTagField.ADVANCED_CUTOFF) {
                                     addField(field, firstTag.getFirst(field.fieldKey))
                                 }
+                                // advanced fields
                             } else {
                                 if(field == SimpleTagField.ReplayGainTrack || field == SimpleTagField.ReplayGainAlbum){
-                                    if(SUPPORTS_RG.contains(firstFile.ext)){
+                                    // skip checking replaygain if unsupported
+                                    if(supportsRG){
                                         if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
                                             addField(field, firstTag.getFirst(field.fieldKey))
                                         }
@@ -132,6 +144,29 @@ class EditorViewModel @Inject constructor(
                                 } else {
                                     if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
                                         addField(field, firstTag.getFirst(field.fieldKey))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (musicList.size > 1 && advancedEditor){
+                    for (song in musicList - musicList[0]) {
+                        val file = simpleFileReader(song.path)
+                        if (file != null){
+                            // Check ReplayGain support for all files
+                            if (!SUPPORTS_RG.contains(file.ext)) {
+                                if (supportsRG) {
+                                    removeRG()
+                                    supportsRG = false
+                                }
+                            }
+                            // open tag
+                            val tag = file.tag
+                            if (tag != null) {
+                                for (tagField in SimpleTagField.entries) {
+                                    if (!tag.getFirst(tagField.fieldKey).isEmpty()) {
+                                        addField(tagField, tag.getFirst(tagField.fieldKey))
                                     }
                                 }
                             }
@@ -149,7 +184,12 @@ class EditorViewModel @Inject constructor(
     fun addField(field: SimpleTagField, content: String = ""){
         _uiState.update {
             it.copy(
-                fieldStates = uiState.value.fieldStates + Pair(field, TextFieldState(content)),
+                fieldStates = uiState.value.fieldStates + Pair(field,
+                    EditorFieldState(
+                        textState = TextFieldState(content),
+                        enabledState = mutableStateOf(true)
+                    )
+                ),
                 invisibleTags = uiState.value.invisibleTags - field
             )
         }
@@ -256,9 +296,9 @@ class EditorViewModel @Inject constructor(
                                 tag.deleteField(field.fieldKey)
                             }
                             for (field in fields) {
-                                if (!field.value.text.isEmpty()) {
-                                    tag.setField(field.key.fieldKey, field.value.text as String)
-                                    log += "Wrote field ${field.key.fieldKey} with content: ${field.value.text}\n"
+                                if (!field.value.textState.text.isEmpty()) {
+                                    tag.setField(field.key.fieldKey, field.value.textState.text as String)
+                                    log += "Wrote field ${field.key.fieldKey} with content: ${field.value.textState.text}\n"
                                 } else {
                                     tag.deleteField(field.key.fieldKey)
                                     log += "Cleared field ${field.key.fieldKey}\n"
@@ -347,7 +387,7 @@ class EditorViewModel @Inject constructor(
 
     fun changesMade(): Boolean {
         val currentFields = uiState.value.fieldStates.map { mapEntry ->
-            mapEntry.value.text as String
+            mapEntry.value.textState.text as String
         }
         return (uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
     }
@@ -426,7 +466,7 @@ class EditorViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 savedFields = uiState.value.fieldStates.map { mapEntry ->
-                    mapEntry.value.text as String
+                    mapEntry.value.textState.text as String
                 }
             )
         }
@@ -448,7 +488,7 @@ class EditorViewModel @Inject constructor(
 data class EditorUiState(
     val initialized: Boolean = false,
     val artwork: Artwork? = null,
-    val fieldStates: Map<SimpleTagField, TextFieldState> = mapOf(),
+    val fieldStates: Map<SimpleTagField, EditorFieldState> = mapOf(),
     val editorMusicList: List<MusicData> = listOf(),
     val artworkChanged: Boolean = false,
     val showBackDialog: Boolean = false,
@@ -461,5 +501,10 @@ data class EditorUiState(
     val invisibleTags: Set<SimpleTagField> = setOf(),
     val searchResults: List<SimpleTagField> = listOf(),
     val deletedFields: Set<SimpleTagField> = setOf()
+)
+
+data class EditorFieldState(
+    val textState: TextFieldState,
+    val enabledState: MutableState<Boolean> //= mutableStateOf(false)
 )
 

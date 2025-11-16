@@ -20,11 +20,22 @@ package dev.secam.simpletag.ui.editor
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.compose.foundation.text.input.TextFieldState
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
+import dev.secam.simpletag.ui.editor.components.EditorArtwork
+import dev.secam.simpletag.ui.editor.components.EditorArtworkButtons
+import dev.secam.simpletag.ui.editor.components.EditorTextField
+import dev.secam.simpletag.ui.editor.components.NoFieldTip
 import org.jaudiotagger.tag.images.Artwork
 
 @Composable
@@ -33,11 +44,63 @@ fun BatchEditor(
     artwork: Artwork?,
     setArtwork: (Artwork?) -> Unit,
     roundCovers: Boolean?,
-    fieldStates: Map<SimpleTagField, TextFieldState>,
+    fieldStates: Map<SimpleTagField, EditorFieldState>,
     pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     advancedEditor: Boolean,
     removeField: (SimpleTagField) -> Unit,
     modifier: Modifier
 ){
     //TODO: Implement Batch Editor
+//    var toggleState by remember { mutableStateMapOf<SimpleTagField, Boolean>() }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+    ) {
+        EditorArtwork(
+            roundCovers = roundCovers ?: true,
+            artwork = artwork,
+            modifier = Modifier
+                .padding(top = 16.dp)
+        )
+        Row {
+            EditorArtworkButtons(
+                onAdd = { pickArtwork.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
+                onDelete = { setArtwork(null) },
+                deleteEnabled = artwork != null,
+                togglable = true,
+                modifier = Modifier
+                    .padding(top = 10.dp, bottom = 6.dp)
+            )
+
+        }
+
+        //  Field List
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 72.dp)
+        ) {
+            if(fieldStates.isEmpty()){
+                NoFieldTip()
+            } else {
+                for (field in fieldStates) {
+                    EditorTextField(
+                        state = field.value.textState,
+                        label = stringResource(field.key.displayNameRes),
+                        hasDelete = advancedEditor,
+                        action = { removeField(field.key) },
+                        togglable = true,
+                        onToggle = { it ->
+                            field.value.enabledState.value = it
+                        },
+                        enabled = field.value.enabledState.value,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                }
+            }
+        }
+    }
 }

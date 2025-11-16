@@ -24,7 +24,6 @@ import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +45,7 @@ fun SingleEditor(
     modifier: Modifier = Modifier,
     setArtwork: (Artwork?) -> Unit,
     artwork: Artwork?,
-    fieldStates: Map<SimpleTagField, TextFieldState>,
+    fieldStates: Map<SimpleTagField, EditorFieldState>,
     pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     removeField: (SimpleTagField) -> Unit,
     advancedEditor: Boolean
@@ -89,12 +88,13 @@ fun SingleEditor(
             } else {
                 for (field in fieldStates) {
                     EditorTextField(
-                        state = field.value,
+                        state = field.value.textState,
                         label = stringResource(field.key.displayNameRes),
+                        modifier = Modifier
+                            .padding(bottom = 8.dp),
                         hasDelete = advancedEditor,
                         action = { removeField(field.key) },
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
+                        onToggle = { removeField(field.key) },
                     )
                 }
             }

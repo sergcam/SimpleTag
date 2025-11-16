@@ -17,20 +17,21 @@
 
 package dev.secam.simpletag.ui.selector.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -40,12 +41,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.secam.simpletag.R
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.util.durationFormatter
 
@@ -136,8 +134,8 @@ fun AlbumSubItem(
 ) {
     val containerColor by animateColorAsState(
         targetValue =
-            if (selected) MaterialTheme.colorScheme.surfaceContainerHighest
-            else MaterialTheme.colorScheme.surfaceContainer,
+            if (selected) MaterialTheme.colorScheme.surfaceContainerHigh
+            else MaterialTheme.colorScheme.surfaceContainerLow,
         label = "selected",
         animationSpec = tween(150)
     )
@@ -147,28 +145,30 @@ fun AlbumSubItem(
         },
         leadingContent = {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(48.dp)
-
+                contentAlignment = Alignment.BottomEnd
             ) {
-                AnimatedContent(
-                    targetState = selected
-                ) { targetSelected ->
-                    if (!targetSelected) {
-                        Text(
-                            text = musicData.track.toString(),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(
+                            shape = RoundedCornerShape(8.dp)
                         )
-                    }else {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_check_24px),
-                            contentDescription = stringResource(R.string.cd_selected)
-                        )
-                    }
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                ) {
+                    Text(
+                        text = musicData.track.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
-
+                AnimatedVisibility(
+                    visible = selected,
+                    enter = scaleIn(tween(150)) + fadeIn(),
+                    exit = scaleOut(tween(150)) + fadeOut(),
+                ) {
+                    SelectCheckCircle()
+                }
             }
         },
         supportingContent = {
@@ -187,4 +187,3 @@ fun AlbumSubItem(
             )
     )
 }
-

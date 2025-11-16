@@ -820,6 +820,8 @@ copy of the Program in return for a fee.\n\n
     <string name="replaygain_album_field">Album ReplayGain</string>
     <string name="multiselect_title">selected</string>
     <string name="cd_selected">selected</string>
+    <string name="cd_help_icon">help</string>
+    <string name="edit_n_tags">Editing # tags</string>
 
 
 </resources>

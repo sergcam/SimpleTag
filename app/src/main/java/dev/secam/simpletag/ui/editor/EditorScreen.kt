@@ -139,23 +139,38 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = stringResource(R.string.edit_tag),
+                title = if (musicList.size == 1) {
+                    stringResource(R.string.edit_tag)
+                } else {
+                    stringResource(R.string.edit_n_tags).replaceFirst("#", musicList.size.toString())
+                },
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
                     } else onNavigateBack()
                 },
                 actions = {
-                    IconButton(
-                        onClick = { viewModel.openExternal(context, musicList[0]) }
-                    ) {
-                        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-                            viewModel.clearCache(context)
+                    if(musicList.size == 1) {
+                        IconButton(
+                            onClick = { viewModel.openExternal(context, musicList[0]) }
+                        ) {
+                            LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                                viewModel.clearCache(context)
+                            }
+                            Icon(
+                                painter = painterResource(R.drawable.ic_open_in_new_24px),
+                                contentDescription = stringResource(R.string.cd_save_tag_icon)
+                            )
                         }
-                        Icon(
-                            painter = painterResource(R.drawable.ic_open_in_new_24px),
-                            contentDescription = stringResource(R.string.cd_save_tag_icon)
-                        )
+                    } else {
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_help_24px),
+                                contentDescription = stringResource(R.string.cd_help_icon)
+                            )
+                        }
                     }
                     IconButton(
                         onClick = { viewModel.setShowSaveDialog(true) }
