@@ -316,7 +316,58 @@ class EditorViewModel @Inject constructor(
                         }
                     } else {
                         log += "Writing multiple files\n"
-                        //TODO: batch tagging support
+                        val enabledFieldStates = fields.filter { it.value.enabledState.value }
+                        for(song in musicList){
+                            val file = simpleFileReader(song.path)
+                            if(file != null){
+                                log += "Opened file: ${file.file.path}\n"
+                                if (file.tag == null) {
+                                    log += "No tag. Creating tag\n"
+                                    file.tag = createTag(file.ext)
+                                    log += "Tag created\n"
+                                }
+                                val tag = file.tag
+                                log += "Tag opened\n"
+                                if(uiState.value.artworkEnabled){
+                                    tag.deleteArtworkField()
+                                    log += "Deleted old artwork\n"
+                                    if (artwork != null) {
+                                        when (tag.javaClass) {
+                                            FlacTag().javaClass -> {
+                                                (tag as FlacTag).setArtworkField(artwork)
+                                            }
+                                            VorbisCommentTag().javaClass -> {
+                                                (tag as VorbisCommentTag).setArtworkField(artwork)
+                                            }
+                                            else -> tag.setField(artwork)
+                                        }
+                                        log += "Wrote new artwork as ${tag.javaClass}\n"
+                                    }
+                                }
+
+                                for(field in uiState.value.deletedFields){
+                                    tag.deleteField(field.fieldKey)
+                                }
+                                for (field in enabledFieldStates) {
+                                    if (!field.value.textState.text.isEmpty()) {
+                                        tag.setField(field.key.fieldKey, field.value.textState.text as String)
+                                        log += "Wrote field ${field.key.fieldKey} with content: ${field.value.textState.text}\n"
+                                    } else {
+                                        tag.deleteField(field.key.fieldKey)
+                                        log += "Cleared field ${field.key.fieldKey}\n"
+                                    }
+                                }
+                                if (file.ext == "ogg") {
+                                    log += "Writing file using ogg writer\n"
+                                    oggFileWriter(file, context)
+                                    log += "Wrote file: ${file.file.path} \n"
+                                } else {
+                                    log += "Writing file using default writer\n"
+                                    simpleFileWriter(file)
+                                    log += "Wrote file: ${file.file.path} \n"
+                                }
+                            }
+                        }
                     }
                     log += "Resetting change tracking\n"
                     //  reset change tracking
@@ -500,7 +551,8 @@ data class EditorUiState(
     val tagNames: Map<SimpleTagField, String> = mapOf(),
     val invisibleTags: Set<SimpleTagField> = setOf(),
     val searchResults: List<SimpleTagField> = listOf(),
-    val deletedFields: Set<SimpleTagField> = setOf()
+    val deletedFields: Set<SimpleTagField> = setOf(),
+    val artworkEnabled: Boolean = false
 )
 
 data class EditorFieldState(
