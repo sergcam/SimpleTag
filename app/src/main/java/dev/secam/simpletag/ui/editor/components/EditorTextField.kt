@@ -20,6 +20,7 @@ package dev.secam.simpletag.ui.editor.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +44,7 @@ fun EditorTextField(
 ) {
     Row {
         OutlinedTextField(
-            state = state,
+            state = if (enabled) state else rememberTextFieldState("<unchanged>"),
             label = {
                 Text(
                     text = label

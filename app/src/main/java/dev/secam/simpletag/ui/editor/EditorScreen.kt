@@ -224,16 +224,17 @@ fun EditorScreen(
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .verticalScroll(rememberScrollState())
+//                        .verticalScroll(rememberScrollState())
                 )
             }
         } else {
-            LoadingScreen()
+            LoadingScreen(text = "Reading Tags")
         }
 
         //  Show dialogs
         if(showSaveDialog){
             SaveTagDialog(
+                tagNum = musicList.size,
                 onCancel = { viewModel.setShowSaveDialog(false) },
                 onConfirm = {
                     viewModel.onSave(

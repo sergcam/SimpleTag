@@ -138,12 +138,12 @@ class EditorViewModel @Inject constructor(
                                     // skip checking replaygain if unsupported
                                     if(supportsRG){
                                         if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
-                                            addField(field, firstTag.getFirst(field.fieldKey))
+                                            addField(field, firstTag.getFirst(field.fieldKey), false)
                                         }
                                     }
                                 } else {
                                     if (!firstTag.getFirst(field.fieldKey).isEmpty()) {
-                                        addField(field, firstTag.getFirst(field.fieldKey))
+                                        addField(field, firstTag.getFirst(field.fieldKey), false)
                                     }
                                 }
                             }
@@ -164,9 +164,9 @@ class EditorViewModel @Inject constructor(
                             // open tag
                             val tag = file.tag
                             if (tag != null) {
-                                for (tagField in SimpleTagField.entries) {
+                                for (tagField in uiState.value.invisibleTags) {
                                     if (!tag.getFirst(tagField.fieldKey).isEmpty()) {
-                                        addField(tagField, tag.getFirst(tagField.fieldKey))
+                                        addField(tagField, tag.getFirst(tagField.fieldKey), false)
                                     }
                                 }
                             }
@@ -181,13 +181,13 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun addField(field: SimpleTagField, content: String = ""){
+    fun addField(field: SimpleTagField, content: String = "", enabled: Boolean = true){
         _uiState.update {
             it.copy(
                 fieldStates = uiState.value.fieldStates + Pair(field,
                     EditorFieldState(
                         textState = TextFieldState(content),
-                        enabledState = mutableStateOf(true)
+                        enabledState = mutableStateOf(enabled)
                     )
                 ),
                 invisibleTags = uiState.value.invisibleTags - field

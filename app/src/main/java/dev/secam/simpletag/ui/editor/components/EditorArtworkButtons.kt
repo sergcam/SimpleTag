@@ -26,10 +26,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,7 +40,8 @@ fun EditorArtworkButtons(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     togglable: Boolean = false,
-
+    onToggle: (Boolean) -> Unit = {},
+    enabled: Boolean = true
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -53,6 +50,7 @@ fun EditorArtworkButtons(
     ) {
         Button(
             onClick = onAdd,
+            enabled = enabled,
             modifier = Modifier
                 .weight(.5f, false)
                 .fillMaxWidth(.98f)
@@ -70,7 +68,7 @@ fun EditorArtworkButtons(
         }
         Button(
             onClick = onDelete,
-            enabled = deleteEnabled,
+            enabled = deleteEnabled && enabled,
             modifier = Modifier
                 .weight(.5f, false)
                 .fillMaxWidth(.98f)
@@ -87,11 +85,10 @@ fun EditorArtworkButtons(
                 fontWeight = FontWeight.Bold
             )
         }
-        var checked by remember { mutableStateOf(false) }
         if(togglable){
             Checkbox(
-                checked = checked,
-                onCheckedChange = { checked = !checked },
+                checked = enabled,
+                onCheckedChange = onToggle,
             )
         }
     }
