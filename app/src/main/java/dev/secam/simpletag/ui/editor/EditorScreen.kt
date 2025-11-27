@@ -19,6 +19,7 @@ package dev.secam.simpletag.ui.editor
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -119,7 +120,7 @@ fun EditorScreen(
             viewModel.setArtwork(viewModel.getArtworkFromUri(context.contentResolver, uri))
         }
     }
-
+    Log.d("ES", musicList[0].path)
     // initialize editor fields
     if (!initialized) {
         viewModel.initEditor(

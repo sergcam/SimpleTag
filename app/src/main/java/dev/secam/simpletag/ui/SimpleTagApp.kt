@@ -34,8 +34,7 @@ import dev.secam.simpletag.ui.editor.EditorScreen
 import dev.secam.simpletag.ui.selector.SelectorScreen
 import dev.secam.simpletag.ui.settings.AboutScreen
 import dev.secam.simpletag.ui.settings.SettingsScreen
-import dev.secam.simpletag.util.navTypeOf
-import kotlin.reflect.typeOf
+import kotlinx.serialization.json.Json
 
 @Composable
 fun SimpleTagApp(
@@ -71,13 +70,13 @@ fun SimpleTagApp(
             SelectorScreen(
                 onNavigateToSettings = { navController.navigate(Settings) },
                 onNavigateToEditor = { musicList: List<MusicData> ->
-                    navController.navigate(Editor(musicList))
+                    navController.navigate(Editor(Json.encodeToString(musicList)))
                 }
             )
         }
 
         composable<Editor> (
-            typeMap = mapOf(typeOf<List<MusicData>>() to navTypeOf<List<MusicData>>()),
+            //typeMap = mapOf(typeOf<List<MusicData>>() to navTypeOf<List<MusicData>>()),
             enterTransition = {
                 return@composable slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Start, tween(duration)
@@ -101,7 +100,7 @@ fun SimpleTagApp(
         ){ backStackEntry ->
             val editor: Editor = backStackEntry.toRoute()
             EditorScreen(
-                musicList = editor.musicList,
+                musicList = Json.decodeFromString(editor.musicList),
                 onNavigateBack = {navController.navigateUp()}
             )
         }
