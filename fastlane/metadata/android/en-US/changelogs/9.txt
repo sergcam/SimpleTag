@@ -1,0 +1,9 @@
+v0.3.0
+What's Fixed:
+- cleaned up some animations
+- fixed replaygain field issue on certain mp3 files
+- fixed issue with files containing "%"
+- fixed issue with loading library on android 10 and below
+What's New:
+- Batch Editor (experimental)
+- please report any bugs related to batch editor
