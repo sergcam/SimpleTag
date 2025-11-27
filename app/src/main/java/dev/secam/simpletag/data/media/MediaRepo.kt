@@ -19,6 +19,7 @@ package dev.secam.simpletag.data.media
 
 import android.content.Context
 import android.media.MediaScannerConnection
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import coil3.imageLoader
@@ -74,16 +75,27 @@ class MediaRepo @Inject constructor(private val context: Context) {
         val music = mutableMapOf<Long, MusicData>()
         val contentResolver = context.contentResolver
 
-        val projection = arrayOf(
-            MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.TRACK,
-            MediaStore.Audio.Media.BITRATE,
-            MediaStore.Audio.Media.DURATION
-        )
+
+        val projection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TRACK,
+                MediaStore.Audio.Media.DURATION
+            )
+        } else {
+            arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TRACK,
+            )
+        }
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
         val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
         log += "Entering content resolver\n"
@@ -117,9 +129,9 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         log += "Found pathColumn at: $pathColumn\n"
                         val trackColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK)
                         log += "Found trackColumn at: $trackColumn\n"
-                        val bitrateColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.BITRATE)
-                        log += "Found bitrateColumn at: $bitrateColumn\n"
-                        val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                        val durationColumn = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                            it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                        } else null
                         log += "Found durationColumn at: $durationColumn\n"
                         // Read Music from MediaStore
                         val musicLoaders = mutableListOf<Job>()
@@ -129,29 +141,26 @@ class MediaRepo @Inject constructor(private val context: Context) {
                             val id = it.getLong(idColumn)
                             val path = it.getString(pathColumn)
                             val ext = path.substringAfterLast(".").lowercase()
-                            val bitrate = it.getInt(bitrateColumn)
-                            val duration = it.getInt(durationColumn)
                             val title = it.getString(titleColumn)
                             val album = it.getString(albumColumn)
                             val artist = it.getString(artistColumn)
                             val track = it.getInt(trackColumn) % 1000
+                            val duration = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                                it.getInt(durationColumn!!)
+                            } else null
                             // Use MediaStore metadata for mp3 and flac files
                             if (ext == "mp3" || ext == "flac") {
                                 log += "$id: Using mediastore metadata for $path\n"
-                                music.put(
-                                    key = id,
-                                    MusicData(
-                                        id = id,
-                                        path = path,
-                                        title = title,
-                                        artist = artist,
-                                        album = album,
-                                        hasArtwork = null,
-                                        tagged = artist != "<unknown>",
-                                        track = track,
-                                        bitrate = bitrate,
-                                        duration = duration
-                                    )
+                                music[id] = MusicData(
+                                    id = id,
+                                    path = path,
+                                    title = title,
+                                    artist = artist,
+                                    album = album,
+                                    hasArtwork = null,
+                                    tagged = artist != "<unknown>",
+                                    track = track,
+                                    duration = duration ?: -1
                                 )
                                 log += "$id: imported $path\n"
                                 Log.d(TAG, "$id: imported $path using mediastore")
@@ -213,20 +222,16 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                                 if(tag?.getFirst(FieldKey.TRACK)?.isEmpty() == false) tag.getFirst(FieldKey.TRACK)?.toInt()
                                                 else 0
 
-                                            music.put(
-                                                key = id,
-                                                MusicData(
-                                                    id = id,
-                                                    path = path,
-                                                    title = jTitle,
-                                                    artist = jArtist,
-                                                    album = jAlbum,
-                                                    hasArtwork = hasArt,
-                                                    track = track,
-                                                    bitrate = bitrate,
-                                                    duration = duration,
-                                                    tagged = tagged == 0 // TODO: Fix this
-                                                )
+                                            music[id] = MusicData(
+                                                id = id,
+                                                path = path,
+                                                title = jTitle,
+                                                artist = jArtist,
+                                                album = jAlbum,
+                                                hasArtwork = hasArt,
+                                                track = track,
+                                                tagged = tagged == 0, // TODO: Fix this
+                                                duration = duration ?: -1
                                             )
                                             log += "$id: imported $path using jaudiotagger\n"
                                             Log.d(
@@ -241,20 +246,16 @@ class MediaRepo @Inject constructor(private val context: Context) {
                                         Log.w("MediaRepo", "$e: Failed to read $path")
                                         log += "$e: failed to read $path\n"
                                         log += "$id: jaudiotagger error. falling back to mediastore\n"
-                                        music.put(
-                                            key = id,
-                                            MusicData(
-                                                id = id,
-                                                path = path,
-                                                title = title,
-                                                artist = artist,
-                                                album = album,
-                                                hasArtwork = null,
-                                                track = track,
-                                                tagged = artist != "<unknown>",
-                                                bitrate = bitrate,
-                                                duration = duration
-                                            )
+                                        music[id] = MusicData(
+                                            id = id,
+                                            path = path,
+                                            title = title,
+                                            artist = artist,
+                                            album = album,
+                                            hasArtwork = null,
+                                            track = track,
+                                            tagged = artist != "<unknown>",
+                                            duration = duration ?: -1
                                         )
                                         log += "$id: imported $path using mediastore fallback\n"
                                         Log.d(
@@ -333,7 +334,6 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         album = album,
                         hasArtwork = hasArt,
                         tagged = tagged == 0,
-                        bitrate = song.bitrate,
                         duration = song.duration
                     )
                 }
@@ -341,15 +341,6 @@ class MediaRepo @Inject constructor(private val context: Context) {
             musicMapState.update { updatedMap }
         }.await()
     }
-
-//    suspend fun rescanMediaStore(scanListener: MediaScannerConnection.OnScanCompletedListener? = null) {
-//        backgroundScope.async {
-//            val paths = musicMapState.value.map { mapEntry ->
-//                mapEntry.value.path
-//            }.toTypedArray()
-//            MediaScannerConnection.scanFile(context, paths, null, scanListener)
-//        }.await()
-//    }
 
     suspend fun updateHasArt(id: Long) {
         backgroundScope.async {
@@ -366,12 +357,26 @@ class MediaRepo @Inject constructor(private val context: Context) {
                 tagged = data.tagged,
                 hasArtwork = hasArt,
                 track = data.track,
-                bitrate = data.bitrate,
                 duration = data.duration
             )
             musicMapState.update {
                 musicMapState.value + Pair(id, newData)
             }
         }.await()
+    }
+
+    suspend fun updateDuration(musicList: List<MusicData>){
+        val loaders = mutableListOf<Job>()
+        for(musicData in musicList) {
+            val loader = backgroundScope.launch {
+                val duration = musicData.getDuration(context)
+                musicMapState.update {
+                    musicMapState.value + Pair(musicData.id, musicData.copy(duration = duration))
+                }
+                Log.d("MediaRepo", musicMapState.value[musicData.id]?.duration.toString() + musicData.path)
+            }
+            loaders.add(loader)
+        }
+        loaders.joinAll()
     }
 }

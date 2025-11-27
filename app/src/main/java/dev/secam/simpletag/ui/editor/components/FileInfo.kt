@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
@@ -32,6 +33,7 @@ import dev.secam.simpletag.ui.components.SimpleSectionHeader
 
 @Composable
 fun FileInfo(musicData: MusicData, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Column (
         modifier = modifier
     ) {
@@ -58,8 +60,9 @@ fun FileInfo(musicData: MusicData, modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
+                val duration = musicData.getDuration(context)
                 Text(
-                    text = (musicData.duration / 60000).toString() + "m " + ((musicData.duration / 1000) % 60) + "s",
+                    text = (duration / 60000).toString() + "m " + ((duration / 1000) % 60) + "s",
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -74,8 +77,9 @@ fun FileInfo(musicData: MusicData, modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
+                val bitrate = musicData.getBitrate(context)
                 Text(
-                    text = (musicData.bitrate / 1000).toString() + " kbps",
+                    text = (bitrate / 1000).toString() + " kbps",
                     modifier = Modifier
                         .fillMaxWidth()
                 )

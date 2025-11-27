@@ -264,6 +264,21 @@ class SelectorViewModel @Inject constructor(
             }
         }
     }
+    fun updateDuration(index: Int, musicList: List<MusicData>){
+        backgroundScope.launch {
+            mediaRepo.updateDuration(musicList)
+            val newList = uiState.value.albumMap[uiState.value.albumList[index].first]!!.toMutableList()
+//            newList[0] = musicMapState.value[id]!!
+            for(i in 0..<newList.size){
+                newList[i] = musicMapState.value[newList[i].id]!!
+            }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    albumMap = uiState.value.albumMap + Pair(uiState.value.albumList[index].first, newList)
+                )
+            }
+        }
+    }
 
     fun refreshMediaStore() {
         backgroundScope.launch {

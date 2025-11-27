@@ -169,6 +169,8 @@ fun ListScreen(
                         ) { index ->
                             if (viewModel.hasArtwork(albumList[index].first) == null) {
                                 viewModel.updateHasArt(index, true)
+                            } else if(albumMap[albumList[index].first]!![0].duration == -1) {
+                                viewModel.updateDuration(index,albumMap[albumList[index].first]!!)
                             }
                             if (albumMap[albumList[index].first] != null) {
                                 SimpleAlbumItem(
