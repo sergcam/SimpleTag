@@ -25,6 +25,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
@@ -95,7 +97,6 @@ fun BatchEditor(
             if(fieldStates.isEmpty()){
                 NoFieldTip()
             } else {
-                // TODO: Make animations nicer
                 for (field in fieldStates) {
                     val visibleState = remember { MutableTransitionState<Boolean>(true) }
                     if(!visibleState.targetState) {
@@ -105,7 +106,7 @@ fun BatchEditor(
                     }
                     AnimatedVisibility(
                         visibleState = visibleState,
-//                        enter = TODO(),
+                        enter = fadeIn() + expandVertically(tween(150)),
                         exit = fadeOut() + shrinkVertically(tween(150)),
                     ){
                         EditorTextField(

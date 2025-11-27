@@ -21,10 +21,19 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,7 +57,8 @@ fun SingleEditor(
     fieldStates: Map<SimpleTagField, EditorFieldState>,
     pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     removeField: (SimpleTagField) -> Unit,
-    advancedEditor: Boolean
+    advancedEditor: Boolean,
+    deletedFields: Set<SimpleTagField>
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,20 +92,36 @@ fun SingleEditor(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 72.dp)
+                .animateContentSize()
         ) {
             if(fieldStates.isEmpty()){
                 NoFieldTip()
             } else {
                 for (field in fieldStates) {
-                    EditorTextField(
-                        state = field.value.textState,
-                        label = stringResource(field.key.displayNameRes),
-                        modifier = Modifier
-                            .padding(bottom = 8.dp),
-                        hasDelete = advancedEditor,
-                        action = { removeField(field.key) },
-                        onToggle = { removeField(field.key) },
-                    )
+                    val visibleState = remember { MutableTransitionState<Boolean>(true) }
+                    if(!visibleState.targetState) {
+                        if(!deletedFields.contains(field.key)){
+                            visibleState.targetState = true
+                        }
+                    }
+                    AnimatedVisibility(
+                        visibleState = visibleState,
+                        enter = fadeIn() + expandVertically(tween(150)),
+                        exit = fadeOut() + shrinkVertically(tween(150)),
+                    ) {
+                        EditorTextField(
+                            state = field.value.textState,
+                            label = stringResource(field.key.displayNameRes),
+                            modifier = Modifier
+                                .padding(bottom = 8.dp),
+                            hasDelete = advancedEditor,
+                            action = {
+                                removeField(field.key)
+                                visibleState.targetState = false
+                            },
+                            onToggle = { removeField(field.key) },
+                        )
+                    }
                 }
             }
         }

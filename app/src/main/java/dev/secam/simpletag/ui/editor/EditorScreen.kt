@@ -212,7 +212,8 @@ fun EditorScreen(
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    deletedFields = deletedFields
                 )
             } else {
                 BatchEditor(
