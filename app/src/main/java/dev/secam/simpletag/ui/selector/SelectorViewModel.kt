@@ -264,6 +264,21 @@ class SelectorViewModel @Inject constructor(
             }
         }
     }
+    fun updateDuration(index: Int, musicList: List<MusicData>){
+        backgroundScope.launch {
+            mediaRepo.updateDuration(musicList)
+            val newList = uiState.value.albumMap[uiState.value.albumList[index].first]!!.toMutableList()
+//            newList[0] = musicMapState.value[id]!!
+            for(i in 0..<newList.size){
+                newList[i] = musicMapState.value[newList[i].id]!!
+            }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    albumMap = uiState.value.albumMap + Pair(uiState.value.albumList[index].first, newList)
+                )
+            }
+        }
+    }
 
     fun refreshMediaStore() {
         backgroundScope.launch {
@@ -291,6 +306,24 @@ class SelectorViewModel @Inject constructor(
             }
             updateMusicList()
         }
+    }
+    fun addSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems + musicData
+        ) }
+    }
+    fun removeSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems - musicData
+        ) }
+        if(uiState.value.selectedItems.isEmpty()){
+            setMultiSelectedEnabled(false)
+        }
+    }
+    fun clearSelection() {
+        _uiState.update { it.copy(
+            selectedItems = setOf()
+        ) }
     }
 
     /*------- Setters -------*/
@@ -360,6 +393,16 @@ class SelectorViewModel @Inject constructor(
             )
         }
     }
+    fun setMultiSelectedEnabled(multiSelectEnabled: Boolean) {
+        if(!multiSelectEnabled) {
+            clearSelection()
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                multiSelectEnabled = multiSelectEnabled
+            )
+        }
+    }
 
 }
 
@@ -377,5 +420,7 @@ data class SelectorUiState(
     val log: String = "",
     val showLogDialog: Boolean = false,
     val albumMap: Map<String, List<MusicData>> = mapOf(),
-    val albumList: List<Pair<String, Boolean>> = listOf()
+    val albumList: List<Pair<String, Boolean>> = listOf(),
+    val multiSelectEnabled: Boolean = false,
+    val selectedItems: Set<MusicData> = setOf()
 )

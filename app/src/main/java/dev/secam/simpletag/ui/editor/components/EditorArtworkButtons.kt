@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +38,10 @@ fun EditorArtworkButtons(
     deleteEnabled: Boolean,
     onAdd: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    togglable: Boolean = false,
+    onToggle: (Boolean) -> Unit = {},
+    enabled: Boolean = true
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -46,6 +50,7 @@ fun EditorArtworkButtons(
     ) {
         Button(
             onClick = onAdd,
+            enabled = enabled,
             modifier = Modifier
                 .weight(.5f, false)
                 .fillMaxWidth(.98f)
@@ -63,7 +68,7 @@ fun EditorArtworkButtons(
         }
         Button(
             onClick = onDelete,
-            enabled = deleteEnabled,
+            enabled = deleteEnabled && enabled,
             modifier = Modifier
                 .weight(.5f, false)
                 .fillMaxWidth(.98f)
@@ -78,6 +83,12 @@ fun EditorArtworkButtons(
             Text(
                 text = stringResource(R.string.delete_cover),
                 fontWeight = FontWeight.Bold
+            )
+        }
+        if(togglable){
+            Checkbox(
+                checked = enabled,
+                onCheckedChange = onToggle,
             )
         }
     }

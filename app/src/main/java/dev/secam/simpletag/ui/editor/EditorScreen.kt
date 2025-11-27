@@ -18,6 +18,7 @@
 package dev.secam.simpletag.ui.editor
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -55,7 +56,6 @@ import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
 import dev.secam.simpletag.ui.selector.LoadingScreen
-import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
 
@@ -89,6 +89,8 @@ fun EditorScreen(
     val showAddFieldDialog = uiState.showAddFieldDialog
     val searchResults = uiState.searchResults
     val log = uiState.log
+    val deletedFields = uiState.deletedFields
+    val artworkEnabled = uiState.artworkEnabled
 
     // permission request (API30+)
     val onCancelText = stringResource(R.string.permission_denied)
@@ -131,7 +133,7 @@ fun EditorScreen(
         )
     }
 
-    BackPressHandler {
+    BackHandler {
         if (viewModel.changesMade()) {
             viewModel.setShowBackDialog(true)
         } else onNavigateBack()
@@ -140,23 +142,38 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = stringResource(R.string.edit_tag),
+                title = if (musicList.size == 1) {
+                    stringResource(R.string.edit_tag)
+                } else {
+                    stringResource(R.string.edit_n_tags).replaceFirst("#", musicList.size.toString())
+                },
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
                     } else onNavigateBack()
                 },
                 actions = {
-                    IconButton(
-                        onClick = { viewModel.openExternal(context, musicList[0]) }
-                    ) {
-                        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-                            viewModel.clearCache(context)
+                    if(musicList.size == 1) {
+                        IconButton(
+                            onClick = { viewModel.openExternal(context, musicList[0]) }
+                        ) {
+                            LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                                viewModel.clearCache(context)
+                            }
+                            Icon(
+                                painter = painterResource(R.drawable.ic_open_in_new_24px),
+                                contentDescription = stringResource(R.string.cd_save_tag_icon)
+                            )
                         }
-                        Icon(
-                            painter = painterResource(R.drawable.ic_open_in_new_24px),
-                            contentDescription = stringResource(R.string.cd_save_tag_icon)
-                        )
+                    } else {
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_help_24px),
+                                contentDescription = stringResource(R.string.cd_help_icon)
+                            )
+                        }
                     }
                     IconButton(
                         onClick = { viewModel.setShowSaveDialog(true) }
@@ -199,7 +216,6 @@ fun EditorScreen(
                 )
             } else {
                 BatchEditor(
-                    musicList = musicList,
                     artwork = artwork,
                     setArtwork = viewModel::setArtwork,
                     roundCovers = roundCovers,
@@ -207,19 +223,23 @@ fun EditorScreen(
                     pickArtwork = pickArtwork,
                     advancedEditor = advancedEditor!!,
                     removeField = viewModel::removeField,
+                    deletedFields = deletedFields,
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    artworkEnabled = artworkEnabled,
+                    setArtworkEnabled = viewModel::setArtworkEnabled
                 )
             }
         } else {
-            LoadingScreen()
+            LoadingScreen(text = "Reading Tags")
         }
 
         //  Show dialogs
         if(showSaveDialog){
             SaveTagDialog(
+                tagNum = musicList.size,
                 onCancel = { viewModel.setShowSaveDialog(false) },
                 onConfirm = {
                     viewModel.onSave(

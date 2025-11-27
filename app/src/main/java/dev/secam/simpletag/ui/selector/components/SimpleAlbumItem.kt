@@ -1,12 +1,33 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.selector.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -16,6 +37,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +49,23 @@ import dev.secam.simpletag.util.durationFormatter
 
 const val ANIMATION_DURATION = 200
 @Composable
-fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit, expanded: Boolean, onClick: () -> Unit) {
+fun SimpleAlbumItem(
+    musicList: List<MusicData>,
+    onSongClick: (MusicData) -> Unit,
+    expanded: Boolean,
+    onSongLongClick: (MusicData) -> Unit,
+    onClick: () -> Unit,
+    selectedSet: Set<MusicData>,
+    onLongClick: (List<MusicData>) -> Unit
+) {
+    val selected = selectedSet.containsAll(musicList)
+    val containerColor by animateColorAsState(
+        targetValue =
+            if (selected) MaterialTheme.colorScheme.surfaceContainerHigh
+            else MaterialTheme.colorScheme.background,
+        label = "selected",
+        animationSpec = tween(150)
+    )
     Column {
         ListItem(
             headlineContent = {
@@ -46,119 +84,103 @@ fun SimpleAlbumItem(musicList: List<MusicData>, onSongClick: (MusicData) -> Unit
                             shape = RoundedCornerShape(8.dp)
                         )
                 ) {
-                    SimpleAlbumArtwork(musicList[0])
+                    SimpleAlbumArtwork(musicList[0],selected = selected)
                 }
             },
             colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = containerColor
             ),
             modifier = Modifier
-                .clickable(
+                .combinedClickable(
                     enabled = true,
-                    onClick = onClick
+                    onClick = onClick,
+                    onLongClick = { onLongClick(musicList) }
                 )
         )
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(tween(ANIMATION_DURATION)),
             exit = fadeOut() + shrinkVertically(tween(ANIMATION_DURATION)),
-//            modifier = Modifier
-//                .height(100.dp)
         ) {
-            AlbumSubItems(musicList, onSongClick)
+            Column(
+//                modifier = modifier
+            ) {
+                for (song in musicList.sortedBy { it.track }) {
+                    AlbumSubItem(
+                        musicData = song,
+                        onClick = onSongClick,
+                        onLongClick =  onSongLongClick,
+                        selected = selectedSet.contains(song)
+                    )
+                }
+            }
         }
-//        if (expanded) {
-//            AlbumSubItems(musicList, onSongClick)
-//        }
     }
 }
 
 @Composable
-fun AlbumSubItems(
-    musicList: List<MusicData>,
+fun AlbumSubItem(
+    musicData: MusicData,
     onClick: (MusicData) -> Unit,
-    modifier: Modifier = Modifier
+    onLongClick: (MusicData) -> Unit,
+//    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+
 ) {
-    val newList = musicList.sortedBy { it.track }
-    Column(
-        modifier = modifier
-    ) {
-        for (song in newList) {
-            ListItem(
-                headlineContent = {
-                    Text(text = song.title)
-                },
-                leadingContent = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(48.dp)
-
-                    ) {
-                        Text(
-                            text = song.track.toString(),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+    val containerColor by animateColorAsState(
+        targetValue =
+            if (selected) MaterialTheme.colorScheme.surfaceContainerHigh
+            else MaterialTheme.colorScheme.surfaceContainerLow,
+        label = "selected",
+        animationSpec = tween(150)
+    )
+    ListItem(
+        headlineContent = {
+            Text(text = musicData.title)
+        },
+        leadingContent = {
+            Box(
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(
+                            shape = RoundedCornerShape(8.dp)
                         )
-                    }
-                },
-                supportingContent = {
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                ) {
                     Text(
-                        text = durationFormatter(song.duration),
+                        text = musicData.track.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                },
-                colors = ListItemDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                modifier = Modifier
-                    .clickable(
-                        enabled = true,
-                        onClick = { onClick(song) }
-                    )
+                }
+                AnimatedVisibility(
+                    visible = selected,
+                    enter = scaleIn(tween(150)) + fadeIn(),
+                    exit = scaleOut(tween(150)) + fadeOut(),
+                ) {
+                    SelectCheckCircle()
+                }
+            }
+        },
+        supportingContent = {
+            if(musicData.duration != -1){
+                Text(
+                    text = durationFormatter(musicData.duration),
+                )
+            }
+        },
+        colors = ListItemDefaults.colors(
+            containerColor = containerColor
+        ),
+        modifier = Modifier
+            .combinedClickable(
+                enabled = true,
+                onClick = { onClick(musicData) },
+                onLongClick = { onLongClick(musicData) }
             )
-        }
-    }
+    )
 }
-//
-//val eg = listOf(
-//    MusicData(
-//        id = 2,
-//        path = "null",
-//        title = "two",
-//        artist = "artist name",
-//        album = "album title",
-//        hasArtwork = false,
-//        track = 2,
-//        tagged = true
-//    ),
-//    MusicData(
-//        id = 3,
-//        path = "null",
-//        title = "three",
-//        artist = "artist name",
-//        album = "album title",
-//        hasArtwork = false,
-//        track = 3,
-//        tagged = true
-//    ),
-//    MusicData(
-//        id = 1,
-//        path = "null",
-//        title = "one",
-//        artist = "artist name",
-//        album = "album title",
-//        hasArtwork = false,
-//        track = 1,
-//        tagged = true
-//    ),
-//)
-//
-//@Preview
-//@Composable
-//fun AlbumItemPrev() {
-//    Column {
-//        SimpleAlbumItem(eg) { }
-//        SimpleAlbumItem(eg) { }
-//    }
-//}
-

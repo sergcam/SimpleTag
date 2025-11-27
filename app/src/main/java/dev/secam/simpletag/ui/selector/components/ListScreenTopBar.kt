@@ -17,6 +17,7 @@
 
 package dev.secam.simpletag.ui.selector.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
-import dev.secam.simpletag.util.BackPressHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +61,7 @@ fun ListScreenTopBar(
         title = {
             if (searchEnabled) {
                 val focusRequester = remember { FocusRequester() }
-                BackPressHandler {
+                BackHandler {
                     textFieldState.clearText()
                     setSearchEnabled(false)
                 }

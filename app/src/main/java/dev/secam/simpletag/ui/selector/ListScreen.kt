@@ -17,48 +17,34 @@
 
 package dev.secam.simpletag.ui.selector
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.SortOrder
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
-import dev.secam.simpletag.ui.selector.components.ListScreenTopBar
 import dev.secam.simpletag.ui.selector.components.SimpleAlbumItem
 import dev.secam.simpletag.ui.selector.components.SimpleMusicItem
 import dev.secam.simpletag.ui.selector.dialogs.FilterDialog
 import dev.secam.simpletag.ui.selector.dialogs.SortDialog
+import dev.secam.simpletag.util.animateExpandTopBar
 import kotlinx.coroutines.launch
 
 
@@ -68,13 +54,12 @@ fun ListScreen(
     modifier: Modifier = Modifier,
     onNavigateToEditor: (List<MusicData>) -> Unit,
     viewModel: SelectorViewModel,
-
+    lazyListState: LazyListState,
+    scrollBehavior: TopAppBarScrollBehavior
 ) {
     val scope = rememberCoroutineScope()
-    val lazyListState = rememberLazyListState()
-    val firstVisible = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
+
     val snackbarHostState = remember { SnackbarHostState() }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
@@ -86,17 +71,14 @@ fun ListScreen(
     val showFilterDialog = uiState.showFilterDialog
     val filesLoaded = uiState.filesLoaded
     val isRefreshing = uiState.isRefreshing
-    val searchEnabled = uiState.searchEnabled
-    val searchQuery = uiState.searchQuery
     val showLogDialog = uiState.showLogDialog
     val albumList = uiState.albumList
     val albumMap = uiState.albumMap
     val log = uiState.log
+    val multiSelectEnabled = uiState.multiSelectEnabled
+    val selectedItems = uiState.selectedItems
 
-    val searchFieldState = rememberTextFieldState(searchQuery)
-    if (searchEnabled && searchFieldState.text != searchQuery){
-        viewModel.setSearchQuery(searchFieldState.text as String)
-    }
+
 
     if (!filesLoaded) {
         viewModel.loadList(
@@ -105,150 +87,147 @@ fun ListScreen(
             actionLabel = stringResource(R.string.log)
         )
     }
-
-    Scaffold(
-        topBar = {
-            ListScreenTopBar(
-                searchEnabled = searchEnabled,
-                textFieldState = searchFieldState,
-                scrollBehavior = scrollBehavior,
-                setSearchEnabled = viewModel::setSearchEnabled,
-                onFilter = { viewModel.setShowFilterDialog(true) },
-                onSort = { viewModel.setShowSortDialog(true) }
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = firstVisible.value != 0,
-                enter = scaleIn(tween(150)) + fadeIn(),
-                exit = scaleOut(tween(150)) + fadeOut()
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        scope.launch { lazyListState.animateScrollToItem(0) }
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_upward_24px),
-                        contentDescription = stringResource(R.string.cd_scroll_top)
-                    )
-                }
+    val onSongClick = { item: MusicData ->
+        if (multiSelectEnabled) {
+            if (selectedItems.contains(item)) {
+                viewModel.removeSelection(item)
+            } else {
+                viewModel.addSelection(item)
             }
-        },
-        contentWindowInsets = WindowInsets(0),
+        } else {
+            onNavigateToEditor(listOf(item))
+        }
+    }
+    val onLongClick = { item: MusicData ->
+        if (multiSelectEnabled) {
+            onSongClick(item)
+        } else {
+            scope.launch { scrollBehavior.animateExpandTopBar(tween(250)) }
+            viewModel.setMultiSelectedEnabled(true)
+            viewModel.addSelection(item)
+        }
+    }
+    val onAlbumLongClick = { musicList: List<MusicData> ->
+        if (!multiSelectEnabled) {
+            scope.launch { scrollBehavior.animateExpandTopBar(tween(250)) }
+            viewModel.setMultiSelectedEnabled(true)
+        }
+        if (selectedItems.containsAll(musicList)) {
+            for (song in musicList){
+                viewModel.removeSelection(song)
+            }
+        } else {
+            for (song in musicList){
+                viewModel.addSelection(song)
+            }
+        }
+    }
+
+    Column(
         modifier = modifier
-    ) { contentPadding ->
+    ) {
+        //  Loading bar while loading music
+        if (!filesLoaded) {
+            LoadingScreen(
+                text = stringResource(R.string.loading_music),
+                subtext = stringResource(R.string.loading_music_long)
+            )
+        }
+        //  if loaded and list is empty
+        else if (musicList.isEmpty()) {
+            Text(
+                text = stringResource(R.string.no_results),
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+        }
+        // File List
         Column(
             modifier = Modifier
-                .padding(contentPadding)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .fillMaxSize()
         ) {
-            //  Loading bar while loading music
-            if (!filesLoaded) {
-                LoadingScreen(
-                    text = stringResource(R.string.loading_music),
-                    subtext = stringResource(R.string.loading_music_long)
-                )
-            }
-            //  if loaded and list is empty
-            else if (musicList.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_results),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                )
-            }
-            // File List
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    viewModel.setIsRefreshing(true)
+                    viewModel.refreshMediaStore()
+                },
             ) {
-                PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = {
-                        viewModel.setIsRefreshing(true)
-                        viewModel.refreshMediaStore()
-                    },
-                ) {
-                    if ( sortOrder == SortOrder.Album) {
-                        if(albumList.isEmpty() && !musicList.isEmpty()) {
-                            viewModel.setAlbumList()
-                        }
-                        LazyColumn(
-                            state = lazyListState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            items(
-                                count = albumList.size,
-                                key = null,//{ musicList[it].id },
-                                contentType = { String }
-                            ) { index ->
-                                if (viewModel.hasArtwork(albumList[index].first) == null) {
-                                    viewModel.updateHasArt(index, true)
-                                }
-                                if (albumMap[albumList[index].first] != null) {
-//                                    var expanded by remember { mutableStateOf(false) }
-                                    SimpleAlbumItem(
-                                        albumMap[albumList[index].first]!!,
-                                        onSongClick = { data ->
-                                            onNavigateToEditor(listOf(data))
-                                        },
-                                        expanded = albumList[index].second,
-                                        onClick = { viewModel.expandAlbum(index) }
-                                    )
-                                }
+                if (sortOrder == SortOrder.Album) {
+                    if (albumList.isEmpty() && !musicList.isEmpty()) {
+                        viewModel.setAlbumList()
+                    }
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        items(
+                            count = albumList.size,
+                            key = null,//{ musicList[it].id },
+                            contentType = { String }
+                        ) { index ->
+                            if (viewModel.hasArtwork(albumList[index].first) == null) {
+                                viewModel.updateHasArt(index, true)
+                            } else if(albumMap[albumList[index].first]!![0].duration == -1) {
+                                viewModel.updateDuration(index,albumMap[albumList[index].first]!!)
+                            }
+                            if (albumMap[albumList[index].first] != null) {
+                                SimpleAlbumItem(
+                                    musicList = albumMap[albumList[index].first]!!,
+                                    onSongClick = onSongClick,
+                                    expanded = albumList[index].second,
+                                    selectedSet = selectedItems,
+                                    onClick = { viewModel.expandAlbum(index) },
+                                    onSongLongClick = onLongClick,
+                                    onLongClick = onAlbumLongClick,
+                                )
                             }
                         }
-                    } else {
-                        LazyColumn(
-                            state = lazyListState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            items(
-                                count = musicList.size,
-                                key = null,//{ musicList[it].id },
-                                contentType = { MusicData }
-                            ) { index ->
+                    }
+                } else {
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        items(
+                            count = musicList.size,
+                            key = null,//{ musicList[it].id },
+                            contentType = { MusicData }
+                        ) { index ->
 
-                                if (musicList[index].hasArtwork == null) {
-                                    viewModel.updateHasArt(index)
-                                }
-                                SimpleMusicItem(musicList[index]) {
-                                    onNavigateToEditor(listOf(musicList[index]))
-                                }
+                            if (musicList[index].hasArtwork == null) {
+                                viewModel.updateHasArt(index)
                             }
+                            SimpleMusicItem(
+                                musicData = musicList[index],
+                                onLongClick = { onLongClick(musicList[index]) },
+                                selected = selectedItems.contains(musicList[index]),
+                                onClick = { onSongClick(musicList[index]) },
+                            )
                         }
                     }
                 }
             }
         }
+    }
 
-        //  Show Dialogs
-        if (showFilterDialog) {
-            FilterDialog(
-                hasTag = taggedFilter,
-                onConfirm = viewModel::setTaggedFilter
-            ) { viewModel.setShowFilterDialog(false) }
-        }
-        if (showSortDialog) {
-            SortDialog(
-                sortOrder = sortOrder,
-                sortDirection = sortDirection,
-                onConfirm = viewModel::setSort
-            ) { viewModel.setShowSortDialog(false) }
-        }
-        if(showLogDialog){
-            LogDialog(log) { viewModel.setShowLogDialog(false) }
-        }
+    //  Show Dialogs
+    if (showFilterDialog) {
+        FilterDialog(
+            hasTag = taggedFilter,
+            onConfirm = viewModel::setTaggedFilter
+        ) { viewModel.setShowFilterDialog(false) }
+    }
+    if (showSortDialog) {
+        SortDialog(
+            sortOrder = sortOrder,
+            sortDirection = sortDirection,
+            onConfirm = viewModel::setSort
+        ) { viewModel.setShowSortDialog(false) }
+    }
+    if (showLogDialog) {
+        LogDialog(log) { viewModel.setShowLogDialog(false) }
     }
 }
-
-
-
-
-

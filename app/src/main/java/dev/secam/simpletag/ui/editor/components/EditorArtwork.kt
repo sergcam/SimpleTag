@@ -23,6 +23,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.secam.simpletag.R
 import org.jaudiotagger.tag.images.Artwork
@@ -43,9 +45,11 @@ import org.jaudiotagger.tag.images.Artwork
 fun EditorArtwork(
     roundCovers: Boolean,
     artwork: Artwork?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(
                 shape =
@@ -55,6 +59,7 @@ fun EditorArtwork(
     ) {
         if (artwork != null) {
             Image(
+                alpha = if( enabled )1f else .5f,
                 bitmap = BitmapFactory.decodeByteArray(
                     artwork.binaryData,
                     0,
@@ -65,6 +70,17 @@ fun EditorArtwork(
                 modifier = Modifier
                     .fillMaxSize()
             )
+
+            if (!enabled){
+                Icon(
+                    painter = painterResource(R.drawable.edit_off_24px),
+                    contentDescription = "art disabled",
+                tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .size(48.dp)
+                )
+            }
+
         } else {
             Box(
                 contentAlignment = Alignment.Center,
@@ -80,6 +96,16 @@ fun EditorArtwork(
                         .fillMaxSize(.5f)
                 )
             }
+
         }
+
     }
+}
+
+@Preview
+@Composable
+fun AlbumArtPrev(){
+    EditorArtwork(
+        true,null
+    )
 }

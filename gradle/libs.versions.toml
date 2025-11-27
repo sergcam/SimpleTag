@@ -1,28 +1,28 @@
 [versions]
 accompanistPermissions = "0.37.3"
-agp = "8.13.0"
+agp = "8.13.1"
 appcompat = "1.7.1"
 coilCompose = "3.3.0"
 datastorePreferences = "1.1.7"
-jaudiotagger = "3.0.1"
+#jaudiotagger = "3.0.1"
 kotlin = "2.2.20"
 activityCompose = "1.11.0"
-material3 = "1.4.0-rc01"
-navigationCompose = "2.9.4"
-hilt = "2.57.1"
+material3 = "1.5.0-alpha07"
+navigationCompose = "2.9.5"
+hilt = "2.57.2"
 ksp = "2.2.20-2.0.2"
 hiltNavigationCompose = "1.3.0"
 kotlinxSerializationJson = "1.9.0"
 
 
 [libraries]
-javax-imageio = { module = "javax.imageio:imageio"}
+#javax-imageio = { module = "javax.imageio:imageio"}
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
-jaudiotagger = { module = "net.jthink:jaudiotagger", version.ref = "jaudiotagger" }
+#jaudiotagger = { module = "net.jthink:jaudiotagger", version.ref = "jaudiotagger" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
