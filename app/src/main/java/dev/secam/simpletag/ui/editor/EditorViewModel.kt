@@ -131,7 +131,7 @@ class EditorViewModel @Inject constructor(
                             // basic fields
                             if (!advancedEditor) {
                                 if (index <= SimpleTagField.ADVANCED_CUTOFF) {
-                                    addField(field, firstTag.getFirst(field.fieldKey))
+                                    addField(field, firstTag.getFirst(field.fieldKey), false)
                                 }
                                 // advanced fields
                             } else {
