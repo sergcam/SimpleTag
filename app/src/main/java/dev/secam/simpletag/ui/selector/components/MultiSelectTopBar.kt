@@ -49,7 +49,7 @@ fun MultiSelectTopBar(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_close_24px),
-                    contentDescription = "exit multiselect"
+                    contentDescription = stringResource(R.string.cd_exit_mulitselect)
                 )
             }
         },
@@ -62,7 +62,7 @@ fun MultiSelectTopBar(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_edit_24px),
-                    contentDescription = "edit selected"
+                    contentDescription = stringResource(R.string.cd_edit_multiselect)
                 )
             }
         },

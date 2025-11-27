@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import dev.secam.simpletag.R
 
 @Composable
@@ -44,7 +45,7 @@ fun EditorTextField(
 ) {
     Row {
         OutlinedTextField(
-            state = if (enabled) state else rememberTextFieldState("<unchanged>"),
+            state = if (enabled) state else rememberTextFieldState("<${stringResource(R.string.unchanged)}>"),
             label = {
                 Text(
                     text = label
@@ -54,7 +55,7 @@ fun EditorTextField(
                 {
                     Row {
                         IconButton(onClick =  action, enabled = enabled) {
-                            Icon(painterResource(R.drawable.ic_delete_24px), "delete")
+                            Icon(painterResource(R.drawable.ic_delete_24px), stringResource(R.string.cd_delete))
                         }
                         if (togglable) {
                             Checkbox(

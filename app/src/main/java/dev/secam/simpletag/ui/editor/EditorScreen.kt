@@ -19,7 +19,6 @@ package dev.secam.simpletag.ui.editor
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -53,6 +52,7 @@ import dev.secam.simpletag.ui.components.AnimatedFloatingActionButton
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.editor.dialogs.AddFieldDialog
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
+import dev.secam.simpletag.ui.editor.dialogs.HelpDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
 import dev.secam.simpletag.ui.selector.LoadingScreen
@@ -87,6 +87,7 @@ fun EditorScreen(
     val showBackDialog = uiState.showBackDialog
     val showLogDialog = uiState.showLogDialog
     val showAddFieldDialog = uiState.showAddFieldDialog
+    val showHelpDialog = uiState.showHelpDialog
     val searchResults = uiState.searchResults
     val log = uiState.log
     val deletedFields = uiState.deletedFields
@@ -120,7 +121,6 @@ fun EditorScreen(
             viewModel.setArtwork(viewModel.getArtworkFromUri(context.contentResolver, uri))
         }
     }
-    Log.d("ES", musicList[0].path)
     // initialize editor fields
     if (!initialized) {
         viewModel.initEditor(
@@ -167,7 +167,7 @@ fun EditorScreen(
                         }
                     } else {
                         IconButton(
-                            onClick = {}
+                            onClick = { viewModel.setShowHelpDialog(true) }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_help_24px),
@@ -234,7 +234,7 @@ fun EditorScreen(
                 )
             }
         } else {
-            LoadingScreen(text = "Reading Tags")
+            LoadingScreen(text = stringResource(R.string.reading_tags))
         }
 
         //  Show dialogs
@@ -280,6 +280,9 @@ fun EditorScreen(
                 onSearch = viewModel::onSearch,
                 onAdd = viewModel::addField
             ) { viewModel.setShowAddFieldDialog(false) }
+        }
+        if(showHelpDialog){
+            HelpDialog { viewModel.setShowHelpDialog(false) }
         }
     }
 }

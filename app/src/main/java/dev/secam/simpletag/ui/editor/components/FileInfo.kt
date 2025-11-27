@@ -62,7 +62,7 @@ fun FileInfo(musicData: MusicData, modifier: Modifier = Modifier) {
                 )
                 val duration = musicData.getDuration(context)
                 Text(
-                    text = (duration / 60000).toString() + "m " + ((duration / 1000) % 60) + "s",
+                    text = (duration / 60000).toString() + "${stringResource(R.string.minute_short)} " + ((duration / 1000) % 60) + stringResource(R.string.second_short),
                     modifier = Modifier
                         .fillMaxWidth()
                 )

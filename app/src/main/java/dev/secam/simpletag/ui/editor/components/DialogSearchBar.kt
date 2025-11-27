@@ -61,7 +61,7 @@ fun DialogSearchBar (textFieldState: TextFieldState) {
                 }
             }
         },
-        placeholder = { Text("Search Fields") },
+        placeholder = { Text(stringResource(R.string.search_fields)) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)

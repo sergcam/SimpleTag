@@ -55,7 +55,6 @@ fun SimpleMusicItem(
         targetValue =
             if (selected) MaterialTheme.colorScheme.surfaceContainerHigh
             else MaterialTheme.colorScheme.background,
-        label = "selected",
         animationSpec = tween(150)
     )
     ListItem(

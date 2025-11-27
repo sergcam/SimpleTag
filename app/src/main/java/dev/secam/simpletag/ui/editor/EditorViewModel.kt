@@ -530,6 +530,9 @@ class EditorViewModel @Inject constructor(
     fun setShowLogDialog(showLogDialog: Boolean) {
         _uiState.update { it.copy(showLogDialog = showLogDialog) }
     }
+    fun setShowHelpDialog(showHelpDialog: Boolean) {
+        _uiState.update { it.copy(showHelpDialog = showHelpDialog) }
+    }
 
     fun setShowAddFieldDialog(showAddFieldDialog: Boolean){
         _uiState.update { it.copy(showAddFieldDialog = showAddFieldDialog) }
@@ -551,6 +554,7 @@ data class EditorUiState(
     val showBackDialog: Boolean = false,
     val showSaveDialog: Boolean = false,
     val showLogDialog: Boolean = false,
+    val showHelpDialog: Boolean = false,
     val showAddFieldDialog: Boolean = false,
     val savedFields: List<String> = listOf(),
     val log: String = "",
