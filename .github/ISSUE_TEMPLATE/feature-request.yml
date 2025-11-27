@@ -36,7 +36,7 @@ body:
     id: terms
     attributes:
       label: Duplicates
-      description: By submitting this issue, you aknowledge the following
+      description: By submitting this issue, you acknowledge the following
       options:
         - label: I have checked this feature request for duplicates.
           required: true
