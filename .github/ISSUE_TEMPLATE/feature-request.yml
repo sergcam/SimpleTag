@@ -1,0 +1,44 @@
+name: Feature Request
+description: Propose new functionality
+labels: ["enhancement"]
+assignees:
+  - OxygenCobalt
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to SimpleTag's feature request form.
+  - type: textarea
+    id: desc
+    attributes:
+      label: Description 
+      description: Provide a clear and concise description of the feature to implement.
+      placeholder: I want...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem solved
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+  - type: textarea
+    id: why
+    attributes:
+      label: Benefit
+      description: >
+        How will this addition benefit **everyone's** usage of SimpleTag? A convincing argument increases the likelihood
+        that this feature is accepted.
+      placeholder: This feature allows...
+    validations:
+      required: true 
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Duplicates
+      description: By submitting this issue, you aknowledge the following
+      options:
+        - label: I have checked this feature request for duplicates.
+          required: true
+        - label: I have checked that this feature is not implemented in the [lastest version](https://github.com/sergcam/SimpleTag/releases).
+          required: true
