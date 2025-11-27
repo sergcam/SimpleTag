@@ -114,15 +114,10 @@ fun SimpleAlbumItem(
                     )
                 }
             }
-//            AlbumSubItems(musicList, onSongClick, onLongClick, selected = false)
         }
-//        if (expanded) {
-//            AlbumSubItems(musicList, onSongClick)
-//        }
     }
 }
 
-// TODO: get selected state and visually update item
 @Composable
 fun AlbumSubItem(
     musicData: MusicData,
@@ -172,9 +167,11 @@ fun AlbumSubItem(
             }
         },
         supportingContent = {
-            Text(
-                text = durationFormatter(musicData.duration),
-            )
+            if(musicData.duration != -1){
+                Text(
+                    text = durationFormatter(musicData.duration),
+                )
+            }
         },
         colors = ListItemDefaults.colors(
             containerColor = containerColor

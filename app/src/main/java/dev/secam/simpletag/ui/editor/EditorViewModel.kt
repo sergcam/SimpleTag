@@ -69,6 +69,7 @@ import org.jaudiotagger.tag.mp4.Mp4Tag
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag
 import java.io.File
 import java.nio.file.AccessDeniedException
+import java.util.ArrayList
 import javax.inject.Inject
 
 const val WRITE_TIMEOUT = 1000L
@@ -190,7 +191,8 @@ class EditorViewModel @Inject constructor(
                         enabledState = mutableStateOf(enabled)
                     )
                 ),
-                invisibleTags = uiState.value.invisibleTags - field
+                invisibleTags = uiState.value.invisibleTags - field,
+                deletedFields = uiState.value.deletedFields - field
             )
         }
     }
@@ -205,11 +207,13 @@ class EditorViewModel @Inject constructor(
         }
     }
     fun removeField(field: SimpleTagField){
+        setChangesMade(true)
         _uiState.update {
             it.copy(
-                fieldStates = uiState.value.fieldStates - field,
+//                fieldStates = uiState.value.fieldStates - field,
                 invisibleTags = uiState.value.invisibleTags + field,
-                deletedFields = uiState.value.deletedFields + field
+                deletedFields = uiState.value.deletedFields + field,
+
             )
         }
     }
@@ -263,7 +267,7 @@ class EditorViewModel @Inject constructor(
             try {
                 withTimeout(WRITE_TIMEOUT) {
                     log = "Entered writeTags()\n"
-                    val fields = uiState.value.fieldStates
+                    val fields = uiState.value.fieldStates - uiState.value.deletedFields
                     val artwork = uiState.value.artwork
                     val musicList = uiState.value.editorMusicList
                     if (musicList.size == 1) {
@@ -373,10 +377,11 @@ class EditorViewModel @Inject constructor(
                     //  reset change tracking
                     setArtworkChanged(false)
                     setSavedFields()
+                    setChangesMade(false)
                     log += "Change tracking reset\n"
                     //  refresh mediastore to reflect changes
                     log += "Refreshing mediastore\n"
-                    mediaRepo.refreshMediaStore(uiState.value.editorMusicList)
+                    mediaRepo.refreshMediaStore(musicList)
                     log += "Mediastore refreshed\n"
                     log += "Finished saving\n"
                     Log.d("EditorVM", log)
@@ -403,14 +408,16 @@ class EditorViewModel @Inject constructor(
                 // request permission for api 30+
                 if (launcher != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val musicList = uiState.value.editorMusicList
-                    val uri = ContentUris.withAppendedId(
-                        MediaStore.Audio.Media.getContentUri("external"),
-                        musicList[0].id
-                    )
+                    val uris = ArrayList(musicList.map{ song ->
+                        ContentUris.withAppendedId(
+                            MediaStore.Audio.Media.getContentUri("external"),
+                            song.id
+                        )
+                    })
                     val request = IntentSenderRequest.Builder(
                         MediaStore.createWriteRequest(
                             context.contentResolver,
-                            arrayListOf(uri)
+                            uris
                         )
                     ).build()
                     launcher.launch(request)
@@ -440,7 +447,7 @@ class EditorViewModel @Inject constructor(
         val currentFields = uiState.value.fieldStates.map { mapEntry ->
             mapEntry.value.textState.text as String
         }
-        return (uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
+        return (uiState.value.changesMade || uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
     }
 
     fun onSearch(query: String = "") {
@@ -463,6 +470,8 @@ class EditorViewModel @Inject constructor(
         }
     }
 
+
+
     /*------- Setters -------*/
     fun setArtwork(artwork: Artwork?) {
         _uiState.update { currentState ->
@@ -472,14 +481,6 @@ class EditorViewModel @Inject constructor(
             )
         }
     }
-
-//    fun setFieldStates(fieldStates: Map<SimpleTagField, TextFieldState>) {
-//        _uiState.update { currentState ->
-//            currentState.copy(
-//                fieldStates = fieldStates
-//            )
-//        }
-//    }
 
     fun setEditorMusicList(editorMusicList: List<MusicData>) {
         _uiState.update { currentState ->
@@ -533,7 +534,12 @@ class EditorViewModel @Inject constructor(
     fun setShowAddFieldDialog(showAddFieldDialog: Boolean){
         _uiState.update { it.copy(showAddFieldDialog = showAddFieldDialog) }
     }
-
+    fun setChangesMade(changesMade: Boolean) {
+        _uiState.update { it.copy(changesMade = changesMade) }
+    }
+    fun setArtworkEnabled(artworkEnabled: Boolean){
+        _uiState.update { it.copy(artworkEnabled = artworkEnabled) }
+    }
 }
 
 data class EditorUiState(
@@ -552,7 +558,8 @@ data class EditorUiState(
     val invisibleTags: Set<SimpleTagField> = setOf(),
     val searchResults: List<SimpleTagField> = listOf(),
     val deletedFields: Set<SimpleTagField> = setOf(),
-    val artworkEnabled: Boolean = false
+    val artworkEnabled: Boolean = false,
+    val changesMade: Boolean = false
 )
 
 data class EditorFieldState(

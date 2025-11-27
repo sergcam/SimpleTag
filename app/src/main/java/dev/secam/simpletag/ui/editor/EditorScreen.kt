@@ -88,6 +88,8 @@ fun EditorScreen(
     val showAddFieldDialog = uiState.showAddFieldDialog
     val searchResults = uiState.searchResults
     val log = uiState.log
+    val deletedFields = uiState.deletedFields
+    val artworkEnabled = uiState.artworkEnabled
 
     // permission request (API30+)
     val onCancelText = stringResource(R.string.permission_denied)
@@ -213,7 +215,6 @@ fun EditorScreen(
                 )
             } else {
                 BatchEditor(
-                    musicList = musicList,
                     artwork = artwork,
                     setArtwork = viewModel::setArtwork,
                     roundCovers = roundCovers,
@@ -221,10 +222,13 @@ fun EditorScreen(
                     pickArtwork = pickArtwork,
                     advancedEditor = advancedEditor!!,
                     removeField = viewModel::removeField,
+                    deletedFields = deletedFields,
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-//                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    artworkEnabled = artworkEnabled,
+                    setArtworkEnabled = viewModel::setArtworkEnabled
                 )
             }
         } else {
