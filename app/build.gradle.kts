@@ -18,8 +18,8 @@ android {
         applicationId = "dev.secam.simpletag"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.2.1-beta"
+        versionCode = 9
+        versionName = "0.3.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
