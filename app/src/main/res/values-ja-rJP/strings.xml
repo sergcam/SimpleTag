@@ -187,4 +187,24 @@
     <string name="add_field_tip">Press the + to add a field</string>
     <string name="replaygain_track_field">Track ReplayGain</string>
     <string name="replaygain_album_field">Album ReplayGain</string>
+    <string name="multiselect_title">selected</string>
+    <string name="cd_selected">selected</string>
+    <string name="cd_help_icon">help</string>
+    <string name="edit_n_tags">Editing # tags</string>
+    <string name="help_dialog_title">Batch Editor Help</string>
+    <string name="batch_help_header">Using the batch editor:</string>
+    <string name="batch_help_one">1. Use the checkboxes to select which fields you would like to edit</string>
+    <string name="batch_help_two">2. Upon saving, all checked fields will be written to all of the selected audio files</string>
+    <string name="batch_help_three">3. Any unchecked fields will be left as is for each audio file</string>
+    <string name="batch_help_four">4. Deleting a field will delete it for all audio files</string>
+    <string name="search_fields">Search Fields</string>
+    <string name="reading_tags">Reading Tags</string>
+    <string name="cd_art_disabled">art disabled</string>
+    <string name="unchanged">unchanged</string>
+    <string name="minute_short">m</string>
+    <string name="second_short">s</string>
+    <string name="add_field">Add Field</string>
+    <string name="cd_delete">delete\n</string>
+    <string name="cd_exit_mulitselect">exit multiselect</string>
+    <string name="cd_edit_multiselect">edit selected</string>
 </resources>
