@@ -188,8 +188,11 @@ class SelectorViewModel @Inject constructor(
 
     fun sortList(musicList: List<MusicData>): List<MusicData> {
         val newList = musicList.toMutableList()
+        val sortOrder = if(prefState.value.rememberSort) prefState.value.sortOrder else uiState.value.sortOrder
+        val sortDirection = if(prefState.value.rememberSort) prefState.value.sortDirection else uiState.value.sortDirection
+
         newList.sortBy { selector ->
-            when(uiState.value.sortOrder){
+            when(sortOrder){
                 SortOrder.Album ->
                     selector.album.lowercase()
                 SortOrder.Title ->
@@ -200,7 +203,7 @@ class SelectorViewModel @Inject constructor(
 //                        selector.artist?.lowercase()
             }
         }
-        if(uiState.value.sortDirection == SortDirection.Descending){
+        if(sortDirection == SortDirection.Descending){
             newList.reverse()
         }
         return newList as List<MusicData>
@@ -355,6 +358,10 @@ class SelectorViewModel @Inject constructor(
                 sortOrder = sortOrder,
                 sortDirection = sortDirection
             )
+        }
+        viewModelScope.launch {
+            preferencesRepo.saveSortOrder(sortOrder)
+            preferencesRepo.saveSortDirection(sortDirection)
         }
         updateMusicList()
     }

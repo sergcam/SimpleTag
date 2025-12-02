@@ -48,6 +48,7 @@ class SettingsViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
+    /*      Preferences     */
     fun setTheme(theme: AppTheme) {
         viewModelScope.launch {
             preferencesRepo.saveThemePref(theme)
@@ -82,7 +83,13 @@ class SettingsViewModel @Inject constructor(
             preferencesRepo.saveSystemFontPref(systemFont)
         }
     }
+    fun setRememberSort(rememberSort: Boolean) {
+        viewModelScope.launch {
+            preferencesRepo.saveRememberSort(rememberSort)
+        }
+    }
 
+    /*      UI State     */
     fun setShowThemeDialog(showThemeDialog: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -97,6 +104,7 @@ class SettingsViewModel @Inject constructor(
             )
         }
     }
+
 
 
     @Composable

@@ -27,6 +27,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -43,6 +45,9 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val ROUND_COVERS = booleanPreferencesKey("round_covers")
         val SYSTEM_FONT = booleanPreferencesKey("system_font")
         val OPTIONAL_PERMISSIONS_SKIPPED = booleanPreferencesKey("optional_permissions_skipped")
+        val REMEMBER_SORT = booleanPreferencesKey("remember_sort")
+        val SORT_ORDER = stringPreferencesKey("sort_order")
+        val SORT_DIRECTION = stringPreferencesKey("sort_direction")
         const val TAG = "PreferencesRepo"
     }
 
@@ -65,6 +70,9 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val roundCovers = preferences[ROUND_COVERS] ?: true
             val systemFont = preferences[SYSTEM_FONT] ?: false
             val optionalPermissionsSkipped = preferences[OPTIONAL_PERMISSIONS_SKIPPED] ?: false
+            val rememberSort = preferences[REMEMBER_SORT] ?: false
+            val sortOrder = preferences[SORT_ORDER] ?: "Title"
+            val sortDirection = preferences[SORT_DIRECTION] ?: "Ascending"
 
             UserPreferences(
                 theme = AppTheme.valueOf(theme),
@@ -73,7 +81,10 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
                 advancedEditor = advancedEditor,
                 roundCovers = roundCovers,
                 systemFont = systemFont,
-                optionalPermissionsSkipped = optionalPermissionsSkipped
+                optionalPermissionsSkipped = optionalPermissionsSkipped,
+                rememberSort = rememberSort,
+                sortOrder = SortOrder.valueOf(sortOrder),
+                sortDirection = SortDirection.valueOf(sortDirection)
             )
 
         }
@@ -119,5 +130,22 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             preferences[OPTIONAL_PERMISSIONS_SKIPPED] = optionalPermissionsSkipped
         }
     }
+
+    override suspend fun saveRememberSort(rememberSort: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[REMEMBER_SORT] = rememberSort
+        }
+    }
+
+    override suspend fun saveSortOrder(sortOrder: SortOrder) {
+        dataStore.edit { preferences ->
+            preferences[SORT_ORDER] = sortOrder.name
+        }
+    }
+
+    override suspend fun saveSortDirection(sortDirection: SortDirection) {
+        dataStore.edit { preferences ->
+            preferences[SORT_DIRECTION] = sortDirection.name
+        }    }
 
 }

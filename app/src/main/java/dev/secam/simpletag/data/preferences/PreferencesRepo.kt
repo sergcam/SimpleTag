@@ -19,6 +19,8 @@ package dev.secam.simpletag.data.preferences
 
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesRepo {
@@ -30,4 +32,7 @@ interface PreferencesRepo {
     suspend fun saveRoundCoversPref(roundCovers: Boolean)
     suspend fun saveSystemFontPref(systemFont: Boolean)
     suspend fun saveOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean)
+    suspend fun saveRememberSort(rememberSort: Boolean)
+    suspend fun saveSortOrder(sortOrder: SortOrder)
+    suspend fun saveSortDirection(sortDirection: SortDirection)
 }

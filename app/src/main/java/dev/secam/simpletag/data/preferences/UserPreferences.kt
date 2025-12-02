@@ -19,6 +19,8 @@ package dev.secam.simpletag.data.preferences
 
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
 
 data class UserPreferences(
     val theme: AppTheme = AppTheme.System,
@@ -27,5 +29,8 @@ data class UserPreferences(
     val advancedEditor: Boolean = false,
     val roundCovers: Boolean = true,
     val systemFont: Boolean = false,
-    val optionalPermissionsSkipped: Boolean = false
+    val optionalPermissionsSkipped: Boolean = false,
+    val rememberSort: Boolean = false,
+    val sortOrder: SortOrder = SortOrder.Title,
+    val sortDirection: SortDirection = SortDirection.Ascending
 )

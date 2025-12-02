@@ -61,11 +61,14 @@ fun ListScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val prefState = viewModel.prefState.collectAsState().value
+
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
+    val rememberSort = prefState.rememberSort
     val musicList = uiState.musicList
-    val sortOrder = uiState.sortOrder
-    val sortDirection = uiState.sortDirection
+    val sortOrder = if(rememberSort) prefState.sortOrder else uiState.sortOrder
+    val sortDirection = if(rememberSort) prefState.sortDirection else uiState.sortDirection
     val taggedFilter = uiState.taggedFilter
     val showSortDialog = uiState.showSortDialog
     val showFilterDialog = uiState.showFilterDialog
