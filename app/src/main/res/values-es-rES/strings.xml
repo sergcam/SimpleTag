@@ -207,4 +207,7 @@
     <string name="cd_delete">delete\n</string>
     <string name="cd_exit_mulitselect">exit multiselect</string>
     <string name="cd_edit_multiselect">edit selected</string>
+    <string name="general">General</string>
+    <string name="settings_remember_sort">Remember Sort Settings</string>
+    <string name="behavior">Behavior</string>
 </resources>
