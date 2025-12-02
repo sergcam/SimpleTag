@@ -207,4 +207,7 @@
     <string name="cd_delete">删除\n</string>
     <string name="cd_exit_mulitselect">退出多选</string>
     <string name="cd_edit_multiselect">编辑所选</string>
+    <string name="general">General</string>
+    <string name="settings_remember_sort">Remember Sort Settings</string>
+    <string name="behavior">Behavior</string>
 </resources>
