@@ -65,6 +65,15 @@ fun EditorTextField(
                         }
                     }
                 }
+            } else if(action != null){
+                {
+                    if (togglable) {
+                        Checkbox(
+                            checked = enabled,
+                            onCheckedChange = onToggle,
+                        )
+                    }
+                }
             } else null,
             enabled = enabled,
             modifier = modifier
