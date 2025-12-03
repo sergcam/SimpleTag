@@ -2,7 +2,6 @@
 <resources>
     <!--    License     -->
     <!--    Titles    -->
-    <string name="app_name">SimpleTag</string>
     <string name="settings_title">Einstellungen</string>
     <string name="about_title">Über</string>
     <!--     Content Desc    -->

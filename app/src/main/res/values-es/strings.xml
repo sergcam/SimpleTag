@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SimpleTag</string>
     <string name="settings_title">Ajustes</string>
     <string name="about_title">Acerca De</string>
     <string name="title_field">Título</string>

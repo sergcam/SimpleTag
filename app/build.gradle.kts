@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -37,6 +38,12 @@ android {
             applicationIdSuffix = ".debug"
             isDebuggable = true
             versionNameSuffix = "-debug"
+        }
+    }
+    applicationVariants.all {
+        outputs.forEach { output ->
+            (output as BaseVariantOutputImpl).outputFileName =
+                "SimpleTag_${versionName}.apk"
         }
     }
     compileOptions {
