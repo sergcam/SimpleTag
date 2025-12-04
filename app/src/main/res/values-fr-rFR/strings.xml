@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--    License     -->
     <!--    Titles    -->
-    <string name="app_name">SimpleTag</string>
     <string name="settings_title">Paramètres</string>
     <string name="about_title">À propos</string>
     <!--     Content Desc    -->
@@ -210,4 +208,7 @@
     <string name="general">General</string>
     <string name="settings_remember_sort">Remember Sort Settings</string>
     <string name="behavior">Behavior</string>
+    <string name="edit_lyrics">Edit Lyrics</string>
+    <string name="delete_lyrics">Delete Lyrics</string>
+    <string name="save_lyrics">Save Lyrics</string>
 </resources>
