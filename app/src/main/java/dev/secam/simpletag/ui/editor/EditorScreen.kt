@@ -26,8 +26,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -50,6 +55,7 @@ import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.ui.components.AnimatedFloatingActionButton
 import dev.secam.simpletag.ui.components.SimpleTopBar
+import dev.secam.simpletag.ui.editor.dialogs.LyricsEditorSheet
 import dev.secam.simpletag.ui.editor.dialogs.AddFieldDialog
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
 import dev.secam.simpletag.ui.editor.dialogs.HelpDialog
@@ -59,7 +65,7 @@ import dev.secam.simpletag.ui.selector.LoadingScreen
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EditorScreen(
     musicList: List<MusicData>,
@@ -80,6 +86,7 @@ fun EditorScreen(
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
+    val editorMusicList = uiState.editorMusicList
     val initialized = uiState.initialized
     val artwork = uiState.artwork
     val fieldStates = uiState.fieldStates
@@ -88,6 +95,7 @@ fun EditorScreen(
     val showLogDialog = uiState.showLogDialog
     val showAddFieldDialog = uiState.showAddFieldDialog
     val showHelpDialog = uiState.showHelpDialog
+    val showLyricsSheet = uiState.showLyricsSheet
     val searchResults = uiState.searchResults
     val log = uiState.log
     val deletedFields = uiState.deletedFields
@@ -122,7 +130,7 @@ fun EditorScreen(
         }
     }
     // initialize editor fields
-    if (!initialized) {
+    if (!initialized || musicList != editorMusicList) {
         viewModel.initEditor(
             musicList,
             tagNames = buildMap {
@@ -175,25 +183,57 @@ fun EditorScreen(
                             )
                         }
                     }
-                    IconButton(
-                        onClick = { viewModel.setShowSaveDialog(true) }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_save_24px),
-                            contentDescription = stringResource(R.string.cd_save_tag_icon)
-                        )
-                    }
+
                 },
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
-            AnimatedFloatingActionButton(
-                visible = advancedEditor ?: false,
-                icon = painterResource(R.drawable.ic_add_24px),
-                iconDescription = stringResource(R.string.cd_add_field)
-            ) { viewModel.setShowAddFieldDialog(true) }
+            HorizontalFloatingToolbar(
+                expanded = true,
+                floatingActionButton = {
+                    AnimatedFloatingActionButton(
+                        visible = true,
+                        icon = painterResource(R.drawable.ic_save_24px),
+                        iconDescription = stringResource(R.string.cd_save_tag_icon)
+                    ) { viewModel.setShowSaveDialog(true) }
+                },
+//                scrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
+//                    FloatingToolbarExitDirection.Bottom)
+            ) {
+
+
+                IconButton(
+                    onClick = { viewModel.setShowLyricsSheet(true) }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_lyrics_24px),
+                        contentDescription = stringResource(R.string.cd_edit_lyrics)
+                    )
+                }
+                IconButton(
+                    onClick = {  }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_done_all_24px),
+                        contentDescription = stringResource(R.string.cd_edit_lyrics)
+                    )
+                }
+                IconButton(
+                    onClick = { viewModel.setShowAddFieldDialog(true) },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add_24px),
+                        contentDescription = stringResource(R.string.cd_add_field)
+                    )
+                }
+            }
         },
+        floatingActionButtonPosition = FabPosition.Center,
+
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
@@ -283,6 +323,14 @@ fun EditorScreen(
         }
         if(showHelpDialog){
             HelpDialog { viewModel.setShowHelpDialog(false) }
+        }
+        if(showLyricsSheet){
+            LyricsEditorSheet(
+                songTitle = musicList[0].title,
+                artist = musicList[0].artist
+            ) {
+                viewModel.setShowLyricsSheet(false)
+            }
         }
     }
 }

@@ -104,6 +104,7 @@ class EditorViewModel @Inject constructor(
     fun initEditor(musicList: List<MusicData>, tagNames: Map<SimpleTagField, String>) {
         backgroundScope.launch {
             var supportsRG = true
+            resetFields()
             val advancedEditor = prefState.value?.advancedEditor
             if (advancedEditor != null) {
                 _uiState.update { currentState ->
@@ -214,6 +215,16 @@ class EditorViewModel @Inject constructor(
                 invisibleTags = uiState.value.invisibleTags + field,
                 deletedFields = uiState.value.deletedFields + field,
 
+            )
+        }
+    }
+
+    fun resetFields() {
+        _uiState.update {
+            it.copy(
+                fieldStates = mapOf(),
+                invisibleTags = setOf(),
+                deletedFields = setOf(),
             )
         }
     }
@@ -537,6 +548,9 @@ class EditorViewModel @Inject constructor(
     fun setShowAddFieldDialog(showAddFieldDialog: Boolean){
         _uiState.update { it.copy(showAddFieldDialog = showAddFieldDialog) }
     }
+    fun setShowLyricsSheet(showLyricsSheet: Boolean) {
+        _uiState.update { it.copy(showLyricsSheet = showLyricsSheet) }
+    }
     fun setChangesMade(changesMade: Boolean) {
         _uiState.update { it.copy(changesMade = changesMade) }
     }
@@ -556,6 +570,7 @@ data class EditorUiState(
     val showLogDialog: Boolean = false,
     val showHelpDialog: Boolean = false,
     val showAddFieldDialog: Boolean = false,
+    val showLyricsSheet: Boolean = false,
     val savedFields: List<String> = listOf(),
     val log: String = "",
     val tagNames: Map<SimpleTagField, String> = mapOf(),

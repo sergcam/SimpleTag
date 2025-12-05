@@ -219,6 +219,7 @@
     <string name="edit_lyrics">Edit Lyrics</string>
     <string name="delete_lyrics">Delete Lyrics</string>
     <string name="save_lyrics">Save Lyrics</string>
+    <string name="cd_edit_lyrics">edit lyriccs</string>
 
 
 </resources>

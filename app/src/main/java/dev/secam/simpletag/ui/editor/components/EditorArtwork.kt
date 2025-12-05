@@ -73,7 +73,7 @@ fun EditorArtwork(
 
             if (!enabled){
                 Icon(
-                    painter = painterResource(R.drawable.edit_off_24px),
+                    painter = painterResource(R.drawable.ic_edit_off_24px),
                     contentDescription = stringResource(R.string.cd_art_disabled),
                 tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
