@@ -205,11 +205,11 @@
     <string name="cd_delete">删除\n</string>
     <string name="cd_exit_mulitselect">退出多选</string>
     <string name="cd_edit_multiselect">编辑所选</string>
-    <string name="general">General</string>
-    <string name="settings_remember_sort">Remember Sort Settings</string>
-    <string name="behavior">Behavior</string>
-    <string name="edit_lyrics">Edit Lyrics</string>
-    <string name="delete_lyrics">Delete Lyrics</string>
-    <string name="save_lyrics">Save Lyrics</string>
-    <string name="cd_edit_lyrics">edit lyriccs</string>
+    <string name="general">一般</string>
+    <string name="settings_remember_sort">记住排序设置</string>
+    <string name="behavior">行为</string>
+    <string name="edit_lyrics">编辑歌词</string>
+    <string name="delete_lyrics">删除歌词</string>
+    <string name="save_lyrics">保存歌词</string>
+    <string name="cd_edit_lyrics">编辑歌词</string>
 </resources>
