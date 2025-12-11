@@ -18,9 +18,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,10 +37,12 @@ import kotlinx.coroutines.launch
 fun LyricsEditorSheet(
     songTitle: String,
     artist: String,
+    lyrics: String,
+    setLyrics: (String?) -> Unit,
     onDismiss: () -> Unit,
 ){
     val scope = rememberCoroutineScope()
-    val lyricsState = rememberTextFieldState()
+    val lyricsState = rememberTextFieldState(lyrics)
     val lyricsActivityLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -47,37 +51,22 @@ fun LyricsEditorSheet(
                 val receivedLyrics = result.data?.getStringExtra("lyrics")
                 if (!receivedLyrics.isNullOrBlank()) {
                     lyricsState.setTextAndPlaceCursorAtEnd(receivedLyrics)
-                    scope.launch {
-//                        sonner.show(
-//                            message = context.getString(R.string.lyrics_received),
-//                            type = ToastType.Success
-//                        )
-                    }
                 } else {
                     scope.launch {
-//                        sonner.show(
-//                            message = context.getString(R.string.empty_lyrics_received),
-//                            type = ToastType.Error
-//                        )
+//                        TODO: on lyrics retrieve fail
                     }
                 }
             }
 
             Activity.RESULT_CANCELED -> {
                 scope.launch {
-//                    sonner.show(
-//                        message = context.getString(R.string.lyrics_retrieve_cancelled),
-//                        type = ToastType.Info
-//                    )
+//                    TODO: on lyrics retrieve cancel
                 }
             }
 
             else -> {
                 scope.launch {
-//                    sonner.show(
-//                        message = context.getString(R.string.something_unexpected_occurred),
-//                        type = ToastType.Error
-//                    )
+//                    TODO: unknown error
                 }
             }
         }
@@ -94,6 +83,7 @@ fun LyricsEditorSheet(
         try {
             lyricsActivityLauncher.launch(lyricsRetrieveIntent)
         } catch (e: Exception) {
+//            TODO: SongSync not installed
 //            when (e) {
 //                is ActivityNotFoundException -> showInstallSongSyncDialog = true
 //                else -> scope.launch {
@@ -109,24 +99,27 @@ fun LyricsEditorSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
+        sheetGesturesEnabled = false
     ) {
         Column(
+            horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
         ) {
             OutlinedTextField(
                 state = lyricsState,
                 placeholder = {Text(stringResource(R.string.lyrics_field))},
-                lineLimits = TextFieldLineLimits.MultiLine(4,10),
+                lineLimits = TextFieldLineLimits.MultiLine(6,16),
                 modifier = Modifier
                     .fillMaxWidth()
+//                    .padding(bottom = 24.dp)
             )
-            Button(
+            TextButton(
                 onClick = {launchLyricsRetrieveIntent()},
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
+//                    .fillMaxWidth()
+                    .padding(top = 0.dp, bottom = 8.dp)
             ){
                 Icon(
                     painter = painterResource(R.drawable.ic_lyrics_24px),
@@ -144,11 +137,14 @@ fun LyricsEditorSheet(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(top = 0.dp)
+                    .padding(bottom = 32.dp)
                     .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { },
+                    onClick = {
+                        setLyrics(null)
+                        onDismiss()
+                    },
                     modifier = Modifier
                         .weight(.5f, false)
                         .fillMaxWidth(.98f)
@@ -166,7 +162,10 @@ fun LyricsEditorSheet(
                     )
                 }
                 Button(
-                    onClick = {  },
+                    onClick = {
+                        setLyrics(lyricsState.text as String)
+                        onDismiss()
+                    },
                     modifier = Modifier
                         .weight(.5f, false)
                         .fillMaxWidth(.98f)

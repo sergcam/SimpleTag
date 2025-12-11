@@ -150,6 +150,11 @@ class EditorViewModel @Inject constructor(
                                 }
                             }
                         }
+                        deleteLyricsField()
+                        val lyrics = firstTag.getFirst(SimpleTagField.Lyrics.fieldKey)
+                        if(lyrics != null){
+                            setLyrics(lyrics)
+                        }
                     }
                 }
                 if (musicList.size > 1 && advancedEditor){
@@ -183,6 +188,12 @@ class EditorViewModel @Inject constructor(
         }
     }
 
+    fun deleteLyricsField(){
+        _uiState.update { it.copy(
+            fieldStates = uiState.value.fieldStates - SimpleTagField.Lyrics,
+            invisibleTags = uiState.value.invisibleTags - SimpleTagField.Lyrics,
+        ) }
+    }
     fun addField(field: SimpleTagField, content: String = "", enabled: Boolean = true){
         _uiState.update {
             it.copy(
@@ -280,7 +291,9 @@ class EditorViewModel @Inject constructor(
                     log = "Entered writeTags()\n"
                     val fields = uiState.value.fieldStates - uiState.value.deletedFields
                     val artwork = uiState.value.artwork
+                    val lyrics = uiState.value.lyrics
                     val musicList = uiState.value.editorMusicList
+                    // single editor
                     if (musicList.size == 1) {
                         log += "Writing single file\n"
                         val file = simpleFileReader(musicList[0].path)
@@ -310,6 +323,11 @@ class EditorViewModel @Inject constructor(
                             for(field in uiState.value.deletedFields){
                                 tag.deleteField(field.fieldKey)
                             }
+                            if (lyrics != null) {
+                                tag.setField(SimpleTagField.Lyrics.fieldKey,lyrics)
+                            } else {
+                                tag.deleteField(SimpleTagField.Lyrics.fieldKey)
+                            }
                             for (field in fields) {
                                 if (!field.value.textState.text.isEmpty()) {
                                     tag.setField(field.key.fieldKey, field.value.textState.text as String)
@@ -329,6 +347,7 @@ class EditorViewModel @Inject constructor(
                                 log += "Wrote file: ${file.file.path} \n"
                             }
                         }
+                    //  Batch Editor
                     } else {
                         log += "Writing multiple files\n"
                         val enabledFieldStates = fields.filter { it.value.enabledState.value }
@@ -557,11 +576,15 @@ class EditorViewModel @Inject constructor(
     fun setArtworkEnabled(artworkEnabled: Boolean){
         _uiState.update { it.copy(artworkEnabled = artworkEnabled) }
     }
+    fun setLyrics(lyrics: String?){
+        _uiState.update { it.copy(lyrics = lyrics) }
+    }
 }
 
 data class EditorUiState(
     val initialized: Boolean = false,
     val artwork: Artwork? = null,
+    val lyrics: String? = null,
     val fieldStates: Map<SimpleTagField, EditorFieldState> = mapOf(),
     val editorMusicList: List<MusicData> = listOf(),
     val artworkChanged: Boolean = false,

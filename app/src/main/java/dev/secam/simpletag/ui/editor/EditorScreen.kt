@@ -89,6 +89,7 @@ fun EditorScreen(
     val editorMusicList = uiState.editorMusicList
     val initialized = uiState.initialized
     val artwork = uiState.artwork
+    val lyrics = uiState.lyrics
     val fieldStates = uiState.fieldStates
     val showSaveDialog = uiState.showSaveDialog
     val showBackDialog = uiState.showBackDialog
@@ -327,7 +328,9 @@ fun EditorScreen(
         if(showLyricsSheet){
             LyricsEditorSheet(
                 songTitle = musicList[0].title,
-                artist = musicList[0].artist
+                artist = musicList[0].artist,
+                lyrics = lyrics ?: "",
+                setLyrics = viewModel::setLyrics
             ) {
                 viewModel.setShowLyricsSheet(false)
             }
