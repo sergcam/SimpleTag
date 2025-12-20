@@ -26,6 +26,7 @@ import coil3.imageLoader
 import coil3.memory.MemoryCache
 import coil3.request.Options
 import dev.secam.simpletag.data.coil.MusicDataKeyer
+import dev.secam.simpletag.data.enums.FolderSelectMode
 import dev.secam.simpletag.util.tag.simpleFileReader
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +42,7 @@ import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
 import javax.inject.Inject
+import kotlin.random.Random
 
 val COMPATIBLE_TYPES = listOf(
     "mp3",
@@ -62,13 +64,16 @@ val COMPATIBLE_TYPES = listOf(
 const val TAG = "MediaRepo"
 
 class MediaRepo @Inject constructor(private val context: Context) {
+
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
     private val backgroundScope =
         CoroutineScope(Dispatchers.Default).plus(coroutineExceptionHandler)
     val musicMapState = MutableStateFlow(mapOf<Long, MusicData>())
-
+    val version = MutableStateFlow(Random.nextInt())
+    private val pathList = MutableStateFlow(emptySet<String>())
+    private val filterMode = MutableStateFlow(FolderSelectMode.Exclude)
     suspend fun loadFiles(): String? {
         var error = false
         var log = "Loading files\n"
@@ -138,133 +143,137 @@ class MediaRepo @Inject constructor(private val context: Context) {
                         log += "Iterating through mediastore\n"
                         while (it.moveToNext()) {
                             // get id and path from MediaStore metadata
-                            val id = it.getLong(idColumn)
                             val path = it.getString(pathColumn)
-                            val ext = path.substringAfterLast(".").lowercase()
-                            val title = it.getString(titleColumn)
-                            val album = it.getString(albumColumn)
-                            val artist = it.getString(artistColumn)
-                            val track = it.getInt(trackColumn) % 1000
-                            val duration = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                                it.getInt(durationColumn!!)
-                            } else null
-                            // Use MediaStore metadata for mp3 and flac files
-                            if (ext == "mp3" || ext == "flac") {
-                                log += "$id: Using mediastore metadata for $path\n"
-                                music[id] = MusicData(
-                                    id = id,
-                                    path = path,
-                                    title = title,
-                                    artist = artist,
-                                    album = album,
-                                    hasArtwork = null,
-                                    tagged = artist != "<unknown>",
-                                    track = track,
-                                    duration = duration ?: -1
-                                )
-                                log += "$id: imported $path\n"
-                                Log.d(TAG, "$id: imported $path using mediastore")
-                            }
-                            // Use jaudiotagger for non-mp3/flac files (better compatibility / more accurate but slower)
-                            else if (COMPATIBLE_TYPES.contains(ext)) {
-                                log += "$id: Using jaudiotagger metadata for $path\n"
-                                val loader = backgroundScope.launch {
-                                    log += "$id: Opening file\n"
-                                    try {
-                                        val file = simpleFileReader(path)
-                                        if (file != null) {
-                                            log += "$id: File opened\n"
-                                            log += "$id: Getting tag\n"
-                                            val tag: Tag? = file.getTag()
-                                            log += "$id: Got tag\n"
-                                            var tagged = 0
-                                            val jTitle: String
-                                            val jArtist: String
-                                            val jAlbum: String
-                                            if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(
-                                                    FieldKey.TITLE
-                                                ) == null
-                                            ) {
-                                                jTitle = file.file.name
-                                                tagged++
-                                            } else {
-                                                jTitle =
-                                                    tag.getFirst(FieldKey.TITLE)
-                                                        ?: file.file.name
-                                            }
-                                            log += "$id: Got title\n"
-                                            if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(
-                                                    FieldKey.ALBUM
-                                                ) == null
-                                            ) {
-                                                jAlbum = "<unknown>"
-                                                tagged++
-                                            } else {
-                                                jAlbum =
-                                                    tag.getFirst(FieldKey.ALBUM)
-                                                        ?: "<unknown>"
-                                            }
-                                            log += "$id: Got album\n"
-                                            if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(
-                                                    FieldKey.ARTIST
-                                                ) == null
-                                            ) {
-                                                jArtist = "<unknown>"
-                                                tagged++
-                                            } else {
-                                                jArtist =
-                                                    tag.getFirst(FieldKey.ARTIST)
-                                                        ?: "<unknown>"
-                                            }
-                                            log += "$id: Got artist\n"
-                                            val hasArt = tag?.firstArtwork != null
-                                            val track =
-                                                if(tag?.getFirst(FieldKey.TRACK)?.isEmpty() == false) tag.getFirst(FieldKey.TRACK)?.toInt()
-                                                else 0
+                            if(checkPath(pathList.value, filterMode.value, path)) {
+                                val id = it.getLong(idColumn)
+                                val ext = path.substringAfterLast(".").lowercase()
+                                val title = it.getString(titleColumn)
+                                val album = it.getString(albumColumn)
+                                val artist = it.getString(artistColumn)
+                                val track = it.getInt(trackColumn) % 1000
+                                val duration = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    it.getInt(durationColumn!!)
+                                } else null
+                                // Use MediaStore metadata for mp3 and flac files
+                                if (ext == "mp3" || ext == "flac") {
+                                    log += "$id: Using mediastore metadata for $path\n"
+                                    music[id] = MusicData(
+                                        id = id,
+                                        path = path,
+                                        title = title,
+                                        artist = artist,
+                                        album = album,
+                                        hasArtwork = null,
+                                        tagged = artist != "<unknown>",
+                                        track = track,
+                                        duration = duration ?: -1
+                                    )
+                                    log += "$id: imported $path\n"
+                                    Log.d(TAG, "$id: imported $path using mediastore")
+                                }
+                                // Use jaudiotagger for non-mp3/flac files (better compatibility / more accurate but slower)
+                                else if (COMPATIBLE_TYPES.contains(ext)) {
+                                    log += "$id: Using jaudiotagger metadata for $path\n"
+                                    val loader = backgroundScope.launch {
+                                        log += "$id: Opening file\n"
+                                        try {
+                                            val file = simpleFileReader(path)
+                                            if (file != null) {
+                                                log += "$id: File opened\n"
+                                                log += "$id: Getting tag\n"
+                                                val tag: Tag? = file.getTag()
+                                                log += "$id: Got tag\n"
+                                                var tagged = 0
+                                                val jTitle: String
+                                                val jArtist: String
+                                                val jAlbum: String
+                                                if (tag?.getFirst(FieldKey.TITLE) == "" || tag?.getFirst(
+                                                        FieldKey.TITLE
+                                                    ) == null
+                                                ) {
+                                                    jTitle = file.file.name
+                                                    tagged++
+                                                } else {
+                                                    jTitle =
+                                                        tag.getFirst(FieldKey.TITLE)
+                                                            ?: file.file.name
+                                                }
+                                                log += "$id: Got title\n"
+                                                if (tag?.getFirst(FieldKey.ALBUM) == "" || tag?.getFirst(
+                                                        FieldKey.ALBUM
+                                                    ) == null
+                                                ) {
+                                                    jAlbum = "<unknown>"
+                                                    tagged++
+                                                } else {
+                                                    jAlbum =
+                                                        tag.getFirst(FieldKey.ALBUM)
+                                                            ?: "<unknown>"
+                                                }
+                                                log += "$id: Got album\n"
+                                                if (tag?.getFirst(FieldKey.ARTIST) == "" || tag?.getFirst(
+                                                        FieldKey.ARTIST
+                                                    ) == null
+                                                ) {
+                                                    jArtist = "<unknown>"
+                                                    tagged++
+                                                } else {
+                                                    jArtist =
+                                                        tag.getFirst(FieldKey.ARTIST)
+                                                            ?: "<unknown>"
+                                                }
+                                                log += "$id: Got artist\n"
+                                                val hasArt = tag?.firstArtwork != null
+                                                val track =
+                                                    if (tag?.getFirst(FieldKey.TRACK)
+                                                            ?.isEmpty() == false
+                                                    ) tag.getFirst(FieldKey.TRACK)?.toInt()
+                                                    else 0
 
+                                                music[id] = MusicData(
+                                                    id = id,
+                                                    path = path,
+                                                    title = jTitle,
+                                                    artist = jArtist,
+                                                    album = jAlbum,
+                                                    hasArtwork = hasArt,
+                                                    track = track,
+                                                    tagged = tagged == 0, // TODO: Fix this
+                                                    duration = duration ?: -1
+                                                )
+                                                log += "$id: imported $path using jaudiotagger\n"
+                                                Log.d(
+                                                    TAG,
+                                                    "$id: imported $path using jaudiotagger"
+                                                )
+                                            } else {
+                                                throw CannotReadException()
+                                            }
+                                        } catch (e: Exception) {
+                                            error = true
+                                            Log.w("MediaRepo", "$e: Failed to read $path")
+                                            log += "$e: failed to read $path\n"
+                                            log += "$id: jaudiotagger error. falling back to mediastore\n"
                                             music[id] = MusicData(
                                                 id = id,
                                                 path = path,
-                                                title = jTitle,
-                                                artist = jArtist,
-                                                album = jAlbum,
-                                                hasArtwork = hasArt,
+                                                title = title,
+                                                artist = artist,
+                                                album = album,
+                                                hasArtwork = null,
                                                 track = track,
-                                                tagged = tagged == 0, // TODO: Fix this
+                                                tagged = artist != "<unknown>",
                                                 duration = duration ?: -1
                                             )
-                                            log += "$id: imported $path using jaudiotagger\n"
+                                            log += "$id: imported $path using mediastore fallback\n"
                                             Log.d(
                                                 TAG,
-                                                "$id: imported $path using jaudiotagger"
+                                                "$id: imported $path using mediastore fallback"
                                             )
-                                        } else {
-                                            throw CannotReadException()
                                         }
-                                    } catch (e: Exception) {
-                                        error = true
-                                        Log.w("MediaRepo", "$e: Failed to read $path")
-                                        log += "$e: failed to read $path\n"
-                                        log += "$id: jaudiotagger error. falling back to mediastore\n"
-                                        music[id] = MusicData(
-                                            id = id,
-                                            path = path,
-                                            title = title,
-                                            artist = artist,
-                                            album = album,
-                                            hasArtwork = null,
-                                            track = track,
-                                            tagged = artist != "<unknown>",
-                                            duration = duration ?: -1
-                                        )
-                                        log += "$id: imported $path using mediastore fallback\n"
-                                        Log.d(
-                                            TAG,
-                                            "$id: imported $path using mediastore fallback"
-                                        )
                                     }
+                                    musicLoaders.add(loader)
                                 }
-                                musicLoaders.add(loader)
                             }
                         }
                         log += "Waiting for all tasks to finish\n"
@@ -378,5 +387,37 @@ class MediaRepo @Inject constructor(private val context: Context) {
             loaders.add(loader)
         }
         loaders.joinAll()
+    }
+
+    fun updateVersion(){
+        version.update { Random.nextInt() }
+    }
+
+    fun updatePathFilter(pathList: Set<String>, filterMode: FolderSelectMode) {
+        this.pathList.update { pathList }
+        this.filterMode.update { filterMode }
+    }
+}
+
+fun checkPath(pathList: Set<String>, mode: FolderSelectMode, path: String): Boolean {
+    if(pathList.isEmpty()) return true
+    else if(mode == FolderSelectMode.Exclude) {
+        Log.d("MediaRepo", "filter mode exclude")
+        for(p in pathList){
+            if(path.startsWith(p)) {
+                Log.d("MediaRepo", "p: $p")
+                Log.d("MediaRepo", "path: $path")
+
+                Log.d("MediaRepo", "returning false")
+                return false
+            }
+        }
+        return true
+    } else {
+        Log.d("MediaRepo", "filter mode include")
+        for(p in pathList){
+            if(path.startsWith(p)) return true
+        }
+        return false
     }
 }

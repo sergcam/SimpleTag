@@ -81,7 +81,7 @@ fun ListScreen(
     val multiSelectEnabled = uiState.multiSelectEnabled
     val selectedItems = uiState.selectedItems
 
-
+    // TODO: refresh list on version change
 
     if (!filesLoaded) {
         viewModel.loadList(

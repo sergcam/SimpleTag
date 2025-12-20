@@ -40,6 +40,7 @@ import dev.secam.simpletag.ui.components.SimpleSectionHeader
 import dev.secam.simpletag.ui.components.SimpleToggleItem
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.settings.dialogs.ColorSchemeDialog
+import dev.secam.simpletag.ui.settings.dialogs.FilePickerDialog
 import dev.secam.simpletag.ui.settings.dialogs.ThemeDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,11 +60,14 @@ fun SettingsScreen(
     val roundCovers = prefs.roundCovers
     val systemFont = prefs.systemFont
     val rememberSort = prefs.rememberSort
+    val selectedList = prefs.selectedList
+    val selectMode = prefs.selectMode
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
     val showThemeDialog = uiState.showThemeDialog
     val showColorSchemeDialog = uiState.showColorSchemeDialog
+    val showFolderPickerDialog = uiState.showFolderPickerDialog
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -113,11 +117,18 @@ fun SettingsScreen(
             SettingsSection(
                 title = stringResource(R.string.behavior)
             ) {
+                SimpleListItem(
+                    headlineContent = stringResource(R.string.manage_folders),
+                    icon = painterResource(R.drawable.ic_folder_managed_24px),
+                    supportingContent = stringResource(R.string.manage_folders_sub),
+                    onClick = { viewModel.setShowFolderPickerDialog(true) }
+                )
                 SimpleToggleItem(
                     headlineContent = stringResource(R.string.settings_remember_sort),
                     currentState = rememberSort,
                     onToggle = viewModel::setRememberSort
                 )
+
             }
 
             /*----- Editor Section -----*/
@@ -161,6 +172,18 @@ fun SettingsScreen(
                 colorScheme = colorScheme,
                 setColorScheme = viewModel::setColorScheme
             ) { viewModel.setShowColorSchemeDialog(false) }
+        }
+        if(showFolderPickerDialog) {
+            FilePickerDialog(
+                setSelectionMode = viewModel::setSelectMode,
+                onDismiss = {
+                    viewModel.setShowFolderPickerDialog(false)
+                },
+                uriList = selectedList,
+                setUriList = viewModel::setSelectedList,
+                selectMode = selectMode,
+                updateFilters = viewModel::updateFilters
+            )
         }
     }
 }

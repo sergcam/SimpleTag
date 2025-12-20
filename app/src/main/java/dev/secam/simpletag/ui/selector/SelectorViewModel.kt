@@ -63,6 +63,7 @@ class SelectorViewModel @Inject constructor(
 
     fun loadList(snackbarHostState: SnackbarHostState, message: String, actionLabel: String) {
         backgroundScope.launch {
+            mediaRepo.updatePathFilter(prefState.value.selectedList, prefState.value.selectMode)
             val result = mediaRepo.loadFiles()
             if(result == null) {
                 _uiState.update { currentState ->

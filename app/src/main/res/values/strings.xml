@@ -220,6 +220,13 @@
     <string name="delete_lyrics">Delete Lyrics</string>
     <string name="save_lyrics">Save Lyrics</string>
     <string name="cd_edit_lyrics">edit lyriccs</string>
+    <string name="include">Include</string>
+    <string name="exclude">Exclude</string>
+    <string name="dialog_save">Save</string>
+    <string name="select_folders">Selected Folders</string>
+    <string name="cd_add_folder">add folder</string>
+    <string name="manage_folders">Manage Folders</string>
+    <string name="manage_folders_sub">Change which folders to look for music in</string>
 
 
 </resources>

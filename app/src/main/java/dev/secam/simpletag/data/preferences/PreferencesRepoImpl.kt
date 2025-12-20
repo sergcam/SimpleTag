@@ -27,11 +27,13 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.FolderSelectMode
 import dev.secam.simpletag.data.enums.SortDirection
 import dev.secam.simpletag.data.enums.SortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
 
@@ -48,6 +50,8 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val REMEMBER_SORT = booleanPreferencesKey("remember_sort")
         val SORT_ORDER = stringPreferencesKey("sort_order")
         val SORT_DIRECTION = stringPreferencesKey("sort_direction")
+        val SELECT_MODE = stringPreferencesKey("select_mode")
+        val SELECTED_LIST = stringPreferencesKey("selected_list")
         const val TAG = "PreferencesRepo"
     }
 
@@ -73,6 +77,8 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val rememberSort = preferences[REMEMBER_SORT] ?: false
             val sortOrder = preferences[SORT_ORDER] ?: "Title"
             val sortDirection = preferences[SORT_DIRECTION] ?: "Ascending"
+            val selectMode = preferences[SELECT_MODE] ?: "Include"
+            val selectedList = preferences[SELECTED_LIST] ?: Json.encodeToString(setOf<String>())
 
             UserPreferences(
                 theme = AppTheme.valueOf(theme),
@@ -84,7 +90,9 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
                 optionalPermissionsSkipped = optionalPermissionsSkipped,
                 rememberSort = rememberSort,
                 sortOrder = SortOrder.valueOf(sortOrder),
-                sortDirection = SortDirection.valueOf(sortDirection)
+                sortDirection = SortDirection.valueOf(sortDirection),
+                selectMode = FolderSelectMode.valueOf(selectMode),
+                selectedList = Json.decodeFromString(selectedList)
             )
 
         }
@@ -146,6 +154,19 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
     override suspend fun saveSortDirection(sortDirection: SortDirection) {
         dataStore.edit { preferences ->
             preferences[SORT_DIRECTION] = sortDirection.name
-        }    }
+        }
+    }
+
+    override suspend fun saveSelectMode(selectMode: FolderSelectMode) {
+        dataStore.edit { preferences ->
+            preferences[SELECT_MODE] = selectMode.name
+        }
+    }
+
+    override suspend fun saveSelectedList(selectedList: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[SELECTED_LIST] = Json.encodeToString(selectedList)
+        }
+    }
 
 }

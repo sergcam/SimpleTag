@@ -19,6 +19,7 @@ package dev.secam.simpletag.data.preferences
 
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.FolderSelectMode
 import dev.secam.simpletag.data.enums.SortDirection
 import dev.secam.simpletag.data.enums.SortOrder
 import kotlinx.coroutines.flow.Flow
@@ -35,4 +36,6 @@ interface PreferencesRepo {
     suspend fun saveRememberSort(rememberSort: Boolean)
     suspend fun saveSortOrder(sortOrder: SortOrder)
     suspend fun saveSortDirection(sortDirection: SortDirection)
+    suspend fun saveSelectMode(selectMode: FolderSelectMode)
+    suspend fun saveSelectedList(selectedList: Set<String>)
 }

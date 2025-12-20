@@ -19,6 +19,7 @@ package dev.secam.simpletag.data.preferences
 
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.FolderSelectMode
 import dev.secam.simpletag.data.enums.SortDirection
 import dev.secam.simpletag.data.enums.SortOrder
 
@@ -32,5 +33,7 @@ data class UserPreferences(
     val optionalPermissionsSkipped: Boolean = false,
     val rememberSort: Boolean = false,
     val sortOrder: SortOrder = SortOrder.Title,
-    val sortDirection: SortDirection = SortDirection.Ascending
+    val sortDirection: SortDirection = SortDirection.Ascending,
+    val selectMode: FolderSelectMode = FolderSelectMode.Include,
+    val selectedList: Set<String> = setOf()
 )
