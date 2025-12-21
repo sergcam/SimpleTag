@@ -212,4 +212,11 @@
     <string name="delete_lyrics">Supprimer les paroles</string>
     <string name="save_lyrics">Enregistrer les paroles</string>
     <string name="cd_edit_lyrics">modifier les paroles</string>
+    <string name="include">Inclure</string>
+    <string name="exclude">Exclure</string>
+    <string name="dialog_save">Sauvegarder</string>
+    <string name="select_folders">Dossiers sélectionnés</string>
+    <string name="cd_add_folder">ajouter un dossier</string>
+    <string name="manage_folders">Gérer les dossiers</string>
+    <string name="manage_folders_sub">Modifier les dossiers dans lesquels rechercher la musique</string>
 </resources>
