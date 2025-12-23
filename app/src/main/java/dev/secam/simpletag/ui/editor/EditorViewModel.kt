@@ -577,6 +577,9 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(artworkEnabled = artworkEnabled) }
     }
     fun setLyrics(lyrics: String?){
+        if(lyrics != uiState.value.lyrics) {
+            setChangesMade(true)
+        }
         _uiState.update { it.copy(lyrics = lyrics) }
     }
 }

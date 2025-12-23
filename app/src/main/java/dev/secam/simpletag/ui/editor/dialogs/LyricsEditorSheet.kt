@@ -143,7 +143,10 @@ fun LyricsEditorSheet(
                 Button(
                     onClick = {
                         setLyrics(null)
-                        onDismiss()
+                        scope.launch {
+                            sheetState.hide()
+                            onDismiss()
+                        }
                     },
                     modifier = Modifier
                         .weight(.5f, false)
@@ -164,7 +167,10 @@ fun LyricsEditorSheet(
                 Button(
                     onClick = {
                         setLyrics(lyricsState.text as String)
-                        onDismiss()
+                        scope.launch {
+                            sheetState.hide()
+                            onDismiss()
+                        }
                     },
                     modifier = Modifier
                         .weight(.5f, false)
