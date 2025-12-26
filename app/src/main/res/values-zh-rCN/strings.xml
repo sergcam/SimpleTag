@@ -212,8 +212,8 @@
     <string name="delete_lyrics">删除歌词</string>
     <string name="save_lyrics">保存歌词</string>
     <string name="cd_edit_lyrics">编辑歌词</string>
-    <string name="include">Include</string>
-    <string name="exclude">Exclude</string>
+    <string name="include">包括</string>
+    <string name="exclude">排除</string>
     <string name="dialog_save">Save</string>
     <string name="select_folders">Selected Folders</string>
     <string name="cd_add_folder">add folder</string>
