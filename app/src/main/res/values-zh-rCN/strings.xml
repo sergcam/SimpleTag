@@ -214,9 +214,9 @@
     <string name="cd_edit_lyrics">编辑歌词</string>
     <string name="include">包括</string>
     <string name="exclude">排除</string>
-    <string name="dialog_save">Save</string>
-    <string name="select_folders">Selected Folders</string>
-    <string name="cd_add_folder">add folder</string>
-    <string name="manage_folders">Manage Folders</string>
-    <string name="manage_folders_sub">Change which folders to look for music in</string>
+    <string name="dialog_save">保存</string>
+    <string name="select_folders">所选文件夹</string>
+    <string name="cd_add_folder">添加文件夹</string>
+    <string name="manage_folders">管理文件夹</string>
+    <string name="manage_folders_sub">更改查找音乐的文件夹</string>
 </resources>
