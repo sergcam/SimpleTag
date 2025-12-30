@@ -1,0 +1,5 @@
+app/src/main/java/org/jaudiotagger/** linguist-vendored
+app/src/main/java/org/jaudiotagger/tag/id3/ID3v22FieldKey.java -linguist-vendored
+app/src/main/java/org/jaudiotagger/tag/id3/ID3v22Frames.java -linguist-vendored
+app/src/main/java/org/jaudiotagger/tag/id3/ID3v24FieldKey.java -linguist-vendored
+app/src/main/java/org/jaudiotagger/tag/id3/ID3v24Frames.java -linguist-vendored

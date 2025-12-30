@@ -37,9 +37,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.secam.simpletag.R
 import dev.secam.simpletag.ui.components.SimpleListItem
 import dev.secam.simpletag.ui.components.SimpleSectionHeader
-import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.components.SimpleToggleItem
+import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.settings.dialogs.ColorSchemeDialog
+import dev.secam.simpletag.ui.settings.dialogs.FilePickerDialog
 import dev.secam.simpletag.ui.settings.dialogs.ThemeDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,14 +56,18 @@ fun SettingsScreen(
     val theme = prefs.theme
     val colorScheme = prefs.colorScheme
     val pureBlack = prefs.pureBlack
-    val advancedEditor = prefs.advancedEditor
+    val simpleEditor = prefs.simpleEditor
     val roundCovers = prefs.roundCovers
     val systemFont = prefs.systemFont
+    val rememberSort = prefs.rememberSort
+    val selectedList = prefs.selectedList
+    val selectMode = prefs.selectMode
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
     val showThemeDialog = uiState.showThemeDialog
     val showColorSchemeDialog = uiState.showColorSchemeDialog
+    val showFolderPickerDialog = uiState.showFolderPickerDialog
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -81,70 +86,78 @@ fun SettingsScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())
         ) {
-            //  Appearance Section
-            SimpleSectionHeader(
-                text = stringResource(R.string.appearance),
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            SimpleListItem(
-                headlineContent = stringResource(R.string.theme),
-                supportingContent = stringResource(theme.displayNameRes),
-                icon = viewModel.getThemeIcon(theme)
-            ) {viewModel.setShowThemeDialog(true)}
-            SimpleListItem(
-                headlineContent = stringResource(R.string.color_scheme),
-                supportingContent = stringResource(colorScheme.displayNameRes),
-                icon = painterResource(R.drawable.ic_palette_24px),
-                iconColor = MaterialTheme.colorScheme.primary
-            ) {viewModel.setShowColorSchemeDialog(true)}
-            SimpleToggleItem(
-                headlineContent = stringResource(R.string.pure_black),
-                currentState = pureBlack,
-                onToggle = viewModel::setPureBlack
-            )
-            SimpleToggleItem(
-                headlineContent = stringResource(R.string.system_font),
-                currentState = systemFont,
-                onToggle = viewModel::setSystemFont
-            )
-            HorizontalDivider(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-            )
+            /*----- Appearance Section -----*/
+            SettingsSection(
+                title = stringResource(R.string.appearance)
+            ) {
+                SimpleListItem(
+                    headlineContent = stringResource(R.string.theme),
+                    supportingContent = stringResource(theme.displayNameRes),
+                    icon = viewModel.getThemeIcon(theme)
+                ) {viewModel.setShowThemeDialog(true)}
+                SimpleListItem(
+                    headlineContent = stringResource(R.string.color_scheme),
+                    supportingContent = stringResource(colorScheme.displayNameRes),
+                    icon = painterResource(R.drawable.ic_palette_24px),
+                    iconColor = MaterialTheme.colorScheme.primary
+                ) {viewModel.setShowColorSchemeDialog(true)}
+                SimpleToggleItem(
+                    headlineContent = stringResource(R.string.pure_black),
+                    currentState = pureBlack,
+                    onToggle = viewModel::setPureBlack
+                )
+                SimpleToggleItem(
+                    headlineContent = stringResource(R.string.system_font),
+                    currentState = systemFont,
+                    onToggle = viewModel::setSystemFont
+                )
+            }
 
-            //  Editor Section
-            SimpleSectionHeader(
-                text = stringResource(R.string.editor),
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            SimpleToggleItem(
-                headlineContent = stringResource(R.string.advanced_editor),
-                supportingContent = stringResource(R.string.advanced_editor_subtext),
-                currentState = advancedEditor,
-                onToggle = viewModel::setAdvancedEditor
-            )
-            SimpleToggleItem(
-                headlineContent = stringResource(R.string.round_album_cover),
-                currentState = roundCovers,
-                onToggle = viewModel::setRoundCovers
-            )
-            HorizontalDivider(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-            )
+            /*----- Behavior Section -----*/
+            SettingsSection(
+                title = stringResource(R.string.behavior)
+            ) {
+                SimpleListItem(
+                    headlineContent = stringResource(R.string.manage_folders),
+                    icon = painterResource(R.drawable.ic_folder_managed_24px),
+                    supportingContent = stringResource(R.string.manage_folders_sub),
+                    onClick = { viewModel.setShowFolderPickerDialog(true) }
+                )
+                SimpleToggleItem(
+                    headlineContent = stringResource(R.string.settings_remember_sort),
+                    currentState = rememberSort,
+                    onToggle = viewModel::setRememberSort
+                )
 
-            //  About Section
-            SimpleSectionHeader(
-                text = stringResource(R.string.about_title),
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            SimpleListItem(
-                headlineContent = stringResource(R.string.about_title),
-                icon = painterResource(R.drawable.ic_info_24px)
-            ) { onNavigateToAbout() }
+            }
+
+            /*----- Editor Section -----*/
+            SettingsSection(
+                title = stringResource(R.string.editor)
+            ) {
+                SimpleToggleItem(
+                    headlineContent = stringResource(R.string.simple_editor),
+                    supportingContent = stringResource(R.string.simple_editor_long),
+                    currentState = simpleEditor,
+                    onToggle = viewModel::setSimpleEditor
+                )
+                SimpleToggleItem(
+                    headlineContent = stringResource(R.string.round_album_cover),
+                    currentState = roundCovers,
+                    onToggle = viewModel::setRoundCovers
+                )
+            }
+
+            /*----- About Section -----*/
+            SettingsSection(
+                title = stringResource(R.string.about_title),
+                hasDivider = false
+            ) {
+                SimpleListItem(
+                    headlineContent = stringResource(R.string.about_title),
+                    icon = painterResource(R.drawable.ic_info_24px)
+                ) { onNavigateToAbout() }
+            }
         }
 
         //  Show Dialogs
@@ -159,6 +172,41 @@ fun SettingsScreen(
                 colorScheme = colorScheme,
                 setColorScheme = viewModel::setColorScheme
             ) { viewModel.setShowColorSchemeDialog(false) }
+        }
+        if(showFolderPickerDialog) {
+            FilePickerDialog(
+                setSelectionMode = viewModel::setSelectMode,
+                onDismiss = {
+                    viewModel.setShowFolderPickerDialog(false)
+                },
+                uriList = selectedList,
+                setUriList = viewModel::setSelectedList,
+                selectMode = selectMode,
+                updateFilters = viewModel::updateFilters
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    hasDivider: Boolean = true,
+    content: @Composable () -> Unit,
+){
+    Column(modifier){
+        SimpleSectionHeader(
+            text = title,
+            modifier = Modifier
+                .padding(start = 16.dp)
+        )
+        content()
+        if(hasDivider){
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+            )
         }
     }
 }

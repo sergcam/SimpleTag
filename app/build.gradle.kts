@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -18,8 +19,8 @@ android {
         applicationId = "dev.secam.simpletag"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.2.0-beta"
+        versionCode = 9
+        versionName = "0.3.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +38,12 @@ android {
             applicationIdSuffix = ".debug"
             isDebuggable = true
             versionNameSuffix = "-debug"
+        }
+    }
+    applicationVariants.all {
+        outputs.forEach { output ->
+            (output as BaseVariantOutputImpl).outputFileName =
+                "SimpleTag_${versionName}.apk"
         }
     }
     compileOptions {
@@ -69,10 +76,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
-    implementation(libs.jaudiotagger)
     implementation(libs.accompanist.permissions)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
+
 
     //coil
     implementation(libs.coil.compose)

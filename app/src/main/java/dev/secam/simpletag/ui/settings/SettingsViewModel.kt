@@ -26,6 +26,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.FolderSelectMode
+import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +40,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val preferencesRepo: PreferencesRepo
+    private val preferencesRepo: PreferencesRepo,
+    private val mediaRepo: MediaRepo
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState())
     val prefState = preferencesRepo.preferencesFlow.stateIn(
@@ -48,6 +51,7 @@ class SettingsViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
+    /*      Preferences     */
     fun setTheme(theme: AppTheme) {
         viewModelScope.launch {
             preferencesRepo.saveThemePref(theme)
@@ -66,9 +70,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setAdvancedEditor(advancedEditor: Boolean) {
+    fun setSimpleEditor(simpleEditor: Boolean) {
         viewModelScope.launch {
-            preferencesRepo.saveAdvancedEditorPref(advancedEditor)
+            preferencesRepo.saveSimpleEditorPref(simpleEditor)
         }
     }
 
@@ -82,7 +86,32 @@ class SettingsViewModel @Inject constructor(
             preferencesRepo.saveSystemFontPref(systemFont)
         }
     }
+    fun setRememberSort(rememberSort: Boolean) {
+        viewModelScope.launch {
+            preferencesRepo.saveRememberSort(rememberSort)
+        }
+    }
 
+    fun setSelectMode(selectMode: FolderSelectMode) {
+        viewModelScope.launch {
+            preferencesRepo.saveSelectMode(selectMode)
+        }
+    }
+    fun setSelectedList(selectedList: Set<String>) {
+        viewModelScope.launch {
+            preferencesRepo.saveSelectedList(selectedList)
+        }
+    }
+    fun updateFilters(selectedList: Set<String>, selectMode: FolderSelectMode){
+        viewModelScope.launch {
+            mediaRepo.updatePathFilter(selectedList, selectMode)
+            mediaRepo.updateVersion()
+        }
+    }
+
+
+
+    /*      UI State     */
     fun setShowThemeDialog(showThemeDialog: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -98,6 +127,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setShowFolderPickerDialog(showFolderPickerDialog: Boolean){
+        _uiState.update { currentState ->
+            currentState.copy(
+                showFolderPickerDialog = showFolderPickerDialog
+            )
+        }
+    }
+
+
 
     @Composable
     fun getThemeIcon(theme: AppTheme): Painter {
@@ -112,4 +150,5 @@ class SettingsViewModel @Inject constructor(
 data class SettingsUiState(
     val showThemeDialog: Boolean = false,
     val showColorSchemeDialog: Boolean = false,
+    val showFolderPickerDialog: Boolean = false
 )

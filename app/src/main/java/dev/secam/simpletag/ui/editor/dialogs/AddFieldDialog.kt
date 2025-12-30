@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.ui.components.SimpleDialog
 import dev.secam.simpletag.ui.components.SimpleDialogOptions
@@ -23,7 +24,7 @@ import dev.secam.simpletag.ui.editor.components.DialogSearchBar
 @Composable
 fun AddFieldDialog(entryList: List<SimpleTagField>, onSearch: (String) -> Unit, onAdd: (SimpleTagField) -> Unit, onDismiss: () -> Unit){
     SimpleDialog(
-        title = "Add Field",
+        title = stringResource(R.string.add_field),
         onDismiss = onDismiss,
         manualPadding = true
     ) {
@@ -49,7 +50,7 @@ fun AddFieldDialog(entryList: List<SimpleTagField>, onSearch: (String) -> Unit, 
             }
         }
         SimpleDialogOptions(
-            option = "Cancel",
+            option = stringResource(R.string.dialog_cancel),
             action = onDismiss,
             manualPadding = true
         )

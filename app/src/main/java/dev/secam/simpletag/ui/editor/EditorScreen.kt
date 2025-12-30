@@ -18,6 +18,7 @@
 package dev.secam.simpletag.ui.editor
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -25,8 +26,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -42,6 +48,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import dev.secam.simpletag.R
 import dev.secam.simpletag.data.enums.SimpleTagField
 import dev.secam.simpletag.data.media.MusicData
@@ -49,14 +57,16 @@ import dev.secam.simpletag.ui.components.AnimatedFloatingActionButton
 import dev.secam.simpletag.ui.components.SimpleTopBar
 import dev.secam.simpletag.ui.editor.dialogs.AddFieldDialog
 import dev.secam.simpletag.ui.editor.dialogs.BackWarningDialog
+import dev.secam.simpletag.ui.editor.dialogs.HelpDialog
 import dev.secam.simpletag.ui.editor.dialogs.LogDialog
+import dev.secam.simpletag.ui.editor.dialogs.LyricsEditorSheet
 import dev.secam.simpletag.ui.editor.dialogs.SaveTagDialog
+import dev.secam.simpletag.ui.editor.dialogs.SongSyncMissingDialog
 import dev.secam.simpletag.ui.selector.LoadingScreen
-import dev.secam.simpletag.util.BackPressHandler
 import dev.secam.simpletag.util.rememberActivityResult
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EditorScreen(
     musicList: List<MusicData>,
@@ -73,19 +83,26 @@ fun EditorScreen(
     // prefs
     val prefs = viewModel.prefState.collectAsState().value
     val roundCovers = prefs?.roundCovers
-    val advancedEditor = prefs?.advancedEditor
+    val simpleEditor = prefs?.simpleEditor
 
     // ui state
     val uiState = viewModel.uiState.collectAsState().value
+    val editorMusicList = uiState.editorMusicList
     val initialized = uiState.initialized
     val artwork = uiState.artwork
+    val lyrics = uiState.lyrics
     val fieldStates = uiState.fieldStates
     val showSaveDialog = uiState.showSaveDialog
     val showBackDialog = uiState.showBackDialog
     val showLogDialog = uiState.showLogDialog
     val showAddFieldDialog = uiState.showAddFieldDialog
+    val showHelpDialog = uiState.showHelpDialog
+    val showLyricsSheet = uiState.showLyricsSheet
+    val showSongSyncMissingDialog = uiState.showSongSyncMissingDialog
     val searchResults = uiState.searchResults
     val log = uiState.log
+    val deletedFields = uiState.deletedFields
+    val artworkEnabled = uiState.artworkEnabled
 
     // permission request (API30+)
     val onCancelText = stringResource(R.string.permission_denied)
@@ -115,9 +132,8 @@ fun EditorScreen(
             viewModel.setArtwork(viewModel.getArtworkFromUri(context.contentResolver, uri))
         }
     }
-
     // initialize editor fields
-    if (!initialized) {
+    if (!initialized || musicList != editorMusicList) {
         viewModel.initEditor(
             musicList,
             tagNames = buildMap {
@@ -128,7 +144,7 @@ fun EditorScreen(
         )
     }
 
-    BackPressHandler {
+    BackHandler {
         if (viewModel.changesMade()) {
             viewModel.setShowBackDialog(true)
         } else onNavigateBack()
@@ -137,40 +153,104 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = stringResource(R.string.edit_tag),
+                title = if (musicList.size == 1) {
+                    stringResource(R.string.edit_tag)
+                } else {
+                    stringResource(R.string.edit_n_tags).replaceFirst("#", musicList.size.toString())
+                },
                 onBack = {
                     if (viewModel.changesMade()) {
                         viewModel.setShowBackDialog(true)
                     } else onNavigateBack()
                 },
                 actions = {
-                    IconButton(
-                        onClick = { viewModel.openExternal(context, musicList[0]) }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_open_in_new_24px),
-                            contentDescription = stringResource(R.string.cd_save_tag_icon)
-                        )
+                    if(musicList.size == 1) {
+                        IconButton(
+                            onClick = { viewModel.openExternal(context, musicList[0]) }
+                        ) {
+                            LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                                viewModel.clearCache(context)
+                            }
+                            Icon(
+                                painter = painterResource(R.drawable.ic_open_in_new_24px),
+                                contentDescription = stringResource(R.string.cd_save_tag_icon)
+                            )
+                        }
+                    } else {
+                        IconButton(
+                            onClick = { viewModel.setShowHelpDialog(true) }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_help_24px),
+                                contentDescription = stringResource(R.string.cd_help_icon)
+                            )
+                        }
                     }
-                    IconButton(
-                        onClick = { viewModel.setShowSaveDialog(true) }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_save_24px),
-                            contentDescription = stringResource(R.string.cd_save_tag_icon)
-                        )
-                    }
+
                 },
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
-            AnimatedFloatingActionButton(
-                visible = advancedEditor ?: false,
-                icon = painterResource(R.drawable.ic_add_24px),
-                iconDescription = stringResource(R.string.cd_add_field)
-            ) { viewModel.setShowAddFieldDialog(true) }
+            if(simpleEditor == false){
+                HorizontalFloatingToolbar(
+                    expanded = true,
+                    floatingActionButton = {
+                        AnimatedFloatingActionButton(
+                            visible = true,
+                            icon = painterResource(R.drawable.ic_save_24px),
+                            iconDescription = stringResource(R.string.cd_save_tag_icon)
+                        ) { viewModel.setShowSaveDialog(true) }
+                    }
+                ) {
+                    if(musicList.size == 1){
+                        IconButton(
+                            onClick = { viewModel.setShowLyricsSheet(true) }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_lyrics_24px),
+                                contentDescription = stringResource(R.string.cd_edit_lyrics)
+                            )
+                        }
+                    }
+                    if(musicList.size > 1){
+                        IconButton(
+                            onClick = {  }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_done_all_24px),
+                                contentDescription = stringResource(R.string.cd_select_all)
+                            )
+                        }
+
+                    }
+                    IconButton(
+                        onClick = { viewModel.setShowAddFieldDialog(true) },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_add_24px),
+                            contentDescription = stringResource(R.string.cd_add_field)
+                        )
+                    }
+
+
+                }
+            }
+            //  Basic Editor
+            else {
+                AnimatedFloatingActionButton(
+                    visible = true,
+                    icon = painterResource(R.drawable.ic_save_24px),
+                    iconDescription = stringResource(R.string.cd_save_tag_icon)
+                ) { viewModel.setShowSaveDialog(true) }
+            }
+
         },
+        floatingActionButtonPosition = if(simpleEditor == false) FabPosition.Center else FabPosition.End,
+
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
@@ -184,36 +264,40 @@ fun EditorScreen(
                     roundCovers = roundCovers,
                     fieldStates = fieldStates,
                     pickArtwork = pickArtwork,
-                    advancedEditor = advancedEditor!!,
+                    simpleEditor = simpleEditor!!,
                     removeField = viewModel::removeField,
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    deletedFields = deletedFields
                 )
             } else {
                 BatchEditor(
-                    musicList = musicList,
                     artwork = artwork,
                     setArtwork = viewModel::setArtwork,
                     roundCovers = roundCovers,
                     fieldStates = fieldStates,
                     pickArtwork = pickArtwork,
-                    advancedEditor = advancedEditor!!,
+                    simpleEditor = simpleEditor!!,
                     removeField = viewModel::removeField,
+                    deletedFields = deletedFields,
                     modifier = modifier
                         .padding(contentPadding)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    artworkEnabled = artworkEnabled,
+                    setArtworkEnabled = viewModel::setArtworkEnabled
                 )
             }
         } else {
-            LoadingScreen()
+            LoadingScreen(text = stringResource(R.string.reading_tags))
         }
 
         //  Show dialogs
         if(showSaveDialog){
             SaveTagDialog(
+                tagNum = musicList.size,
                 onCancel = { viewModel.setShowSaveDialog(false) },
                 onConfirm = {
                     viewModel.onSave(
@@ -253,6 +337,23 @@ fun EditorScreen(
                 onSearch = viewModel::onSearch,
                 onAdd = viewModel::addField
             ) { viewModel.setShowAddFieldDialog(false) }
+        }
+        if(showHelpDialog){
+            HelpDialog { viewModel.setShowHelpDialog(false) }
+        }
+        if(showLyricsSheet){
+            LyricsEditorSheet(
+                songTitle = musicList[0].title,
+                artist = musicList[0].artist,
+                lyrics = lyrics ?: "",
+                setLyrics = viewModel::setLyrics,
+                onSongSyncMissing = { viewModel.setShowSongSyncMissingDialog(true) }
+            ) {
+                viewModel.setShowLyricsSheet(false)
+            }
+        }
+        if(showSongSyncMissingDialog){
+            SongSyncMissingDialog { viewModel.setShowSongSyncMissingDialog(false) }
         }
     }
 }

@@ -56,6 +56,7 @@ class SelectorViewModel @Inject constructor(
         initialValue = UserPreferences()
     )
     val musicMapState = mediaRepo.musicMapState
+    val mediaRepoVersion = mediaRepo.version
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
     }
@@ -63,6 +64,7 @@ class SelectorViewModel @Inject constructor(
 
     fun loadList(snackbarHostState: SnackbarHostState, message: String, actionLabel: String) {
         backgroundScope.launch {
+            mediaRepo.updatePathFilter(prefState.value.selectedList, prefState.value.selectMode)
             val result = mediaRepo.loadFiles()
             if(result == null) {
                 _uiState.update { currentState ->
@@ -72,7 +74,6 @@ class SelectorViewModel @Inject constructor(
                                 entry.value
                             },
                         ),
-                        filesLoaded = true
                     )
                 }
             } else {
@@ -83,13 +84,13 @@ class SelectorViewModel @Inject constructor(
                                 entry.value
                             },
                         ),
-                        filesLoaded = true,
                         log = result
                     )
                 }
                 if (snackbarHostState.showSnackbar(message, actionLabel, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed)
                     setShowLogDialog(true)
             }
+            _uiState.update { it.copy(localVersion = mediaRepoVersion.value) }
         }
     }
     suspend fun suspendLoadList() {
@@ -100,8 +101,7 @@ class SelectorViewModel @Inject constructor(
                     musicMapState.value.map { entry ->
                         entry.value
                     }
-                ),
-                filesLoaded = true
+                )
             )
         }
     }
@@ -188,8 +188,11 @@ class SelectorViewModel @Inject constructor(
 
     fun sortList(musicList: List<MusicData>): List<MusicData> {
         val newList = musicList.toMutableList()
+        val sortOrder = if(prefState.value.rememberSort) prefState.value.sortOrder else uiState.value.sortOrder
+        val sortDirection = if(prefState.value.rememberSort) prefState.value.sortDirection else uiState.value.sortDirection
+
         newList.sortBy { selector ->
-            when(uiState.value.sortOrder){
+            when(sortOrder){
                 SortOrder.Album ->
                     selector.album.lowercase()
                 SortOrder.Title ->
@@ -200,7 +203,7 @@ class SelectorViewModel @Inject constructor(
 //                        selector.artist?.lowercase()
             }
         }
-        if(uiState.value.sortDirection == SortDirection.Descending){
+        if(sortDirection == SortDirection.Descending){
             newList.reverse()
         }
         return newList as List<MusicData>
@@ -264,20 +267,27 @@ class SelectorViewModel @Inject constructor(
             }
         }
     }
+    fun updateDuration(index: Int, musicList: List<MusicData>){
+        backgroundScope.launch {
+            mediaRepo.updateDuration(musicList)
+            val newList = uiState.value.albumMap[uiState.value.albumList[index].first]!!.toMutableList()
+//            newList[0] = musicMapState.value[id]!!
+            for(i in 0..<newList.size){
+                newList[i] = musicMapState.value[newList[i].id]!!
+            }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    albumMap = uiState.value.albumMap + Pair(uiState.value.albumList[index].first, newList)
+                )
+            }
+        }
+    }
 
     fun refreshMediaStore() {
-        backgroundScope.launch{
-//            var count = 0
-//            mediaRepo.rescanMediaStore {path, uri ->
-//                count++
-//                if(count == musicMapState.value.size){
-//                    backgroundScope.launch {
-                        suspendLoadList()
-                        updateMusicList()
-                        _uiState.update { it.copy(isRefreshing = false) }
-//                    }
-//                }
-//            }
+        backgroundScope.launch {
+            suspendLoadList()
+            updateMusicList()
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
@@ -297,7 +307,26 @@ class SelectorViewModel @Inject constructor(
                     albumList = albumMap.map { Pair(it.key,false) }
                 )
             }
+            updateMusicList()
         }
+    }
+    fun addSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems + musicData
+        ) }
+    }
+    fun removeSelection(musicData: MusicData) {
+        _uiState.update { it.copy(
+            selectedItems = uiState.value.selectedItems - musicData
+        ) }
+        if(uiState.value.selectedItems.isEmpty()){
+            setMultiSelectedEnabled(false)
+        }
+    }
+    fun clearSelection() {
+        _uiState.update { it.copy(
+            selectedItems = setOf()
+        ) }
     }
 
     /*------- Setters -------*/
@@ -329,6 +358,10 @@ class SelectorViewModel @Inject constructor(
                 sortOrder = sortOrder,
                 sortDirection = sortDirection
             )
+        }
+        viewModelScope.launch {
+            preferencesRepo.saveSortOrder(sortOrder)
+            preferencesRepo.saveSortDirection(sortDirection)
         }
         updateMusicList()
     }
@@ -367,22 +400,34 @@ class SelectorViewModel @Inject constructor(
             )
         }
     }
+    fun setMultiSelectedEnabled(multiSelectEnabled: Boolean) {
+        if(!multiSelectEnabled) {
+            clearSelection()
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                multiSelectEnabled = multiSelectEnabled
+            )
+        }
+    }
 
 }
 
 data class SelectorUiState(
     val musicList: List<MusicData> = listOf(),
+    val localVersion: Int = 0,
     val showSortDialog: Boolean = false,
     val showFilterDialog: Boolean = false,
     val taggedFilter: Boolean = false, //true means only show non-tagged
     val sortOrder: SortOrder = SortOrder.Title,
     val sortDirection: SortDirection = SortDirection.Ascending,
-    val filesLoaded: Boolean = false,
     val isRefreshing: Boolean = false,
     val searchQuery: String = "",
     val searchEnabled: Boolean = false,
     val log: String = "",
     val showLogDialog: Boolean = false,
     val albumMap: Map<String, List<MusicData>> = mapOf(),
-    val albumList: List<Pair<String, Boolean>> = listOf()
+    val albumList: List<Pair<String, Boolean>> = listOf(),
+    val multiSelectEnabled: Boolean = false,
+    val selectedItems: Set<MusicData> = setOf()
 )

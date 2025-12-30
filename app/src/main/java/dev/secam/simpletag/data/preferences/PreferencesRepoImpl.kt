@@ -27,9 +27,13 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.secam.simpletag.data.enums.AppColorScheme
 import dev.secam.simpletag.data.enums.AppTheme
+import dev.secam.simpletag.data.enums.FolderSelectMode
+import dev.secam.simpletag.data.enums.SortDirection
+import dev.secam.simpletag.data.enums.SortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
 
@@ -39,10 +43,15 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val THEME = stringPreferencesKey("theme")
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         val PURE_BLACK = booleanPreferencesKey("pure_black")
-        val ADVANCED_EDITOR = booleanPreferencesKey("advanced_editor")
+        val SIMPLE_EDITOR = booleanPreferencesKey("simple_editor")
         val ROUND_COVERS = booleanPreferencesKey("round_covers")
         val SYSTEM_FONT = booleanPreferencesKey("system_font")
         val OPTIONAL_PERMISSIONS_SKIPPED = booleanPreferencesKey("optional_permissions_skipped")
+        val REMEMBER_SORT = booleanPreferencesKey("remember_sort")
+        val SORT_ORDER = stringPreferencesKey("sort_order")
+        val SORT_DIRECTION = stringPreferencesKey("sort_direction")
+        val SELECT_MODE = stringPreferencesKey("select_mode")
+        val SELECTED_LIST = stringPreferencesKey("selected_list")
         const val TAG = "PreferencesRepo"
     }
 
@@ -61,19 +70,29 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val theme = preferences[THEME] ?: "System"
             val colorScheme = preferences[COLOR_SCHEME] ?: if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) "Dynamic" else "Red"
             val pureBlack = preferences[PURE_BLACK] ?: false
-            val advancedEditor = preferences[ADVANCED_EDITOR] ?: false
+            val simpleEditor = preferences[SIMPLE_EDITOR] ?: false
             val roundCovers = preferences[ROUND_COVERS] ?: true
             val systemFont = preferences[SYSTEM_FONT] ?: false
             val optionalPermissionsSkipped = preferences[OPTIONAL_PERMISSIONS_SKIPPED] ?: false
+            val rememberSort = preferences[REMEMBER_SORT] ?: false
+            val sortOrder = preferences[SORT_ORDER] ?: "Title"
+            val sortDirection = preferences[SORT_DIRECTION] ?: "Ascending"
+            val selectMode = preferences[SELECT_MODE] ?: "Include"
+            val selectedList = preferences[SELECTED_LIST] ?: Json.encodeToString(setOf<String>())
 
             UserPreferences(
                 theme = AppTheme.valueOf(theme),
                 colorScheme = AppColorScheme.valueOf(colorScheme),
                 pureBlack = pureBlack,
-                advancedEditor = advancedEditor,
+                simpleEditor = simpleEditor,
                 roundCovers = roundCovers,
                 systemFont = systemFont,
-                optionalPermissionsSkipped = optionalPermissionsSkipped
+                optionalPermissionsSkipped = optionalPermissionsSkipped,
+                rememberSort = rememberSort,
+                sortOrder = SortOrder.valueOf(sortOrder),
+                sortDirection = SortDirection.valueOf(sortDirection),
+                selectMode = FolderSelectMode.valueOf(selectMode),
+                selectedList = Json.decodeFromString(selectedList)
             )
 
         }
@@ -96,9 +115,9 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         }
     }
 
-    override suspend fun saveAdvancedEditorPref(advancedEditor: Boolean) {
+    override suspend fun saveSimpleEditorPref(simpleEditor: Boolean) {
         dataStore.edit { preferences ->
-            preferences[ADVANCED_EDITOR] = advancedEditor
+            preferences[SIMPLE_EDITOR] = simpleEditor
         }
     }
 
@@ -117,6 +136,36 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
     override suspend fun saveOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean) {
         dataStore.edit { preferences ->
             preferences[OPTIONAL_PERMISSIONS_SKIPPED] = optionalPermissionsSkipped
+        }
+    }
+
+    override suspend fun saveRememberSort(rememberSort: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[REMEMBER_SORT] = rememberSort
+        }
+    }
+
+    override suspend fun saveSortOrder(sortOrder: SortOrder) {
+        dataStore.edit { preferences ->
+            preferences[SORT_ORDER] = sortOrder.name
+        }
+    }
+
+    override suspend fun saveSortDirection(sortDirection: SortDirection) {
+        dataStore.edit { preferences ->
+            preferences[SORT_DIRECTION] = sortDirection.name
+        }
+    }
+
+    override suspend fun saveSelectMode(selectMode: FolderSelectMode) {
+        dataStore.edit { preferences ->
+            preferences[SELECT_MODE] = selectMode.name
+        }
+    }
+
+    override suspend fun saveSelectedList(selectedList: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[SELECTED_LIST] = Json.encodeToString(selectedList)
         }
     }
 
