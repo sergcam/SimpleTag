@@ -219,4 +219,9 @@
     <string name="cd_add_folder">add folder</string>
     <string name="manage_folders">Manage Folders</string>
     <string name="manage_folders_sub">Change which folders to look for music in</string>
+    <string name="cd_select_all">select all</string>
+    <string name="song_sync_missing">SongSync Not Installed</string>
+    <string name="song_sync_long">SongSync is not installed. Download it from IzzyOnDroid or Github to use this feature</string>
+    <string name="simple_editor">Simple Editor</string>
+    <string name="simple_editor_long">Use a more basic editor with less features</string>
 </resources>
