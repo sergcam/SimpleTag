@@ -1,0 +1,15 @@
+v0.3.1
+What's Fixed:
+- minor app icon adjustments
+
+What's New:
+- Add setting to remember sort selection
+- Lyrics editor + SongSync integration
+- Add setting to filter specific folders
+- Advanced Editor is now the default. Preference is reset and setting is now named "Simple Editor"
+- Updated translations:
+    - German (@BixelBird, @Stzyxh)
+    - Spanish(@WaifuPX-DG)
+    - Japanese(@jpgjm)
+    - French(@Mickael81, @happyclem)
+    - Chinese(anonymous)
