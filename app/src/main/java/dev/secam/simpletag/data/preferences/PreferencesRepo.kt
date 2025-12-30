@@ -29,7 +29,7 @@ interface PreferencesRepo {
     suspend fun saveThemePref(theme: AppTheme)
     suspend fun saveColorSchemePref(colorScheme: AppColorScheme)
     suspend fun savePureBlackPref(pureBlack: Boolean)
-    suspend fun saveAdvancedEditorPref(advancedEditor: Boolean)
+    suspend fun saveSimpleEditorPref(simpleEditor: Boolean)
     suspend fun saveRoundCoversPref(roundCovers: Boolean)
     suspend fun saveSystemFontPref(systemFont: Boolean)
     suspend fun saveOptionalPermissionsSkipped(optionalPermissionsSkipped: Boolean)

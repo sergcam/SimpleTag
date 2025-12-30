@@ -57,7 +57,7 @@ fun SingleEditor(
     fieldStates: Map<SimpleTagField, EditorFieldState>,
     pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     removeField: (SimpleTagField) -> Unit,
-    advancedEditor: Boolean,
+    simpleEditor: Boolean,
     deletedFields: Set<SimpleTagField>
 ) {
     Column(
@@ -79,7 +79,7 @@ fun SingleEditor(
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 6.dp)
         )
-        if (advancedEditor){
+        if (!simpleEditor){
             FileInfo(
                 musicData = musicData,
                 modifier = Modifier
@@ -91,7 +91,7 @@ fun SingleEditor(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 72.dp)
+                .padding(bottom = 84.dp)
                 .animateContentSize()
         ) {
             if(fieldStates.isEmpty()){
@@ -114,7 +114,7 @@ fun SingleEditor(
                             label = stringResource(field.key.displayNameRes),
                             modifier = Modifier
                                 .padding(bottom = 8.dp),
-                            hasDelete = advancedEditor,
+                            hasDelete = !simpleEditor,
                             action = {
                                 removeField(field.key)
                                 visibleState.targetState = false

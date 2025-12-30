@@ -70,9 +70,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setAdvancedEditor(advancedEditor: Boolean) {
+    fun setSimpleEditor(simpleEditor: Boolean) {
         viewModelScope.launch {
-            preferencesRepo.saveAdvancedEditorPref(advancedEditor)
+            preferencesRepo.saveSimpleEditorPref(simpleEditor)
         }
     }
 

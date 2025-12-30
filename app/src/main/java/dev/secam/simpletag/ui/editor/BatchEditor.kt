@@ -53,7 +53,7 @@ fun BatchEditor(
     roundCovers: Boolean?,
     fieldStates: Map<SimpleTagField, EditorFieldState>,
     pickArtwork: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
-    advancedEditor: Boolean,
+    simpleEditor: Boolean,
     removeField: (SimpleTagField) -> Unit,
     deletedFields: Set<SimpleTagField>,
     artworkEnabled: Boolean,
@@ -84,7 +84,6 @@ fun BatchEditor(
                 onToggle = { setArtworkEnabled(it)},
                 enabled = artworkEnabled
             )
-
         }
 
         //  Field List
@@ -98,7 +97,7 @@ fun BatchEditor(
                 NoFieldTip()
             } else {
                 for (field in fieldStates) {
-                    val visibleState = remember { MutableTransitionState<Boolean>(true) }
+                    val visibleState = remember { MutableTransitionState(true) }
                     if(!visibleState.targetState) {
                         if(!deletedFields.contains(field.key)){
                             visibleState.targetState = true
@@ -112,7 +111,7 @@ fun BatchEditor(
                         EditorTextField(
                             state = field.value.textState,
                             label = stringResource(field.key.displayNameRes),
-                            hasDelete = advancedEditor,
+                            hasDelete = !simpleEditor,
                             action = {
                                 removeField(field.key)
                                 visibleState.targetState = false

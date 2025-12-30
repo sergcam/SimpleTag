@@ -56,7 +56,7 @@ fun SettingsScreen(
     val theme = prefs.theme
     val colorScheme = prefs.colorScheme
     val pureBlack = prefs.pureBlack
-    val advancedEditor = prefs.advancedEditor
+    val simpleEditor = prefs.simpleEditor
     val roundCovers = prefs.roundCovers
     val systemFont = prefs.systemFont
     val rememberSort = prefs.rememberSort
@@ -136,10 +136,10 @@ fun SettingsScreen(
                 title = stringResource(R.string.editor)
             ) {
                 SimpleToggleItem(
-                    headlineContent = stringResource(R.string.advanced_editor),
-                    supportingContent = stringResource(R.string.advanced_editor_subtext),
-                    currentState = advancedEditor,
-                    onToggle = viewModel::setAdvancedEditor
+                    headlineContent = stringResource(R.string.simple_editor),
+                    supportingContent = stringResource(R.string.simple_editor_long),
+                    currentState = simpleEditor,
+                    onToggle = viewModel::setSimpleEditor
                 )
                 SimpleToggleItem(
                     headlineContent = stringResource(R.string.round_album_cover),

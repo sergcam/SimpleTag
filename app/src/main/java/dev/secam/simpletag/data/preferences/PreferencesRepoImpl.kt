@@ -43,7 +43,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         val THEME = stringPreferencesKey("theme")
         val COLOR_SCHEME = stringPreferencesKey("color_scheme")
         val PURE_BLACK = booleanPreferencesKey("pure_black")
-        val ADVANCED_EDITOR = booleanPreferencesKey("advanced_editor")
+        val SIMPLE_EDITOR = booleanPreferencesKey("simple_editor")
         val ROUND_COVERS = booleanPreferencesKey("round_covers")
         val SYSTEM_FONT = booleanPreferencesKey("system_font")
         val OPTIONAL_PERMISSIONS_SKIPPED = booleanPreferencesKey("optional_permissions_skipped")
@@ -70,7 +70,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
             val theme = preferences[THEME] ?: "System"
             val colorScheme = preferences[COLOR_SCHEME] ?: if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) "Dynamic" else "Red"
             val pureBlack = preferences[PURE_BLACK] ?: false
-            val advancedEditor = preferences[ADVANCED_EDITOR] ?: false
+            val simpleEditor = preferences[SIMPLE_EDITOR] ?: false
             val roundCovers = preferences[ROUND_COVERS] ?: true
             val systemFont = preferences[SYSTEM_FONT] ?: false
             val optionalPermissionsSkipped = preferences[OPTIONAL_PERMISSIONS_SKIPPED] ?: false
@@ -84,7 +84,7 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
                 theme = AppTheme.valueOf(theme),
                 colorScheme = AppColorScheme.valueOf(colorScheme),
                 pureBlack = pureBlack,
-                advancedEditor = advancedEditor,
+                simpleEditor = simpleEditor,
                 roundCovers = roundCovers,
                 systemFont = systemFont,
                 optionalPermissionsSkipped = optionalPermissionsSkipped,
@@ -115,9 +115,9 @@ class PreferencesRepoImpl @Inject constructor(private val dataStore: DataStore<P
         }
     }
 
-    override suspend fun saveAdvancedEditorPref(advancedEditor: Boolean) {
+    override suspend fun saveSimpleEditorPref(simpleEditor: Boolean) {
         dataStore.edit { preferences ->
-            preferences[ADVANCED_EDITOR] = advancedEditor
+            preferences[SIMPLE_EDITOR] = simpleEditor
         }
     }
 
