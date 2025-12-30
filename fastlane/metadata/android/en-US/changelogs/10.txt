@@ -8,7 +8,7 @@ What's New:
 - Add setting to filter specific folders
 - Advanced Editor is now the default. Preference is reset and setting is now named "Simple Editor"
 - Updated translations:
-    - German (@BixelBird, @Stzyxh)
+    - German (@bixelbird, @Stzyxh)
     - Spanish(@WaifuPX-DG)
     - Japanese(@jpgjm)
     - French(@Mickael81, @happyclem)
