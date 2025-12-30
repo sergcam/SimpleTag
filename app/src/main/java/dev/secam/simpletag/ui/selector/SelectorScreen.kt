@@ -151,6 +151,8 @@ fun SelectorScreen(
         readAudio = mediaPermissionState.status.isGranted
 
         when {
+            optionalPermissionsSkipped == null ->
+                LoadingScreen()
             readAudio && optionalPermissionsSkipped ->
                 ListScreen(
                     onNavigateToEditor = onNavigateToEditor,
