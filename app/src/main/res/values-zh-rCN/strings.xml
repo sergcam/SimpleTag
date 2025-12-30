@@ -219,4 +219,9 @@
     <string name="cd_add_folder">添加文件夹</string>
     <string name="manage_folders">管理文件夹</string>
     <string name="manage_folders_sub">更改查找音乐的文件夹</string>
+    <string name="cd_select_all">select all</string>
+    <string name="song_sync_missing">SongSync Not Installed</string>
+    <string name="song_sync_long">SongSync is not installed. Download it from IzzyOnDroid or Github to use this feature</string>
+    <string name="simple_editor">Simple Editor</string>
+    <string name="simple_editor_long">Use a more basic editor with less features</string>
 </resources>
