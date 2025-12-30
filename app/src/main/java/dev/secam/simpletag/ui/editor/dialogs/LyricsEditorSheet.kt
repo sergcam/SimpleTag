@@ -1,6 +1,24 @@
+/*
+ * Copyright (C) 2025  Sergio Camacho
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package dev.secam.simpletag.ui.editor.dialogs
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +57,7 @@ fun LyricsEditorSheet(
     artist: String,
     lyrics: String,
     setLyrics: (String?) -> Unit,
+    onSongSyncMissing: () -> Unit,
     onDismiss: () -> Unit,
 ){
     val scope = rememberCoroutineScope()
@@ -84,15 +103,9 @@ fun LyricsEditorSheet(
             lyricsActivityLauncher.launch(lyricsRetrieveIntent)
         } catch (e: Exception) {
 //            TODO: SongSync not installed
-//            when (e) {
-//                is ActivityNotFoundException -> showInstallSongSyncDialog = true
-//                else -> scope.launch {
-//                    sonner.show(
-//                        message = context.getString(R.string.something_unexpected_occurred),
-//                        type = ToastType.Error
-//                    )
-//                }
-//            }
+            when (e) {
+                is ActivityNotFoundException -> onSongSyncMissing()
+            }
         }
     }
     val sheetState = rememberModalBottomSheetState(true)

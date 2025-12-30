@@ -105,8 +105,8 @@ class EditorViewModel @Inject constructor(
         backgroundScope.launch {
             var supportsRG = true
             resetFields()
-            val advancedEditor = prefState.value?.advancedEditor
-            if (advancedEditor != null) {
+            val simpleEditor = prefState.value?.simpleEditor
+            if (simpleEditor != null) {
                 _uiState.update { currentState ->
                     currentState.copy(
                         invisibleTags = SimpleTagField.entries.toSet(),
@@ -130,7 +130,7 @@ class EditorViewModel @Inject constructor(
                         // add fields to editor display
                         SimpleTagField.entries.forEachIndexed { index, field ->
                             // basic fields
-                            if (!advancedEditor) {
+                            if (simpleEditor) {
                                 if (index <= SimpleTagField.ADVANCED_CUTOFF) {
                                     addField(field, firstTag.getFirst(field.fieldKey), false)
                                 }
@@ -157,7 +157,7 @@ class EditorViewModel @Inject constructor(
                         }
                     }
                 }
-                if (musicList.size > 1 && advancedEditor){
+                if (musicList.size > 1 && !simpleEditor){
                     for (song in musicList - musicList[0]) {
                         val file = simpleFileReader(song.path)
                         if (file != null){
@@ -477,7 +477,8 @@ class EditorViewModel @Inject constructor(
         val currentFields = uiState.value.fieldStates.map { mapEntry ->
             mapEntry.value.textState.text as String
         }
-        return (uiState.value.changesMade || uiState.value.artworkChanged || uiState.value.savedFields != currentFields)
+        val lyricsChanged = uiState.value.savedLyrics != (uiState.value.lyrics ?: "")
+        return (uiState.value.changesMade || uiState.value.artworkChanged || uiState.value.savedFields != currentFields || lyricsChanged )
     }
 
     fun onSearch(query: String = "") {
@@ -549,7 +550,8 @@ class EditorViewModel @Inject constructor(
             it.copy(
                 savedFields = uiState.value.fieldStates.map { mapEntry ->
                     mapEntry.value.textState.text as String
-                }
+                },
+                savedLyrics = uiState.value.lyrics ?: ""
             )
         }
     }
@@ -570,6 +572,9 @@ class EditorViewModel @Inject constructor(
     fun setShowLyricsSheet(showLyricsSheet: Boolean) {
         _uiState.update { it.copy(showLyricsSheet = showLyricsSheet) }
     }
+    fun setShowSongSyncMissingDialog(showSongSyncMissingDialog: Boolean) {
+        _uiState.update { it.copy(showSongSyncMissingDialog = showSongSyncMissingDialog) }
+    }
     fun setChangesMade(changesMade: Boolean) {
         _uiState.update { it.copy(changesMade = changesMade) }
     }
@@ -577,9 +582,9 @@ class EditorViewModel @Inject constructor(
         _uiState.update { it.copy(artworkEnabled = artworkEnabled) }
     }
     fun setLyrics(lyrics: String?){
-        if(lyrics != uiState.value.lyrics) {
-            setChangesMade(true)
-        }
+//        if(lyrics != uiState.value.lyrics) {
+//            setChangesMade(true)
+//        }
         _uiState.update { it.copy(lyrics = lyrics) }
     }
 }
@@ -591,20 +596,24 @@ data class EditorUiState(
     val fieldStates: Map<SimpleTagField, EditorFieldState> = mapOf(),
     val editorMusicList: List<MusicData> = listOf(),
     val artworkChanged: Boolean = false,
-    val showBackDialog: Boolean = false,
-    val showSaveDialog: Boolean = false,
-    val showLogDialog: Boolean = false,
-    val showHelpDialog: Boolean = false,
-    val showAddFieldDialog: Boolean = false,
-    val showLyricsSheet: Boolean = false,
+
     val savedFields: List<String> = listOf(),
+    val savedLyrics: String = "",
     val log: String = "",
     val tagNames: Map<SimpleTagField, String> = mapOf(),
     val invisibleTags: Set<SimpleTagField> = setOf(),
     val searchResults: List<SimpleTagField> = listOf(),
     val deletedFields: Set<SimpleTagField> = setOf(),
     val artworkEnabled: Boolean = false,
-    val changesMade: Boolean = false
+    val changesMade: Boolean = false,
+    /*      Show Dialogs     */
+    val showBackDialog: Boolean = false,
+    val showSaveDialog: Boolean = false,
+    val showLogDialog: Boolean = false,
+    val showHelpDialog: Boolean = false,
+    val showAddFieldDialog: Boolean = false,
+    val showLyricsSheet: Boolean = false,
+    val showSongSyncMissingDialog: Boolean = false,
 )
 
 data class EditorFieldState(
