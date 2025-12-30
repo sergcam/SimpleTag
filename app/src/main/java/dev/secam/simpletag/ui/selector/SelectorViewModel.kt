@@ -56,6 +56,7 @@ class SelectorViewModel @Inject constructor(
         initialValue = UserPreferences()
     )
     val musicMapState = mediaRepo.musicMapState
+    val mediaRepoVersion = mediaRepo.version
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
     }
@@ -73,7 +74,6 @@ class SelectorViewModel @Inject constructor(
                                 entry.value
                             },
                         ),
-                        filesLoaded = true
                     )
                 }
             } else {
@@ -84,13 +84,13 @@ class SelectorViewModel @Inject constructor(
                                 entry.value
                             },
                         ),
-                        filesLoaded = true,
                         log = result
                     )
                 }
                 if (snackbarHostState.showSnackbar(message, actionLabel, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed)
                     setShowLogDialog(true)
             }
+            _uiState.update { it.copy(localVersion = mediaRepoVersion.value) }
         }
     }
     suspend fun suspendLoadList() {
@@ -101,8 +101,7 @@ class SelectorViewModel @Inject constructor(
                     musicMapState.value.map { entry ->
                         entry.value
                     }
-                ),
-                filesLoaded = true
+                )
             )
         }
     }
@@ -416,12 +415,12 @@ class SelectorViewModel @Inject constructor(
 
 data class SelectorUiState(
     val musicList: List<MusicData> = listOf(),
+    val localVersion: Int = 0,
     val showSortDialog: Boolean = false,
     val showFilterDialog: Boolean = false,
     val taggedFilter: Boolean = false, //true means only show non-tagged
     val sortOrder: SortOrder = SortOrder.Title,
     val sortDirection: SortDirection = SortDirection.Ascending,
-    val filesLoaded: Boolean = false,
     val isRefreshing: Boolean = false,
     val searchQuery: String = "",
     val searchEnabled: Boolean = false,

@@ -72,7 +72,6 @@ fun ListScreen(
     val taggedFilter = uiState.taggedFilter
     val showSortDialog = uiState.showSortDialog
     val showFilterDialog = uiState.showFilterDialog
-    val filesLoaded = uiState.filesLoaded
     val isRefreshing = uiState.isRefreshing
     val showLogDialog = uiState.showLogDialog
     val albumList = uiState.albumList
@@ -82,8 +81,10 @@ fun ListScreen(
     val selectedItems = uiState.selectedItems
 
     // TODO: refresh list on version change
+    val localVersion = uiState.localVersion
+    val mediaRepoVersion = viewModel.mediaRepoVersion
 
-    if (!filesLoaded) {
+    if (localVersion != mediaRepoVersion.collectAsState().value) {
         viewModel.loadList(
             snackbarHostState = snackbarHostState,
             message = stringResource(R.string.list_screen_error),
@@ -130,7 +131,7 @@ fun ListScreen(
         modifier = modifier
     ) {
         //  Loading bar while loading music
-        if (!filesLoaded) {
+        if (localVersion != mediaRepoVersion.collectAsState().value) {
             LoadingScreen(
                 text = stringResource(R.string.loading_music),
                 subtext = stringResource(R.string.loading_music_long)

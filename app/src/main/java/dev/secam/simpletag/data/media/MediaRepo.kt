@@ -390,7 +390,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
     }
 
     fun updateVersion(){
-        version.update { Random.nextInt() }
+        version.update { Random.nextInt(1, Int.MAX_VALUE) }
     }
 
     fun updatePathFilter(pathList: Set<String>, filterMode: FolderSelectMode) {
