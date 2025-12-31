@@ -136,8 +136,8 @@
     <string name="email">Email</string>
     <string name="donate">Donner</string>
     <string name="support">Assistance</string>
-    <string name="bugs_features">Bogue ou demande de fonctionnalité ?</string>
-    <string name="bugs">Vous avez trouvé un bogue ?</string>
+    <string name="bugs_features">Bug ou demande de fonctionnalité ?</string>
+    <string name="bugs">Vous avez trouvé un bug ?</string>
     <string name="advanced_fields">Champs avancés</string>
     <string name="date_added">Date ajoutée</string>
     <string name="descending">Descendant</string>
@@ -168,7 +168,7 @@
     <string name="loading_music_long">Cela peut prendre un certain temps pour les bibliothèques volumineuses</string>
     <string name="author_name">Sergio Camacho</string>
     <string name="github">Github</string>
-    <string name="donate_long">donne-moi de l\'argent</string>
+    <string name="donate_long">Donnez-moi de l\'argent</string>
     <string name="bugs_long">Ouvrir un ticket sur GitHub</string>
     <string name="appearance">Apparence</string>
     <string name="editor">Éditeur</string>
