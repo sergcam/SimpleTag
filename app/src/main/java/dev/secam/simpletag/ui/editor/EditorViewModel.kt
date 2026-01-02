@@ -500,7 +500,29 @@ class EditorViewModel @Inject constructor(
             currentState.copy(searchResults = list.map { it.key })
         }
     }
+    fun toggleSelectAll(){
+        backgroundScope.launch {
+            val fieldStates = uiState.value.fieldStates
+            if(allEnabled()) {
+                for(field in fieldStates){
+                    field.value.enabledState.value = false
+                }
+            }
+            else {
+                for(field in fieldStates){
+                    field.value.enabledState.value = true
+                }
+            }
+            _uiState.update { it.copy(fieldStates = fieldStates) }
+        }
+    }
 
+    fun allEnabled(): Boolean{
+        val fieldStates = uiState.value.fieldStates
+        return fieldStates.map {
+            it.value.enabledState.value
+        }.all { it }
+    }
 
 
     /*------- Setters -------*/

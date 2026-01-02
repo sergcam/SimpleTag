@@ -90,7 +90,7 @@ fun BatchEditor(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 72.dp)
+                .padding(bottom = 84.dp)
                 .animateContentSize()
         ) {
             if(fieldStates.isEmpty()){

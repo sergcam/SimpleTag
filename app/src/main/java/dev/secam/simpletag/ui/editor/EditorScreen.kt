@@ -192,6 +192,7 @@ fun EditorScreen(
             )
         },
         floatingActionButton = {
+            // advanced editor
             if(simpleEditor == false){
                 HorizontalFloatingToolbar(
                     expanded = true,
@@ -215,10 +216,14 @@ fun EditorScreen(
                     }
                     if(musicList.size > 1){
                         IconButton(
-                            onClick = {  }
+                            onClick = { viewModel.toggleSelectAll() }
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_done_all_24px),
+                                painter = if(viewModel.allEnabled()){
+                                    painterResource(R.drawable.ic_remove_done_24px)
+                                } else {
+                                    painterResource(R.drawable.ic_done_all_24px)
+                                },
                                 contentDescription = stringResource(R.string.cd_select_all)
                             )
                         }
