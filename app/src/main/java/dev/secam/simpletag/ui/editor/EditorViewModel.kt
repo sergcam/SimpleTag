@@ -503,23 +503,29 @@ class EditorViewModel @Inject constructor(
     fun toggleSelectAll(){
         backgroundScope.launch {
             val fieldStates = uiState.value.fieldStates
+            val artworkEnabled: Boolean
             if(allEnabled()) {
                 for(field in fieldStates){
                     field.value.enabledState.value = false
                 }
+                artworkEnabled = false
             }
             else {
                 for(field in fieldStates){
                     field.value.enabledState.value = true
                 }
+                artworkEnabled = true
             }
-            _uiState.update { it.copy(fieldStates = fieldStates) }
+            _uiState.update { it.copy(
+                fieldStates = fieldStates,
+                artworkEnabled = artworkEnabled
+            ) }
         }
     }
 
     fun allEnabled(): Boolean{
         val fieldStates = uiState.value.fieldStates
-        return fieldStates.map {
+        return uiState.value.artworkEnabled && fieldStates.map {
             it.value.enabledState.value
         }.all { it }
     }
