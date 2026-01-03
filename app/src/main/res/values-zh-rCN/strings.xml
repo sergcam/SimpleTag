@@ -221,7 +221,7 @@
     <string name="manage_folders_sub">更改查找音乐的文件夹</string>
     <string name="cd_select_all">全选</string>
     <string name="song_sync_missing">未安装 SongSync</string>
-    <string name="song_sync_long">SongSync is not installed. Download it from IzzyOnDroid or Github to use this feature</string>
-    <string name="simple_editor">Simple Editor</string>
-    <string name="simple_editor_long">Use a more basic editor with less features</string>
+    <string name="song_sync_long">未安装 SonhSync。从 lzzyOnDroid 或 Github 下载它来使用本功能</string>
+    <string name="simple_editor">简单编辑器</string>
+    <string name="simple_editor_long">使用功能较少的更基本的编辑器</string>
 </resources>
