@@ -7,7 +7,7 @@
     <string name="cd_back_button">back button</string>
     <string name="cd_settings_button">settings button</string>
     <string name="cd_album_art">Album Art</string>
-    <string name="cd_empty_art">Empty Album Art</string>
+    <string name="cd_empty_art">Порожня обкладинка</string>
     <string name="cd_add_art_icon">Add Art Icon</string>
     <string name="cd_back">Back Button</string>
     <string name="cd_clear_button">Clear Text Button</string>
@@ -54,7 +54,7 @@
     <string name="discogs_artist_site_url_field">Discogs Artist Site Url</string>
     <string name="discogs_release_site_url_field">Discogs Release Site Url</string>
     <string name="dj_mixer_field">DJ Mixer</string>
-    <string name="encoded_by_field">Encoded By</string>
+    <string name="encoded_by_field"></string>
     <string name="engineer_field">Engineer</string>
     <string name="floating_point_bpm_field">Floating Point BPM</string>
     <string name="gapless_playback_field">Gapless Playback</string>
