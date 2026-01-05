@@ -3,7 +3,7 @@ SimpleTag is a Material You audio tagger with support for most major audio and t
 Funzioni:
 
 - Supporto dei formati MP3, MP4(audio), OGG, FLAC, WAV, AIF, DSF e WMA
-- ID3v1, ID3v11, ID3v22, ID3v23, ID3v24, and FLAC tag format support
+- Supporta i formati di tag ID3v1, ID3v11, ID3v22, ID3v23, ID3v24 e FLAC
 - Supports 50+ of the most popular tag fields
 - Batch tag editing (Planned)
 
