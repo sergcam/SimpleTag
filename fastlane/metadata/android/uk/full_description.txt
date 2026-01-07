@@ -1,4 +1,4 @@
-SimpleTag is a Material You audio tagger with support for most major audio and tag formats.
+SimpleTag - редактор тегів у стилі Material You з підтримкою більшості поширених форматів аудіо та тегів.
 
 Features:
 
@@ -13,7 +13,7 @@ Permissions:
 - READ_EXTERNAL_STORAGE API30-API32. Used to read audio files
 - READ_MEDIA_AUDIO API33+. Used to read audio files
 
-Optional permissions (API31+):
+Необов'язкові дозволи (API31+):
 
 - MANAGE_MEDIA Used in combination with ACCESS_MEDIA_LOCATION to write to audio files without system pop-up
 - ACCESS_MEDIA_LOCATION required in conjunction with MANAGE_MEDIA to disable the write permission prompt
