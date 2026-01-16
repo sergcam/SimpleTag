@@ -1,25 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--    License     -->
+    
     <!--    Titles    -->
     <string name="settings_title">Paramètres</string>
     <string name="about_title">À propos</string>
+    
     <!--     Content Desc    -->
-    <string name="cd_back_button">bouton retour</string>
-    <string name="cd_settings_button">bouton paramètres</string>
+    <string name="cd_back_button">Bouton retour</string>
+    <string name="cd_settings_button">Bouton paramètres</string>
     <string name="cd_album_art">Pochette d\'album</string>
     <string name="cd_empty_art">Pochette d\'album vide</string>
     <string name="cd_add_art_icon">Ajouter une icône artistique</string>
     <string name="cd_back">Bouton retour</string>
-    <string name="cd_clear_button">Bouton vider le texte</string>
+    <string name="cd_clear_button">Bouton effacer le texte</string>
     <string name="cd_search_button">Bouton de recherche</string>
     <string name="cd_filter_button">Bouton filtre</string>
-    <string name="cd_permission_not_granted">autorisation non accordée</string>
+    <string name="cd_permission_not_granted">Autorisation non accordée</string>
     <string name="cd_settings_icon">Icône paramètres</string>
     <string name="cd_scroll_top">Remonter en haut de la page</string>
     <string name="cd_save_tag_icon">Icône d\'enregistrement</string>
     <string name="cd_add_cover_icon">Ajouter une icône de couverture</string>
     <string name="cd_delete_cover_icon">Supprimer une icône de couverture</string>
+    
     <!--    Tag Fields    -->
     <string name="title_field">Titre</string>
     <string name="artist_field">Artiste</string>
@@ -93,17 +94,19 @@
     <string name="release_type_field">Genre de publication</string>
     <string name="remixer_field">Remixeur</string>
     <string name="script_field">Script</string>
-    <string name="tags_field">Étiquettes</string>
+    <string name="tags_field">Balises</string>
     <string name="tempo_field">Tempo</string>
     <string name="title_sort_order_field">Ordre de tri du titre</string>
     <string name="total_discs_field">Total des disques</string>
     <string name="total_tracks_field">Total des pistes</string>
     <string name="wikipedia_artist_site_url_field">URL du site Wikipédia de l\'artiste</string>
     <string name="wikipedia_release_site_url_field">URL du site Wikipédia de la sortie</string>
+    
     <!--    Themes      -->
     <string name="system_theme">Système</string>
     <string name="light_theme">Clair</string>
     <string name="dark_theme">Sombre</string>
+    
     <!--    Color Schemes       -->
     <string name="dynamic">Dynamique</string>
     <string name="red">Rouge</string>
@@ -112,16 +115,18 @@
     <string name="green">Vert</string>
     <string name="blue">Bleu</string>
     <string name="purple">Violet</string>
+    
     <!--    Dialog Options      -->
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_leave">Sortir</string>
     <string name="dialog_close">Fermer</string>
     <string name="dialog_confirm">Confirmer</string>
     <string name="dialog_ok">OK</string>
+    
     <!--    UI      -->
     <string name="welcome">Bienvenue</string>
     <string name="grant_permission">Accorder la permission</string>
-    <string name="missing_permission">L\'accès aux fichiers audio est nécessaire pour utiliser l\'application</string>
+    <string name="missing_permission">L\'accès aux fichiers audio est nécessaire pour utiliser l\'application.</string>
     <string name="theme">Thème</string>
     <string name="color_scheme">Palette de couleurs</string>
     <string name="pure_black">Thème noir pur foncé</string>
@@ -145,15 +150,15 @@
     <string name="ascending">Ascendant</string>
     <string name="system_font">Utiliser la police système</string>
     <string name="optional_permissions">Autorisations facultatives</string>
-    <string name="add_cover">Ajouter couverture</string>
-    <string name="delete_cover">Supprimer couverture</string>
+    <string name="add_cover">Ajouter une couverture</string>
+    <string name="delete_cover">Supprimer la couverture</string>
     <string name="unsaved_changes">Modifications non enregistrées</string>
     <string name="unsaved_changes_long">Il y a des modifications non enregistrées dans le(s) fichier(s). Voulez-vous quitter sans enregistrer ?</string>
     <string name="confirm_changes">Confirmer les modifications</string>
-    <string name="overwrite">Remplacer (#) étiquette(s) ?</string>
+    <string name="overwrite">Remplacer (#) balise(s) ?</string>
     <string name="permission_denied">Autorisation refusée</string>
-    <string name="tag_written">Étiquette(s) écrite(s) avec succès</string>
-    <string name="edit_tag">Modifier l\'étiquette</string>
+    <string name="tag_written">Balise(s) écrite(s) avec succès</string>
+    <string name="edit_tag">Modifier la balise</string>
     <string name="file_location">Emplacement du fichier</string>
     <string name="sort_button">Bouton Trier</string>
     <string name="filter">Trier</string>
@@ -162,26 +167,71 @@
     <string name="optional_permissions_long">Les autorisations suivantes sont facultatives et permettent d\'écrire des balises sans invite de confirmation de l\'appareil :</string>
     <string name="manage_media">Gérer les médias :</string>
     <string name="access_media_location">Emplacement des médias :</string>
-    <string name="optional_permission_note">Remarque : l\'emplacement des médias apparaîtra sous la forme « Accéder aux photos et vidéos ». Vous devez tout autoriser, sinon l\'autorisation n\'aura aucun effet</string>
+    <string name="optional_permission_note">Remarque : l\'emplacement des médias apparaîtra sous la forme « Accéder aux photos et vidéos ». Vous devez tout autoriser, sinon l\'autorisation n\'aura aucun effet.</string>
     <string name="skip">Passer</string>
     <string name="no_results">Aucun résultat trouvé</string>
     <string name="loading_music">Chargement de la musique</string>
-    <string name="loading_music_long">Cela peut prendre un certain temps pour les bibliothèques volumineuses</string>
+    <string name="loading_music_long">Cela peut prendre un certain temps pour les bibliothèques volumineuses.</string>
     <string name="author_name">Sergio Camacho</string>
-    <string name="github">Github</string>
-    <string name="donate_long">donne-moi de l\'argent</string>
+    <string name="github">GitHub</string>
+    <string name="donate_long">Offrez-moi un café.</string>
     <string name="bugs_long">Ouvrir un ticket sur GitHub</string>
     <string name="appearance">Apparence</string>
     <string name="editor">Éditeur</string>
+
+    
     <!--    Uncategorized   -->
-    <string name="tag_written_error">Error writing tag</string>
-    <string name="dialog_copy">Copy</string>
-    <string name="log">Log</string>
-    <string name="list_screen_error">Error(s) while loading library</string>
-    <string name="bitrate">Bit Rate</string>
-    <string name="sample_rate">Sample Rate</string>
-    <string name="duration">Duration</string>
-    <string name="basic_fields">Basic Fields</string>
-    <string name="cd_add_field">Add Field</string>
-    <string name="add_field_tip">Press the + to add a field</string>
+    <string name="tag_written_error">Erreur lors de l\'écriture de la balise</string>
+    <string name="dialog_copy">Copier</string>
+    <string name="log">Enregistrer</string>
+    <string name="list_screen_error">Erreur(s) lors du chargement de la bibliothèque</string>
+    <string name="bitrate">Débit binaire</string>
+    <string name="sample_rate">Fréquence d\'échantillonnage</string>
+    <string name="duration">Durée</string>
+    <string name="basic_fields">Champs de base</string>
+    <string name="cd_add_field">Ajouter un champ</string>
+    <string name="add_field_tip">Appuyez sur le + pour ajouter un champ</string>
+    <string name="replaygain_track_field">Piste ReplayGain</string>
+    <string name="replaygain_album_field">Album ReplayGain</string>
+    <string name="multiselect_title">sélectionnés</string>
+    <string name="cd_selected">sélectionné</string>
+    <string name="cd_help_icon">Aide</string>
+    <string name="edit_n_tags">Modification des balises #</string>
+    <string name="help_dialog_title">Aide de l\'éditeur de lots</string>
+    <string name="batch_help_header">Utilisation de l\'éditeur de traitement par lots :</string>
+    <string name="batch_help_one">1. Utilisez les cases à cocher pour sélectionner les champs que vous souhaitez modifier.</string>
+    <string name="batch_help_two">2. Une fois enregistrées, toutes les cases cochées seront écrites dans tous les fichiers audio sélectionnés.</string>
+    <string name="batch_help_three">3. Tous les champs non cochés seront laissés tels quels pour chaque fichier audio.</string>
+    <string name="batch_help_four">4. La suppression d\'un champ entraînera sa suppression pour tous les fichiers audio.</string>
+    <string name="search_fields">Champs de recherche</string>
+    <string name="reading_tags">Lecture des balises</string>
+    <string name="cd_art_disabled">pochette désactivée</string>
+    <string name="unchanged">inchangé</string>
+    <string name="minute_short">min</string>
+    <string name="second_short">s</string>
+    <string name="add_field">Ajouter un champ</string>
+    <string name="cd_delete">Supprimer\n</string>
+    <string name="cd_exit_mulitselect">Quitter la sélection multiple</string>
+    <string name="cd_edit_multiselect">Modifier la sélection</string>
+    <string name="general">Général</string>
+    <string name="settings_remember_sort">Mémoriser les paramètres de tri</string>
+    <string name="behavior">Comportement</string>
+    <string name="edit_lyrics">Modifier les paroles</string>
+    <string name="delete_lyrics">Supprimer les paroles</string>
+    <string name="save_lyrics">Enregistrer les paroles</string>
+    <string name="cd_edit_lyrics">Modifier les paroles</string>
+    <string name="include">Inclure</string>
+    <string name="exclude">Exclure</string>
+    <string name="dialog_save">Sauvegarder</string>
+    <string name="select_folders">Dossiers sélectionnés</string>
+    <string name="cd_add_folder">Ajouter un dossier</string>
+    <string name="manage_folders">Gérer les dossiers</string>
+    <string name="manage_folders_sub">Modifier les dossiers dans lesquels rechercher la musique</string>
+    <string name="cd_select_all">Tout sélectionner</string>
+    <string name="song_sync_missing">SongSync non installé</string>
+    <string name="song_sync_long">SongSync n\'est pas installé. Téléchargez-le depuis IzzyOnDroid ou GitHub pour utiliser cette fonctionnalité.</string>
+    <string name="simple_editor">Éditeur simple</string>
+    <string name="simple_editor_long">Utilisez un éditeur plus basique avec moins de fonctionnalités.</string>
+
+
 </resources>
