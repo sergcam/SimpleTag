@@ -117,8 +117,9 @@ public abstract class AudioFileReader
             GenericAudioHeader info = getEncodingInfo(raf);
             raf.seek(0);
             Tag tag = getTag(raf);
-            return new AudioFile(f, info, tag);
-
+            AudioFile temp = new AudioFile(f, info, tag);
+            temp.setExt(Utils.getExtension(f));
+            return temp;
         }
         catch (CannotReadException cre)
         {

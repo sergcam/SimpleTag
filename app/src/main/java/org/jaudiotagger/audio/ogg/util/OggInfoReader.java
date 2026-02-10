@@ -2,6 +2,7 @@
  * Entagged Audio Tag library
  * Copyright (c) 2003-2005 Raphaël Slinckx <raphael@slinckx.net>
  * Copyright (c) 2004-2005 Christian Laireiter <liree@web.de>
+ * Copyright (c) 2026 Sergio Camacho <sergio@secam.dev>
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@ import org.jaudiotagger.audio.SupportedFileFormat;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.generic.GenericAudioHeader;
 import org.jaudiotagger.audio.generic.Utils;
+import org.jaudiotagger.audio.opus.OpusHeader;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
 
@@ -109,12 +111,11 @@ public class OggInfoReader
         //1st page = Identification Header
         OggPageHeader pageHeader = OggPageHeader.read(raf);
         byte[] vorbisData = new byte[pageHeader.getPageLength()];
+        raf.read(vorbisData);
 
-        if(vorbisData.length < OggPageHeader.OGG_PAGE_HEADER_FIXED_LENGTH)
-        {
+        if(!(isVorbisIDHeader(vorbisData) || isOpusIDHeader(vorbisData))){
             throw new CannotReadException("Invalid Identification header for this Ogg File");
         }
-        raf.read(vorbisData);
         VorbisIdentificationHeader vorbisIdentificationHeader = new VorbisIdentificationHeader(vorbisData);
 
         //Map to generic encodingInfo
@@ -158,6 +159,16 @@ public class OggInfoReader
             length=1;
         }
         return (int) ((size / Utils.KILOBYTE_MULTIPLIER) * Utils.BITS_IN_BYTE_MULTIPLIER / length);
+    }
+    private boolean isVorbisIDHeader(byte[] headerData){
+        byte packetType = headerData[VorbisHeader.FIELD_PACKET_TYPE_POS];
+        String magicSignature = new String(headerData, VorbisHeader.FIELD_CAPTURE_PATTERN_POS, VorbisHeader.FIELD_CAPTURE_PATTERN_LENGTH);
+        return magicSignature.equals(VorbisHeader.CAPTURE_PATTERN) && (packetType == VorbisPacketType.IDENTIFICATION_HEADER.getType());
+    }
+
+    private boolean isOpusIDHeader(byte[] headerData){
+        String magicSignature = new String(headerData, OpusHeader.FIELD_CAPTURE_PATTERN_POS, OpusHeader.FIELD_CAPTURE_PATTERN_LENGTH);
+        return magicSignature.equals(OpusHeader.ID_CAPTURE_PATTERN);
     }
 }
 

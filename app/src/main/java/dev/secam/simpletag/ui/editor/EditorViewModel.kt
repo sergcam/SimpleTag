@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025  Sergio Camacho
+ * Copyright (C) 2025-2026 Sergio Camacho
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +337,7 @@ class EditorViewModel @Inject constructor(
                                     log += "Cleared field ${field.key.fieldKey}\n"
                                 }
                             }
-                            if (file.ext == "ogg") {
+                            if (file.ext == "ogg" || file.ext == "opus") {
                                 log += "Writing file using ogg writer\n"
                                 oggFileWriter(file, context)
                                 log += "Wrote file: ${file.file.path} \n"
@@ -391,7 +391,7 @@ class EditorViewModel @Inject constructor(
                                         log += "Cleared field ${field.key.fieldKey}\n"
                                     }
                                 }
-                                if (file.ext == "ogg") {
+                                if (file.ext == "ogg" || file.ext== "opus") {
                                     log += "Writing file using ogg writer\n"
                                     oggFileWriter(file, context)
                                     log += "Wrote file: ${file.file.path} \n"
