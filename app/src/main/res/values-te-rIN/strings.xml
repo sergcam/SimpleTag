@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--    License     -->
     <!--    Titles    -->
     <string name="settings_title">Settings</string>
     <string name="about_title">About</string>
@@ -184,4 +183,45 @@
     <string name="basic_fields">Basic Fields</string>
     <string name="cd_add_field">Add Field</string>
     <string name="add_field_tip">Press the + to add a field</string>
+    <string name="replaygain_track_field">Track ReplayGain</string>
+    <string name="replaygain_album_field">Album ReplayGain</string>
+    <string name="multiselect_title">selected</string>
+    <string name="cd_selected">selected</string>
+    <string name="cd_help_icon">help</string>
+    <string name="edit_n_tags">Editing # tags</string>
+    <string name="help_dialog_title">Batch Editor Help</string>
+    <string name="batch_help_header">Using the batch editor:</string>
+    <string name="batch_help_one">1. Use the checkboxes to select which fields you would like to edit</string>
+    <string name="batch_help_two">2. Upon saving, all checked fields will be written to all of the selected audio files</string>
+    <string name="batch_help_three">3. Any unchecked fields will be left as is for each audio file</string>
+    <string name="batch_help_four">4. Deleting a field will delete it for all audio files</string>
+    <string name="search_fields">Search Fields</string>
+    <string name="reading_tags">Reading Tags</string>
+    <string name="cd_art_disabled">art disabled</string>
+    <string name="unchanged">unchanged</string>
+    <string name="minute_short">m</string>
+    <string name="second_short">s</string>
+    <string name="add_field">Add Field</string>
+    <string name="cd_delete">delete\n</string>
+    <string name="cd_exit_mulitselect">exit multiselect</string>
+    <string name="cd_edit_multiselect">edit selected</string>
+    <string name="general">General</string>
+    <string name="settings_remember_sort">Remember Sort Settings</string>
+    <string name="behavior">Behavior</string>
+    <string name="edit_lyrics">Edit Lyrics</string>
+    <string name="delete_lyrics">Delete Lyrics</string>
+    <string name="save_lyrics">Save Lyrics</string>
+    <string name="cd_edit_lyrics">edit lyriccs</string>
+    <string name="include">Include</string>
+    <string name="exclude">Exclude</string>
+    <string name="dialog_save">Save</string>
+    <string name="select_folders">Selected Folders</string>
+    <string name="cd_add_folder">add folder</string>
+    <string name="manage_folders">Manage Folders</string>
+    <string name="manage_folders_sub">Change which folders to look for music in</string>
+    <string name="cd_select_all">select all</string>
+    <string name="song_sync_missing">SongSync Not Installed</string>
+    <string name="song_sync_long">SongSync is not installed. Download it from IzzyOnDroid or Github to use this feature</string>
+    <string name="simple_editor">Simple Editor</string>
+    <string name="simple_editor_long">Use a more basic editor with less features</string>
 </resources>
