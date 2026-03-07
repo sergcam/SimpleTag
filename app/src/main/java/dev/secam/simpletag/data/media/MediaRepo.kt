@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025  Sergio Camacho
+ * Copyright (C) 2025-2026 Sergio Camacho
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +54,13 @@ val COMPATIBLE_TYPES = listOf(
     "aifc",
     "wma",
     "ogg",
+    "ogx",
     "mp4",
     "m4a",
     "m4p",
     "flac",
-    "aac"
+    "aac",
+    "opus"
 )
 
 const val TAG = "MediaRepo"
@@ -402,7 +404,6 @@ class MediaRepo @Inject constructor(private val context: Context) {
 fun checkPath(pathList: Set<String>, mode: FolderSelectMode, path: String): Boolean {
     if(pathList.isEmpty()) return true
     else if(mode == FolderSelectMode.Exclude) {
-        Log.d("MediaRepo", "filter mode exclude")
         for(p in pathList){
             if(path.startsWith(p)) {
                 Log.d("MediaRepo", "p: $p")
@@ -414,7 +415,6 @@ fun checkPath(pathList: Set<String>, mode: FolderSelectMode, path: String): Bool
         }
         return true
     } else {
-        Log.d("MediaRepo", "filter mode include")
         for(p in pathList){
             if(path.startsWith(p)) return true
         }
