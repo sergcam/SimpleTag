@@ -72,7 +72,7 @@ import java.nio.file.AccessDeniedException
 import java.util.ArrayList
 import javax.inject.Inject
 
-const val WRITE_TIMEOUT = 1000L
+const val WRITE_TIMEOUT = 2000L
 val SUPPORTS_RG = listOf(
     "mp3",
     "wav",
