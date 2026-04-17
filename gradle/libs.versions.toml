@@ -3,6 +3,7 @@ accompanistPermissions = "0.37.3"
 agp = "8.13.2"
 appcompat = "1.7.1"
 coilCompose = "3.3.0"
+commonsIo = "2.21.0"
 datastorePreferences = "1.1.7"
 #jaudiotagger = "3.0.1"
 kotlin = "2.2.20"
@@ -30,6 +31,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }

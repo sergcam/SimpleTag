@@ -29,6 +29,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.PreferencesRepoImpl
+import dev.secam.simpletag.util.logger.SimpleLogger
 import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -50,4 +51,10 @@ object AppModule {
     fun provideMediaRepo(
         @ApplicationContext context: Context
     ): MediaRepo = MediaRepo(context)
+
+    @Singleton
+    @Provides
+    fun provideSimpleLogger(
+        @ApplicationContext context: Context
+    ): SimpleLogger = SimpleLogger(context)
 }

@@ -67,6 +67,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.commons.io)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
