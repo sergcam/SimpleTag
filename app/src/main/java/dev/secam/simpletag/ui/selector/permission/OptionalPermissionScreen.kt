@@ -26,9 +26,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -85,107 +89,122 @@ fun OptionalPermissionScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         manageMedia = MediaStore.canManageMedia(context)
     }
-    if(manageMedia && mediaLocation) {
+    if (manageMedia && mediaLocation) {
         skip = true
     }
     if (skip) {
         setSkipped(true)
     }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 80.dp)
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_info_24px),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(bottom = 16.dp)
-                .size(48.dp)
-
-        )
-        Text(
-            text = stringResource(R.string.optional_permissions),
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            modifier = Modifier
-                .padding(bottom = 6.dp)
-        )
-        Text(
-            text = stringResource(R.string.optional_permissions_long),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-        )
-
-        Row() {
-            val color =
-                if (manageMedia) Color(0xff4c996e) else MaterialTheme.colorScheme.error
-            Text(
-                text = stringResource(R.string.manage_media),
-                color = color,
-                fontWeight = FontWeight.Medium
-            )
-            Icon(
-                painter =
-                    if (manageMedia) painterResource(R.drawable.ic_check_24px)
-                    else painterResource(R.drawable.ic_close_24px),
-                contentDescription = stringResource(R.string.cd_permission_not_granted),
-                tint = color,
-
-                )
-        }
-        Row(
-            modifier = Modifier
-                .padding(bottom = 16.dp)
+                .heightIn(0.dp)
+                .fillMaxHeight(.78f)
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            val color =
-                if (mediaLocation) Color(0xff4c996e) else MaterialTheme.colorScheme.error
-            Text(
-                text = stringResource(R.string.access_media_location),
-                color = color,
-                fontWeight = FontWeight.Medium
-            )
             Icon(
-                painter =
-                    if (mediaLocation) painterResource(R.drawable.ic_check_24px)
-                    else painterResource(R.drawable.ic_close_24px),
-                contentDescription = stringResource(R.string.cd_permission_not_granted),
-                tint = color,
+                painter = painterResource(R.drawable.ic_info_24px),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .size(48.dp)
+
             )
-        }
-        Text(
-            text = stringResource(R.string.optional_permission_note),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-        )
-        Button(
-            onClick = {
-                if (!mediaLocation) {
-                    optionalPermissionState.launchPermissionRequest()
-                }
-                if (!manageMedia) {
-                    context.startActivity(Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA))
-                }
+            Text(
+                text = stringResource(R.string.optional_permissions),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                modifier = Modifier
+                    .padding(bottom = 6.dp)
+            )
+            Text(
+                text = stringResource(R.string.optional_permissions_long),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            )
+
+            Row {
+                val color =
+                    if (manageMedia) Color(0xff4c996e) else MaterialTheme.colorScheme.error
+                Text(
+                    text = stringResource(R.string.manage_media),
+                    color = color,
+                    fontWeight = FontWeight.Medium
+                )
+                Icon(
+                    painter =
+                        if (manageMedia) painterResource(R.drawable.ic_check_24px)
+                        else painterResource(R.drawable.ic_close_24px),
+                    contentDescription = stringResource(R.string.cd_permission_not_granted),
+                    tint = color,
+
+                    )
             }
-        ) {
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            ) {
+                val color =
+                    if (mediaLocation) Color(0xff4c996e) else MaterialTheme.colorScheme.error
+                Text(
+                    text = stringResource(R.string.access_media_location),
+                    color = color,
+                    fontWeight = FontWeight.Medium
+                )
+                Icon(
+                    painter =
+                        if (mediaLocation) painterResource(R.drawable.ic_check_24px)
+                        else painterResource(R.drawable.ic_close_24px),
+                    contentDescription = stringResource(R.string.cd_permission_not_granted),
+                    tint = color,
+                    modifier = Modifier
+                )
+            }
             Text(
-                text = stringResource(R.string.grant_permission),
-                fontWeight = FontWeight.Bold
+                text = stringResource(
+                    R.string.optional_permission_note
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
             )
         }
-        TextButton({skip = true}) {
-            Text(
-                text = stringResource(R.string.skip)
-            )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp)
+                .padding(top = 16.dp)
+        ) {
+            Button(
+                onClick = {
+                    if (!mediaLocation) {
+                        optionalPermissionState.launchPermissionRequest()
+                    }
+                    if (!manageMedia) {
+                        context.startActivity(Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA))
+                    }
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.grant_permission),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            TextButton({ skip = true }) {
+                Text(
+                    text = stringResource(R.string.skip)
+                )
+            }
         }
     }
 }
@@ -196,6 +215,6 @@ fun OptionalPermissionScreen(
 @Composable
 fun OptPermissionPrev() {
     SimpleTagTheme {
-        OptionalPermissionScreen(){}
+        OptionalPermissionScreen {}
     }
 }
