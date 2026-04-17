@@ -25,8 +25,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,7 +75,10 @@ fun FilePickerDialog(
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.also { uri ->
-                    uriListTemp.add(uriToPath(uri.data!!))
+                    val path = uriToPath(uri.data!!)
+                    if(!uriListTemp.contains(path)) {
+                        uriListTemp.add(path)
+                    }
                 }
             }
             Activity.RESULT_CANCELED -> {
@@ -152,13 +158,15 @@ fun FilePickerDialog(
             Column(
                 modifier = Modifier
                     .padding(bottom = 16.dp)
+                    .heightIn(max = 300.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 if (uriListTemp.isEmpty()) {
                     Text(
                         text = "No Folders Selected",
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                } else
+                } else {
                     for (uri in uriListTemp) {
                         val path = uriFormatter(uri)
                         Row(
@@ -166,6 +174,7 @@ fun FilePickerDialog(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(bottom = 8.dp)
                         ) {
                             Text(
                                 path,
@@ -176,7 +185,6 @@ fun FilePickerDialog(
                             )
                             IconButton(
                                 onClick = { uriListTemp.remove(uri) },
-//                                    modifier = Modifier
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_delete_24px),
@@ -186,6 +194,7 @@ fun FilePickerDialog(
                             }
                         }
                     }
+                }
             }
         }
         SimpleDialogOptions(
@@ -200,9 +209,7 @@ fun FilePickerDialog(
                 onDismiss()
             }
         )
-
     }
-
 }
 
 fun uriFormatter(uri: String): String {
