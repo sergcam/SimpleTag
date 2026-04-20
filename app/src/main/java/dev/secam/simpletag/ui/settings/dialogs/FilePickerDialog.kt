@@ -214,6 +214,9 @@ fun FilePickerDialog(
 
 fun uriFormatter(uri: String): String {
     //TODO check sd card path
-    val path = uri.substringAfter("/storage/emulated/0/")
+    val path = uri.substringAfter("/storage/emulated/0/", "")
+    if(path == ""){ // external directory
+        return uri.substringAfter("/storage/")
+    }
     return "Internal Storage/$path"
 }

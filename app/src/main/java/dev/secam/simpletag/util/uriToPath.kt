@@ -20,5 +20,12 @@ package dev.secam.simpletag.util
 import android.net.Uri
 
 fun uriToPath(uri: Uri): String {
-    return uri.path?.replace("/tree/primary:", "/storage/emulated/0/") ?: ""
+    val path = uri.path!!
+    val location = path.substringBefore(":").substringAfterLast("/")
+    return when(location){
+        "primary" ->
+            path.replace("/tree/primary:", "/storage/emulated/0/")
+        else ->
+            path.replaceFirst(":", "/").replaceFirst("tree", "storage")
+    }
 }
