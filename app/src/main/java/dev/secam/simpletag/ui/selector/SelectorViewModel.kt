@@ -29,7 +29,6 @@ import dev.secam.simpletag.data.media.MediaRepo
 import dev.secam.simpletag.data.media.MusicData
 import dev.secam.simpletag.data.preferences.PreferencesRepo
 import dev.secam.simpletag.data.preferences.UserPreferences
-import dev.secam.simpletag.util.logger.SimpleLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +47,7 @@ import javax.inject.Inject
 class SelectorViewModel @Inject constructor(
     private val preferencesRepo: PreferencesRepo,
     private val mediaRepo: MediaRepo,
-    private val logger: SimpleLogger
+//    private val logger: SimpleLogger
 ): ViewModel() {
     private val _uiState = MutableStateFlow(SelectorUiState())
     val uiState = _uiState.asStateFlow()

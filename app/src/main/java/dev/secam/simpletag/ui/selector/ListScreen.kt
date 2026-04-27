@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -84,12 +85,17 @@ fun ListScreen(
     val localVersion = uiState.localVersion
     val mediaRepoVersion = viewModel.mediaRepoVersion
 
-    if (localVersion != mediaRepoVersion.collectAsState().value) {
-        viewModel.loadList(
-            snackbarHostState = snackbarHostState,
-            message = stringResource(R.string.list_screen_error),
-            actionLabel = stringResource(R.string.log)
-        )
+    val message = stringResource(R.string.list_screen_error)
+    val actionLabel = stringResource(R.string.log)
+
+    LaunchedEffect(mediaRepoVersion) {
+        if (localVersion != mediaRepoVersion.value) {
+            viewModel.loadList(
+                snackbarHostState = snackbarHostState,
+                message = message,
+                actionLabel = actionLabel
+            )
+        }
     }
     val onSongClick = { item: MusicData ->
         if (multiSelectEnabled) {

@@ -350,6 +350,7 @@ class MediaRepo @Inject constructor(private val context: Context) {
                 }
             }
             musicMapState.update { updatedMap }
+            updateVersion()
         }.await()
     }
 
