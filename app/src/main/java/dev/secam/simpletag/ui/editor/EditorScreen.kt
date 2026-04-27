@@ -204,6 +204,9 @@ fun EditorScreen(
                         ) { viewModel.setShowSaveDialog(true) }
                     }
                 ) {
+                    /*---- Single and Batch Front ----*/
+
+                    /*---- Single Editor ----*/
                     if(musicList.size == 1){
                         IconButton(
                             onClick = { viewModel.setShowLyricsSheet(true) }
@@ -214,6 +217,7 @@ fun EditorScreen(
                             )
                         }
                     }
+                    /*---- Batch Editor ----*/
                     if(musicList.size > 1){
                         IconButton(
                             onClick = { viewModel.toggleSelectAll() }
@@ -229,6 +233,15 @@ fun EditorScreen(
                         }
 
                     }
+                    /*---- Single and Batch End ----*/
+//                    IconButton(
+//                        onClick = { viewModel.setShowAddFieldDialog(true) },
+//                    ) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.ic_text_select_start_24px),
+//                            contentDescription = stringResource(R.string.cd_add_field)
+//                        )
+//                    }
                     IconButton(
                         onClick = { viewModel.setShowAddFieldDialog(true) },
                         colors = IconButtonDefaults.iconButtonColors(
