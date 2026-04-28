@@ -1,0 +1,11 @@
+v0.3.2
+What's Fixed:
+- auto refresh music list on save tags
+- fix sd card music loading
+- increase batch editor timeout hopefully fixing #34
+- folder list in settings is now scrollable
+- fixed buttons on permission screen being inaccessible in certain languages/font sizes
+-
+
+What's New:
+- Opus file support
